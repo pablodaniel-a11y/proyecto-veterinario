@@ -52,4 +52,9 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     {
         return $this->hasMany(Mascota::class);
     }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
+    }
 }

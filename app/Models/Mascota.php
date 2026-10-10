@@ -19,4 +19,14 @@ class Mascota extends Model
     {
         return $this->hasMany(Cita::class);
     }
+
+    public function especie()
+    {
+        return $this->BelongsTo(Especie::class);
+    }
+
+    public function consultas()
+    {
+        return $this->hasMany(Consulta::class);
+    }
 }

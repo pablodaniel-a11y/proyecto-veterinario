@@ -14,4 +14,9 @@ class Veterinario extends Model
     {
         return $this->hasMany(Cita::class);
     }
+
+    public function consultas()
+    {
+        return $this->hasMany(Consulta::class);
+    }
 }

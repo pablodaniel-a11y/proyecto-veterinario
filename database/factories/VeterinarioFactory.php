@@ -18,7 +18,10 @@ class VeterinarioFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nombre' => fake()->firstname(),
+            'apellido' => fake()->lastName(),
+            'telefono' => fake()->unique()->phoneNumber(),
+            'email' => fake()->unique()->safeEmail(),
         ];
     }
 }

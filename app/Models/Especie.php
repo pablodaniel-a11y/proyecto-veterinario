@@ -9,4 +9,8 @@ class Especie extends Model
 {
     /** @use HasFactory<\Database\Factories\EspecieFactory> */
     use HasFactory;
+
+    public function razas(){
+        return $this->HasMany(Raza::class);
+    }
 }

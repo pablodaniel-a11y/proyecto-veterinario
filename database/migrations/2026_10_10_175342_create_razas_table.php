@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('razas', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('especie_id')
+                ->constrained('especies')
+                ->cascadeOnDelete();
+            
+            $table->string('nombre');
             $table->timestamps();
         });
     }

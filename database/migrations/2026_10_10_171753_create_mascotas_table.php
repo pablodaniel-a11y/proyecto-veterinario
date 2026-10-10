@@ -16,8 +16,12 @@ return new class extends Migration
             $table->foreignId('user_id')
               ->constrained('users')
               ->cascadeOnDelete();
+            $table->foreignId('raza_id')
+              ->nullable()
+              ->constrained('razas')
+              ->nullOnDelete();
             $table->string('nombre');
-            $table->string('sexo');
+            $table->string('sexo'); //Macho | Hembra
             $table->timestamps();
         });
     }

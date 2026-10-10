@@ -12,6 +12,10 @@ class EspecieSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Especie::create(['nombre' => 'Perro']);
+        Especie::create(['nombre' => 'Gato']);
+        Especie::create(['nombre' => 'Ave']);
+        Especie::create(['nombre' => 'Reptil']);
+        Especie::create(['nombre' => 'Roedor']);
     }
 }

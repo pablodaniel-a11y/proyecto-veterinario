@@ -12,6 +12,6 @@ class VeterinarioSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Veterinario::factory()->count(6)->create();
     }
 }

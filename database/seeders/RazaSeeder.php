@@ -12,6 +12,13 @@ class RazaSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        $perro = Especie::where('nombre', 'Perro')->firstOrFail();
+        $gato = Especie::where('nombre', 'Gato')->firstOrFail();
+
+        Raza::create(['especie_id' => $perro->id, 'nombre' => 'Labrador']);
+        Raza::create(['especie_id' => $perro->id, 'nombre' => 'Caniche']);
+
+        Raza::create(['especie_id' => $gato->id, 'nombre' => 'Siames']);
+        Raza::create(['especie_id' => $gato->id, 'nombre' => 'Persa']);
     }
 }

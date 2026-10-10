@@ -16,11 +16,11 @@ return new class extends Migration
 
             $table->foreignId('veterinario_id')
                 ->constrained('veterinarios')
-                ->cascadOnDelete();
+                ->cascadeOnDelete();
             
             $table->foreignId('mascota_id')
                 ->constrained('mascotas')
-                ->cascadOnDelete();
+                ->cascadeOnDelete();
             
             $table->dateTime('fecha_hora');
             $table->string('motivo');
