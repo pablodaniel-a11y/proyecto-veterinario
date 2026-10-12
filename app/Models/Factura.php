@@ -10,8 +10,8 @@ class Factura extends Model
     /** @use HasFactory<\Database\Factories\FacturaFactory> */
     use HasFactory;
 
-    public function user()
+    public function cliente()
     {
-        return this->BelongsTo(User::class);
+        return this->BelongsTo(cliente::class);
     }
 }

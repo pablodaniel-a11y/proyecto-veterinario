@@ -10,6 +10,11 @@ class Cita extends Model
     /** @use HasFactory<\Database\Factories\CitaFactory> */
     use HasFactory;
 
+    public function cliente()
+    {
+        return $this->BelongsTo(Cliente::class);
+    }
+
 
     public function mascota()
     {

@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             EspecieSeeder::class,
             RazaSeeder::class,
             UserSeeder::class,
+            ClienteSeeder::class,
             MascotaSeeder::class,
             VeterinarioSeeder::class,
             ProductoSeeder::class, //aca van los seeder en orden

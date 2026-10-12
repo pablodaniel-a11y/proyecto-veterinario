@@ -10,9 +10,9 @@ class Mascota extends Model
     /** @use HasFactory<\Database\Factories\MascotaFactory> */
     use HasFactory;
 
-    public function user()
+    public function cliente()
     {
-        return this->BelongsTo(User::class);
+        return this->BelongsTo(Cliente::class);
     }
 
     public function raza()

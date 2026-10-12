@@ -13,13 +13,16 @@ return new class extends Migration
     {
         Schema::create('mascotas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-              ->constrained('users')
+
+            $table->foreignId('cliente_id')
+              ->constrained('clientes')
               ->cascadeOnDelete();
+
             $table->foreignId('raza_id')
               ->nullable()
               ->constrained('razas')
               ->nullOnDelete();
+              
             $table->string('nombre');
             $table->string('sexo'); //Macho | Hembra
             $table->integer('edad')->default(0);

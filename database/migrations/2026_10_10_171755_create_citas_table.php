@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('citas', function (Blueprint $table) {
             $table->id();
 
+            $table->foreignId('cliente_id')
+                ->constrainde('clientes')
+                ->cascadeOnDelete();
+
             $table->foreignId('veterinario_id')
                 ->constrained('veterinarios')
                 ->cascadeOnDelete();
@@ -25,7 +29,6 @@ return new class extends Migration
             $table->dateTime('fecha_hora');
             $table->string('motivo');
             $table->string('estado')->default('pendiente');
-            $table->string('observaciones')->nullable();
             $table->timestamps();
         });
     }

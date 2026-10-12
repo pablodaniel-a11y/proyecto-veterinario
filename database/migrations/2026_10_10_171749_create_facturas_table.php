@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('facturas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')
-                ->constrained('users')
+            $table->foreignId('cliente_id')
+                ->constrained('clientes')
                 ->cascadeOnDelete();
             $table->date('fecha');
             $table->decimal('total',10,2);

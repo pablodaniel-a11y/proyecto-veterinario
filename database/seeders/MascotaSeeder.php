@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Mascota;
-use App\Models\User;
+use App\Models\Cliente;
 use App\Models\Raza;
 
 class MascotaSeeder extends Seeder
@@ -15,13 +15,13 @@ class MascotaSeeder extends Seeder
      */
     public function run(): void
     {
-        $usuario = User::first();
+        $cliente = Cliente::firstOrFail();
 
         $caniche = Raza::where('nombre', 'Caniche')->firstOrFail();
         $siames = Raza::where('nombre', 'Siames')->firstOrFail();
 
         Mascota::create([
-            'user_id' => $usuario->id,
+            'cliente_id' => $cliente->id,
             'raza_id' => $caniche->id,
             'nombre' => 'Ciro',
             'sexo' => 'Macho',
@@ -29,7 +29,7 @@ class MascotaSeeder extends Seeder
         ]);
 
         Mascota::create([
-            'user_id' => $usuario->id,
+            'cliente_id' => $cliente->id,
             'raza_id' => $siames->id,
             'nombre' => 'Mini',
             'sexo' => 'Hembra',
