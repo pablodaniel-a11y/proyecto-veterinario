@@ -15,6 +15,11 @@ class Mascota extends Model
         return this->BelongsTo(User::class);
     }
 
+    public function raza()
+    {
+        return $this->belongsTo(Raza::class);
+    }
+
     public function citas()
     {
         return $this->hasMany(Cita::class);

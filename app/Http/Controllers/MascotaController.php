@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Mascota;
 use App\Http\Requests\StoreMascotaRequest;
 use App\Http\Requests\UpdateMascotaRequest;
@@ -12,8 +13,13 @@ class MascotaController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        //
+    {      
+        $mascotas = Mascota::with('raza.especie')->get();
+
+        return Inertia::render('Mascotas/Index', [
+            'mascotas' => $mascotas
+        ]);
+
     }
 
     /**

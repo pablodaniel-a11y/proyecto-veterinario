@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/profile';
 import type { Auth } from '@/types';
-import { send } from '@/routes/verification';
+//import { send } from '@/routes/verification';
 
 type PageProps = {
     auth: Auth;
@@ -84,7 +84,7 @@ export default function Profile({
                                     message={errors.email}
                                 />
                             </div>
-
+                            {/*
                             {mustVerifyEmail &&
                                 auth.user.email_verified_at === null && (
                                     <div>
@@ -109,7 +109,7 @@ export default function Profile({
                                         )}
                                     </div>
                                 )}
-
+                            */}
                             <div className="flex items-center gap-4">
                                 <Button
                                     disabled={processing}

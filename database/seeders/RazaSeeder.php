@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Raza;
+use App\Models\Especie;
 
 class RazaSeeder extends Seeder
 {

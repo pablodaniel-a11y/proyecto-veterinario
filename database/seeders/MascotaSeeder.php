@@ -4,6 +4,9 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Mascota;
+use App\Models\User;
+use App\Models\Raza;
 
 class MascotaSeeder extends Seeder
 {
@@ -22,6 +25,7 @@ class MascotaSeeder extends Seeder
             'raza_id' => $caniche->id,
             'nombre' => 'Ciro',
             'sexo' => 'Macho',
+            'edad' => 20,
         ]);
 
         Mascota::create([
@@ -29,6 +33,7 @@ class MascotaSeeder extends Seeder
             'raza_id' => $siames->id,
             'nombre' => 'Mini',
             'sexo' => 'Hembra',
+            'edad' => 18,
         ]);
     }
 }
