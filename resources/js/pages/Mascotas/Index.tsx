@@ -13,8 +13,6 @@ interface Raza {
 
 interface Mascota {
     id: number;
-    user_id: number;
-    raza_id: number;
     nombre: string;
     sexo: SexoMascota;
     edad: number;
@@ -22,11 +20,11 @@ interface Mascota {
     raza?: Raza | null;
 }
 
-interface Props {
+interface indexProps {
   mascotas: Mascota[];
 }
 
-export default function Index({mascotas} : Props){
+export default function Index({mascotas} : indexProps){
 
     return(
         <div>

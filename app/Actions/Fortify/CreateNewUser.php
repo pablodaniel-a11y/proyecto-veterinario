@@ -7,6 +7,7 @@ use App\Concerns\ProfileValidationRules;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use App\Models\Cliente;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -24,10 +25,28 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
         ]);
+
+        $cliente = Cliente::where('email', $user->email)->first();
+
+        if ($cliente) {
+            $cliente->update([
+                'user_id' => $user->id,
+                'nombre'  => $user->name,
+            ]);
+        } else {
+            Cliente::create([
+                'user_id'  => $user->id,
+                'nombre'   => $user->name,
+                'email'    => $user->email,
+                'telefono' => 'Pendiente',
+            ]);
+        }
+
+        return $user;
     }
 }

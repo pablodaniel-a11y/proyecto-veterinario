@@ -24,7 +24,7 @@ return new class extends Migration
               ->nullOnDelete();
               
             $table->string('nombre');
-            $table->string('sexo'); //Macho | Hembra
+            $table->string('sexo');
             $table->integer('edad')->default(0);
             $table->string('foto')->nullable();
             $table->timestamps();
