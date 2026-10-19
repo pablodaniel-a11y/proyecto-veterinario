@@ -23,7 +23,7 @@ class StoreMascotaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cliente_id' => ['required', 'exists:clientes,id'],
+            //'cliente_id' => ['required', 'exists:clientes,id'],
             'raza_id'    => ['nullable', 'exists:razas,id'],
             'nombre'   => ['required', 'string', 'max:100'],
             'sexo' => ['required', 'string', 'in:Macho,Hembra', 'max:20'],

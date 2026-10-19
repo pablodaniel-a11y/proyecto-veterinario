@@ -18,10 +18,10 @@ class VeterinarioFactory extends Factory
     public function definition(): array
     {
         return [
-            'nombre' => fake()->firstname(),
-            'apellido' => fake()->lastName(),
+            'user_id' => \App\Models\User::factory(),
             'telefono' => fake()->unique()->phoneNumber(),
-            'email' => fake()->unique()->safeEmail(),
+            'matricula' => fake()->unique()->numberBetween(1000, 9999),
+            'especialidad' => fake()->randomElement(['Cirugía', 'Clínica General', 'Felinos', 'Dermatología', 'Oftalmología', 'Etología (Comportamiento Animal)', 'Nutrición y Dietética']),
         ];
     }
 }

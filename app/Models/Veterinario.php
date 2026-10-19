@@ -10,6 +10,14 @@ class Veterinario extends Model
     /** @use HasFactory<\Database\Factories\VeterinarioFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'nombre',
+        'apellido',
+        'telefono',
+        'email',
+    ];
+
     public function citas()
     {
         return $this->hasMany(Cita::class);

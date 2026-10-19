@@ -10,6 +10,13 @@ class Detalle_Consulta extends Model
     /** @use HasFactory<\Database\Factories\DetalleConsultaFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'consulta_id',
+        'producto_id',
+        'dosis',
+        'cantidad',
+        'indicaciones',
+    ];
 
     public function consulta()
     {

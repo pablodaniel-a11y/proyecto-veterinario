@@ -10,6 +10,17 @@ class Consulta extends Model
     /** @use HasFactory<\Database\Factories\ConsultaFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'veterinario_id',
+        'mascota_id',
+        'fecha_hora',
+        'motivo_consulta',
+        'diagnostico',
+        'peso',
+        'estado',
+    ];
+
+
     public function mascota()
     {
         return $this->BelongsTo(Mascota::class);

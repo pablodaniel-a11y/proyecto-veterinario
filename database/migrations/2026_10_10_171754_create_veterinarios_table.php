@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('veterinarios', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->string('apellido');
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete();
             $table->string('telefono')->unique();
-            $table->string('email')->unique();
+            $table->string('matricula');
+            $table->string('especialidad');
             $table->timestamps();
         });
     }

@@ -6,8 +6,10 @@ use Inertia\Inertia;
 use App\Models\Mascota;
 use App\Models\Raza;
 use App\Models\Especie;
+use App\Models\Cliente;
 use App\Http\Requests\StoreMascotaRequest;
 use App\Http\Requests\UpdateMascotaRequest;
+use Illuminate\Support\Facades\Storage;
 
 class MascotaController extends Controller
 {
@@ -72,8 +74,8 @@ class MascotaController extends Controller
         Mascota::create($mascota);
 
         return redirect()
-            ->route('Mascotas.index');
-            //->with('success', 'Mascota creado correctamente.');
+            ->route('mascotas.index')
+            ->with('success', 'Mascota creado correctamente.');
     }
 
     /**
@@ -103,7 +105,6 @@ class MascotaController extends Controller
      */
     public function update(UpdateMascotaRequest $request, Mascota $mascota)
     {
-
         $validated = $request->validated();
 
         if ($request->hasFile('foto')) {
@@ -118,8 +119,8 @@ class MascotaController extends Controller
         $mascota->update($validated);
 
         return redirect()
-            ->route('mascotas.index');
-            //->with('success', 'Profesor actualizado correctamente.');
+            ->route('mascotas.index')
+            ->with('success', 'Mascota actualizado correctamente.');
     }
 
     /**
@@ -134,7 +135,7 @@ class MascotaController extends Controller
         $mascota->delete();
 
         return redirect()
-            ->route('mascotas.index');
-            //->with('success', 'Profesor eliminado correctamente.');
+            ->route('mascotas.index')
+            ->with('success', 'Mascota eliminado correctamente.');
     }
 }

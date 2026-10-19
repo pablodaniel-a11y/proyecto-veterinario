@@ -10,6 +10,10 @@ class Especie extends Model
     /** @use HasFactory<\Database\Factories\EspecieFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'nombre',
+    ];
+
     public function razas(){
         return $this->HasMany(Raza::class);
     }

@@ -10,6 +10,15 @@ class Mascota extends Model
     /** @use HasFactory<\Database\Factories\MascotaFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'cliente_id',
+        'raza_id',
+        'nombre',
+        'sexo',
+        'edad',
+        'foto',
+    ];
+
     public function cliente()
     {
         return this->BelongsTo(Cliente::class);

@@ -10,6 +10,15 @@ class Cita extends Model
     /** @use HasFactory<\Database\Factories\CitaFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'cliente_id',
+        'veterinario_id',
+        'mascota_id',
+        'fecha_hora',
+        'motivo',
+        'estado',
+    ];
+
     public function cliente()
     {
         return $this->BelongsTo(Cliente::class);

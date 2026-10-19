@@ -10,6 +10,11 @@ class Raza extends Model
     /** @use HasFactory<\Database\Factories\RazaFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'especie_id',
+        'nombre',
+    ];
+
     public function mascotas()
     {
         return $this->hasMany(Mascota::class);
