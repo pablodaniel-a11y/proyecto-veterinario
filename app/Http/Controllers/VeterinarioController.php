@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Veterinario;
+use App\Models\User;
 use App\Http\Requests\StoreVeterinarioRequest;
 use App\Http\Requests\UpdateVeterinarioRequest;
 
@@ -13,7 +15,11 @@ class VeterinarioController extends Controller
      */
     public function index()
     {
-        //
+        $veterinarios= Veterinario::with('user')->get();
+
+        return Inertia::render('Veterinarios/Index', [
+            'veterinarios' => $veterinarios,
+        ]);
     }
 
     /**
@@ -21,7 +27,7 @@ class VeterinarioController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Veterinarios/Create');
     }
 
     /**
@@ -29,7 +35,24 @@ class VeterinarioController extends Controller
      */
     public function store(StoreVeterinarioRequest $request)
     {
-        //
+        $validated= $request->validated();
+
+        $user = User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make(Str::random(10)),
+        ]);
+
+        Veterinario::create([
+            'user_id' => $user->id,
+            'telefono' => $validated['telefono'],
+            'matricula' => $validated['matricula'],
+            'especialidad' => $validated['especialidad'],
+        ]);
+
+        return redirect()
+            ->route('veterinarios.index')
+            ->with('success', 'Perfil creado Correctamente');
     }
 
     /**
@@ -45,7 +68,10 @@ class VeterinarioController extends Controller
      */
     public function edit(Veterinario $veterinario)
     {
-        //
+        $veterinario->load('user');
+        return Inertia::render('Veterinarios/Edit', [
+            'veterinario' => $veterinario,
+        ]);
     }
 
     /**
@@ -53,7 +79,22 @@ class VeterinarioController extends Controller
      */
     public function update(UpdateVeterinarioRequest $request, Veterinario $veterinario)
     {
-        //
+        $validated = $request->validated();
+
+        $veterinario->user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        $veterinario->update([
+            'telefono' => $validated['telefono'],
+            'matricula' => $validated['matricula'],
+            'especialidad' => $validated['especialidad'],
+        ]);
+
+        return redirect()
+            ->route('veterinarios.index')
+            ->with('success', 'Perfil actualizado correctamente.');
     }
 
     /**
@@ -61,6 +102,10 @@ class VeterinarioController extends Controller
      */
     public function destroy(Veterinario $veterinario)
     {
-        //
+        $veterinario->delete();
+
+        return redirect()
+            ->route('veterinarios.index')
+            ->with('success', 'Perfil borrado correctamente.');
     }
 }

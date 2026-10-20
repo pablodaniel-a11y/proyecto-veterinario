@@ -19,11 +19,21 @@ class Cliente extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function citas()
     {
         return $this->hasMany(Cita::class);
+    }
+
+    public function mascotas()
+    {
+        return $this->hasMany(Mascota::class);
+    }
+
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
     }
 }

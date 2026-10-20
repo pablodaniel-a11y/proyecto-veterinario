@@ -26,6 +26,10 @@ const mainNavItems: NavItem[] = [
         title: 'Mascotas',
         href: '/mascotas',
     },
+    {
+        title: 'Profesionales',
+        href: '/veterinarios',
+    },
 ];
 
 const footerNavItems: NavItem[] = [

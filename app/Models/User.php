@@ -48,13 +48,13 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
         ];
     }
 
-    public function mascotas()
+    public function cliente()
     {
-        return $this->hasMany(Mascota::class);
+        return $this->hasOne(Cliente::class);
     }
 
-    public function facturas()
+    public function veterinario()
     {
-        return $this->hasMany(Factura::class);
+        return $this->hasOne(Veterinario::class);
     }
 }

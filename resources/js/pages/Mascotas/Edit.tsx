@@ -34,13 +34,13 @@ interface editProps {
 
 export default function Edit({mascota, razas, especies}: editProps) {
     const {data,setData, post,processing,errors} = useForm({
-        _method : 'put',
-        nombre : mascota.nombre,
-        sexo : mascota.sexo,
-        edad : mascota.edad,
-        foto : null as File | string | null,
+        _method: 'put',
+        nombre: mascota.nombre,
+        sexo: mascota.sexo,
+        edad: mascota.edad,
+        foto: null as File | string | null,
         especie_id: mascota.raza?.especie?.id ?? (especies[0]?.id ?? 0),
-        raza_id : mascota.raza?.id ?? (razas[0]?.id) ?? 0,
+        raza_id: mascota.raza?.id ?? (razas[0]?.id) ?? 0,
     });
     
     const [preview, setPreview] = useState<string | null>(mascota.foto ? `/storage/${mascota.foto}` : null);
