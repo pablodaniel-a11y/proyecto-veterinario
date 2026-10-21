@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Producto;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
@@ -13,7 +14,10 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        //
+        $productos=Producto::all();
+        return Inertia::render('Productos/Index', [
+            'productos' => $productos,
+        ]);
     }
 
     /**
@@ -21,7 +25,7 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Productos/Create');
     }
 
     /**
@@ -29,7 +33,13 @@ class ProductoController extends Controller
      */
     public function store(StoreProductoRequest $request)
     {
-        //
+        $validated= $request->validated();
+
+        Producto::create($validated);
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto creado correctamente');
     }
 
     /**
@@ -45,7 +55,9 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        //
+        return Inertia::render('Productos/Index', [
+            'producto' => $producto,
+        ]);
     }
 
     /**
@@ -53,7 +65,14 @@ class ProductoController extends Controller
      */
     public function update(UpdateProductoRequest $request, Producto $producto)
     {
-        //
+        $validated= $request->validated();
+
+        $producto->update($validated);
+
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto actualizado correctamente');
     }
 
     /**
@@ -61,6 +80,10 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        //
+        $producto->delete();
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto borrado correctamente');
     }
 }

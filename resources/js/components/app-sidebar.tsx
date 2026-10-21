@@ -23,12 +23,16 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Mascotas',
+        title: 'Tus Mascotas',
         href: '/mascotas',
     },
     {
         title: 'Profesionales',
         href: '/veterinarios',
+    },
+    {
+        title: 'Tienda de Productos',
+        href: '/productos',
     },
 ];
 

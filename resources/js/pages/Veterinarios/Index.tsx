@@ -26,7 +26,7 @@ interface indexProps{
 export default function Index({veterinarios, flash}: indexProps){
 
     const eliminar = (id:number) => {
-        if (confirm('¿Está seguro de eliminar esta mascota?')) {
+        if (confirm('¿Está seguro de eliminar este perfil?')) {
             router.delete(`/veterinarios/${id}`);
         }
     };

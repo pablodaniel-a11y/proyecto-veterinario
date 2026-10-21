@@ -37,7 +37,6 @@ class StoreVeterinarioRequest extends FormRequest
             'required' => 'El campo :attribute es obligatorio.',
             'unique' => 'El :attribute ingresado ya se encuentra registrado.',
             'max' => 'El campo :attribute no debe superar los :max caracteres.',
-            'in' => 'El campo :attribute debe ser Macho o Hembra.',
             'integer' => 'El campo :attribute debe ser un número entero.',
             'image' => 'El archivo cargado debe ser una imagen.',
             'mimes' => 'La foto debe tener un formato válido (jpeg, png, jpg, webp).',

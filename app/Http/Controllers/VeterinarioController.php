@@ -52,7 +52,7 @@ class VeterinarioController extends Controller
 
         return redirect()
             ->route('veterinarios.index')
-            ->with('success', 'Perfil creado Correctamente');
+            ->with('success', 'Perfil creado correctamente');
     }
 
     /**
