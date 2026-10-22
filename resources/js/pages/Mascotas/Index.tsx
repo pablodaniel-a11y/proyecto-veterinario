@@ -46,13 +46,21 @@ export default function Index({mascotas, flash} : indexProps){
             <div className="h-15 flex bg-orange-200">
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Carnet de Mascotas</span></h1>
             </div>
-            <div className="bg-orange-300">
+            <div className="bg-orange-300 flex justify-between items-center">
                 <Button 
                     asChild 
                     className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
                 > 
                     <Link href={`/mascotas/create`}>
                         Agregar una Mascota Nueva
+                    </Link> 
+                </Button>
+                <Button 
+                    asChild 
+                    className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
+                > 
+                    <Link href={`/consultas/create`}>
+                        Realizar una Consulta
                     </Link> 
                 </Button>
             </div>
@@ -103,6 +111,15 @@ export default function Index({mascotas, flash} : indexProps){
                                     >
                                         <Trash2 className="mr-1.5 h-4 w-4" />
                                         Eliminar Mascota
+                                    </Button>
+                                    <Button 
+                                        asChild 
+                                        className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm"
+                                    > 
+                                        <Link href={`/mascotas/${mascota.id}/consultas`}> 
+                                            <Plus className="w-4 h-4 mr-2" /> 
+                                            Consultas de la Mascota
+                                        </Link> 
                                     </Button>
                                 </div>
                             </div>

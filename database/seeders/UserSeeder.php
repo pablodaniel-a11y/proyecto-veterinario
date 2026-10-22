@@ -19,5 +19,12 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => bcrypt('1234'),
         ]);
+
+        User::create([
+            'name' => 'veterinarioPrueba',
+            'email' => 'algo2@algo2.com',
+            'email_verified_at' => now(),
+            'password' => bcrypt('1234'),
+        ]);
     }
 }

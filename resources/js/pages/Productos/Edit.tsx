@@ -2,21 +2,22 @@ import { Button } from "@/components/ui/button";
 import { Link, useForm } from "@inertiajs/react";
 import { FormEvent } from "react";
 
-
+type tipoproductos = 'Medicamento' | 'Higiene' | 'Accesorio' | 'Servicio';
 
 interface Producto{
     id: number;
     nombre_producto: string;
-    tipo_producto: string;
+    tipo_producto: tipoproductos;
     precio_venta: number;
     stock_actual: number;
 }
 
 interface editProps{
     producto: Producto;
+    tiposProductosList: tipoproductos[];
 }
 
-export default function Index({producto}: editProps){
+export default function Edit({producto,  tiposProductosList}: editProps){
     const {data,setData,put,processing,errors} = useForm({
         nombre_producto: producto.nombre_producto,
         tipo_producto: producto.tipo_producto,
@@ -49,39 +50,37 @@ export default function Index({producto}: editProps){
                         {errors.nombre_producto && <span className="text-red-500 text-sm">{errors.nombre_producto}</span>}
                     </div>
                     <div>
-                        <label> tipo_producto </label>
+                        <label> Tipo Producto </label>
+                        <select
+                            value={data.tipo_producto}
+                            onChange={(e) => setData('tipo_producto', e.target.value as tipoproductos)}
+                        >
+                            <option value="" disabled>Seleccione un tipo</option>
+                            {tiposProductosList.map((tipo) => (
+                                <option key={tipo} value={tipo}>
+                                    {tipo}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.tipo_producto && <span className="text-red-500 text-sm">{errors.tipo_producto}</span>}
+                    </div>
+                    <div>
+                        <label> Precio Venta </label>
                         <input
-                            type="email"
-                            value={data.email}
-                            onChange={(e) => setData('email', e.target.value)}
+                            type='number'
+                            value={data.precio_venta}
+                            onChange={(e) => setData('precio_venta', Number(e.target.value))}
                         />
-                        {errors.email && <span className="text-red-500 text-sm">{errors.email}</span>}
+                        {errors.precio_venta && <span className="text-red-500 text-sm">{errors.precio_venta}</span>}
                     </div>
                     <div>
-                        <label> Telefono </label>
+                        <label> Precio Venta </label>
                         <input
-                            type='text'
-                            value={data.telefono}
-                            onChange={(e) => setData('telefono', e.target.value)}
+                            type='number'
+                            value={data.stock_actual}
+                            onChange={(e) => setData('stock_actual', Number(e.target.value))}
                         />
-                    </div>
-                    <div>
-                        <label> Matricula </label>
-                        <input 
-                            type="text" 
-                            value={data.matricula}
-                            onChange={(e) => setData('matricula', e.target.value)}
-                        />
-                        {errors.matricula && <span className="text-red-500 text-sm">{errors.matricula}</span>}
-                    </div>
-                    <div>
-                        <label> Especialidad </label>
-                        <input 
-                            type="text" 
-                            value={data.especialidad}
-                            onChange={(e) => setData('especialidad', e.target.value)}
-                        />
-                        {errors.especialidad && <span className="text-red-500 text-sm">{errors.especialidad}</span>}
+                        {errors.stock_actual && <span className="text-red-500 text-sm">{errors.stock_actual}</span>}
                     </div>
                     <div className="flex gap-4 mt-4">
                         <Button 
@@ -89,10 +88,10 @@ export default function Index({producto}: editProps){
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Actualizar Perfil'}
+                            {processing ? 'Guardando...' : 'Actualizar Producto'}
                         </Button>
                         
-                        <Link href="/veterinarios" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">
+                        <Link href="/productos" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">
                             Cancelar
                         </Link>
                     </div>

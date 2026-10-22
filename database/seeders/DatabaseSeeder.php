@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
             ClienteSeeder::class,
             MascotaSeeder::class,
             VeterinarioSeeder::class,
-            ProductoSeeder::class, //aca van los seeder en orden
+            ConsultaSeeder::class,
+            ProductoSeeder::class,
         ]);
     }
 }

@@ -13,9 +13,12 @@ interface Producto{
 
 interface indexProps{
     productos: Producto[];
+    flash?:{
+        success?: string;
+    };
 }
 
-export default function Index({productos}: indexProps){
+export default function Index({productos, flash}: indexProps){
 
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar este Producto?')) {
@@ -25,7 +28,21 @@ export default function Index({productos}: indexProps){
 
     return (
         <div>
+            <div className="h-15 flex bg-orange-200">
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Tienda de Productos</span></h1>
+            </div>
+            <div className="bg-orange-300">
+                <Button 
+                    asChild 
+                    className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
+                > 
+                    <Link href={`/productos/create`}>
+                        Crear un nuevo Producto para la tienda
+                    </Link> 
+                </Button>
+            </div>
             <div>
+                {flash?.success && <div>{flash.success}</div>}
                 <Table>
                     <TableHeader>
                         <TableRow>

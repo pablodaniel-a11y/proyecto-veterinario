@@ -18,6 +18,7 @@ class Consulta extends Model
         'diagnostico',
         'peso',
         'estado',
+        'observaciones'
     ];
 
 

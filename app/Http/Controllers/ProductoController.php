@@ -25,7 +25,11 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Productos/Create');
+        $tiposProductosList=['Medicamento', 'Higiene', 'Accesorio', 'Servicio'];
+
+        return Inertia::render('Productos/Create', [
+            'tiposProductosList' => $tiposProductosList,
+        ]);
     }
 
     /**
@@ -55,8 +59,11 @@ class ProductoController extends Controller
      */
     public function edit(Producto $producto)
     {
-        return Inertia::render('Productos/Index', [
+        $tiposProductosList=['Medicamento', 'Higiene', 'Accesorio', 'Servicio'];
+        
+        return Inertia::render('Productos/Edit', [
             'producto' => $producto,
+            'tiposProductosList' => $tiposProductosList,
         ]);
     }
 
