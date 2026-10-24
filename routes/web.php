@@ -16,7 +16,8 @@ Route::middleware(['auth'/*, 'verified'*/])->group(function () {
     Route::resource('consultas', ConsultaController::class);
     Route::get('/mascotas/{mascota}/consultas', [ConsultaController::class, 'indexpormascota'])->name('mascota.consultas');
     Route::get('/mascotas/{mascota}/consultas/create', [ConsultaController::class, 'createindividual'])->name('mascotas.consultas.create');
-    Route::get('/veterinario/consultas', [ConsultaController::class, 'indexdelveterinario'])->name('veterinario.consultas');
+    Route::post('/mascotas/{mascota}/consultas', [ConsultaController::class, 'store'])->name('mascotas.consultas.store');
+    Route::get('/veterinario/consultas', [ConsultaController::class, 'indexdelveterinario'])->name('veterinario.consultas.index');
     Route::get('/veterinario/consultas/{consulta}/edit', [ConsultaController::class, 'edit'])->name('veterinario.consultas.edit');
     Route::put('/veterinario/consultas/{consulta}', [ConsultaController::class, 'update'])->name('veterinario.consultas.update');
 });

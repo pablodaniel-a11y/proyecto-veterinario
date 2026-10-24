@@ -28,7 +28,7 @@ class UpdateConsultaRequest extends FormRequest
             //'fecha_hora' => ['required', 'date'],
             //'motivo_consulta' => ['nullable', 'string', 'max:500'],
             'diagnostico' => ['required', 'string', 'max:500'],
-            'peso' => ['nullable', 'decimal', 'min:0', 'max:999.99'],
+            'peso' => ['nullable', 'decimal:0,2', 'min:0', 'max:999.99'],
             'estado' => ['required', 'string', 'in:pendiente,completado,cancelado', 'max:20'],
             'observaciones' => ['nullable', 'string', 'max:1000'],
         ];

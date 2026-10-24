@@ -34,6 +34,10 @@ const mainNavItems: NavItem[] = [
         title: 'Tienda de Productos',
         href: '/productos',
     },
+    {
+        title: 'Consultas a Gestionar',
+        href: '/veterinario/consultas',
+    },
 ];
 
 const footerNavItems: NavItem[] = [

@@ -50,30 +50,29 @@ class ConsultaController extends Controller
      */
     public function create()
     {
-
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
         $mascotas = Mascota::where('cliente_id', $cliente->id)->with(['raza.especie'])->get();
-        $veterinarios = Veterinario::all();
+        $veterinarios = Veterinario::with('user')->get();
         $estados= ['pendiente','completado','cancelado'];
 
         return Inertia::render('Consultas/Create', [
             'estados' => $estados,
             'mascotas' => $mascotas,
-            'veterinario' => $veterinarios,
+            'veterinarios' => $veterinarios,
         ]);
     }
 
     public function createindividual(Mascota $mascota)
     {
         $mascota->load(['raza.especie']);
-        $veterinario = Veterinario::all();
+        $veterinarios = Veterinario::with('user')->get();
         $estados= ['pendiente','completado','cancelado'];
 
         return Inertia::render('Consultas/Create', [
             'estados' => $estados,
             'mascota' => $mascota,
-            'veterinario' => $veterinario,
+            'veterinarios' => $veterinarios,
         ]);
     }
 
@@ -83,10 +82,16 @@ class ConsultaController extends Controller
     public function store(StoreConsultaRequest $request)
     {
         $validated= $request->validated();
-        Consulta::create($validated);
+        Consulta::create([
+            ...$validated,
+            'fecha_hora' => now(),
+            'estado' => 'pendiente',
+            'diagnostico' => '',
+            'observaciones' => '',
+        ]);
 
         return redirect()
-            ->route('mascotas.index')
+            ->route('mascota.consultas', $validated['mascota_id'])
             ->with('success', 'Se creo correctamente la Consulta');
 
     }

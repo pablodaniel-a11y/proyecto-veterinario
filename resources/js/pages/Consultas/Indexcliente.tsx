@@ -41,7 +41,7 @@ interface indexProps {
     };
 }
 
-export default function Index({ mascota, consultas }: indexProps) {
+export default function Index({ mascota, consultas, flash }: indexProps) {
   return (
     <div>
         <div className="h-15 flex bg-orange-200">
@@ -66,6 +66,7 @@ export default function Index({ mascota, consultas }: indexProps) {
             </Button>
         </div>
         <div className="min-h-screen flex bg-gray-100">
+            {flash?.success && <div>{flash.success}</div>}
             <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
                 {consultas.map((consulta) => (
                     <li key={consulta.id}>

@@ -21,7 +21,7 @@ class Mascota extends Model
 
     public function cliente()
     {
-        return this->BelongsTo(Cliente::class);
+        return $this->BelongsTo(Cliente::class);
     }
 
     public function raza()

@@ -20,6 +20,7 @@ class ConsultaSeeder extends Seeder
         $mini = Mascota::where('nombre', 'Mini')->first();
 
         $veterinario = Veterinario::inRandomOrder()->first();
+        $veterinarioPrueba = Veterinario::where('telefono', '387123456')->firstOrFail();
 
         Consulta::create([
             'veterinario_id'  => $veterinario->id,
@@ -34,6 +35,17 @@ class ConsultaSeeder extends Seeder
 
         Consulta::create([
             'veterinario_id'  => $veterinario->id,
+            'mascota_id'      => $mini->id,
+            'fecha_hora'      => now(),
+            'motivo_consulta' => 'Control de rutina anual y vacunación.',
+            'diagnostico'     => 'Pendiente de revisión en clínica.',
+            'peso'            => 4.20,
+            'estado'          => 'pendiente',
+            'observaciones'   => null,
+        ]);
+
+        Consulta::create([
+            'veterinario_id'  => $veterinarioPrueba->id,
             'mascota_id'      => $mini->id,
             'fecha_hora'      => now(),
             'motivo_consulta' => 'Control de rutina anual y vacunación.',
