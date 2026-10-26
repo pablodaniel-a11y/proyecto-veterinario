@@ -23,14 +23,17 @@ class UpdateConsultaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //'veterinario_id' => ['required', 'exists:veterinarios,id'],
-            //'mascota_id' => ['required', 'exists:mascotas,id'],
-            //'fecha_hora' => ['required', 'date'],
-            //'motivo_consulta' => ['nullable', 'string', 'max:500'],
             'diagnostico' => ['required', 'string', 'max:500'],
             'peso' => ['nullable', 'decimal:0,2', 'min:0', 'max:999.99'],
             'estado' => ['required', 'string', 'in:pendiente,completado,cancelado', 'max:20'],
             'observaciones' => ['nullable', 'string', 'max:1000'],
+
+            //me di cuenta que no puedo usar el updatedatelle_consultarequest.php
+            'detalles' => ['nullable', 'array'],
+            'detalles.*.producto_id' => ['required', 'exists:productos,id'],
+            'detalles.*.dosis' => ['required', 'numeric', 'min:0', 'max:999.99'],
+            'detalles.*.cantidad' => ['required', 'integer', 'min:1'],
+            'detalles.*.indicaciones' => ['nullable', 'string', 'max:500'],
         ];
     }
 

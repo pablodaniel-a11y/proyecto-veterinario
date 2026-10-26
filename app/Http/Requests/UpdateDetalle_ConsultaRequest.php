@@ -12,7 +12,7 @@ class UpdateDetalle_ConsultaRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**

@@ -34,6 +34,6 @@ class Consulta extends Model
 
     public function detalles_consultas()
     {
-        return $this->HasMany(Especie::class);
+        return $this->HasMany(Detalle_Consulta::class);
     }
 }

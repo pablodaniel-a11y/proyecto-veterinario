@@ -32,6 +32,21 @@ interface Mascota {
     raza?: Raza | null;
 }
 
+interface Producto{
+    id: number;
+    nombre_producto: string;
+    tipo_producto: string;
+    precio_venta: number;
+    stock_actual: number;
+}
+
+interface Detalle_Consulta {
+    producto_id: number | '';
+    dosis: number | '';
+    cantidad: number;
+    indicaciones: string;
+}
+
 interface Consulta{
     id: number;
     fecha_hora: string;
@@ -41,25 +56,61 @@ interface Consulta{
     estado: string;
     observaciones: string;
     mascota: Mascota;
+
+    detalles_consulta?: 
+    {
+        producto_id: number;
+        dosis: number;
+        cantidad: number;
+        indicaciones: string;
+    }[];
 }
 
 interface editProps {
   consulta: Consulta;
   estados: Estados[];
+  productos: Producto[];
 }
 
-export default function Edit({consulta, estados}: editProps) {
+export default function Edit({consulta, estados, productos}: editProps) {
     const {data,setData, put,processing,errors} = useForm({
         diagnostico: consulta.diagnostico ?? '',
         peso: consulta.peso ?? 0,
         estado: consulta.estado as Estados,
         observaciones: consulta.observaciones ?? '',
+
+        detalles: consulta.detalles_consulta?.map(detalle => ({
+            producto_id: detalle.producto_id,
+            dosis: detalle.dosis,
+            cantidad: detalle.cantidad,
+            indicaciones: detalle.indicaciones ?? ''
+        })) as Detalle_Consulta[] ?? []
     });
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
         put(`/veterinario/consultas/${consulta.id}`);
     };
+
+    const agregarProducto = () => {
+        setData('detalles', [
+            ...data.detalles, {producto_id: '', dosis: '', cantidad: 1, indicaciones: ''}
+        ]);
+    }
+
+    const eliminarDetalle = (index: number) => {
+        const nuevo = data.detalles.filter((_, i) => i !== index);
+        setData('detalles', nuevo);
+    };
+
+    const actualizarProducto = (index: number, campo: string , diferente: any) => {
+        const nuevo = [...data.detalles];
+        nuevo[index] = {
+            ...nuevo[index],
+            [campo]: diferente,
+        };
+        setData('detalles', nuevo);
+    }
 
     return(
         <div>
@@ -92,6 +143,79 @@ export default function Edit({consulta, estados}: editProps) {
                             className="w-full border rounded p-2"
                         />
                         {errors.diagnostico && <span className="text-red-500 text-sm">{errors.diagnostico}</span> }
+                    </div>
+                    <div className="border-t pt-4">
+                        <div className="flex justify-between items-center mb-3">
+                            <label> Receta y Productos Aplicados </label>
+                            <Button 
+                                type="button" 
+                                onClick={agregarProducto}
+                                className="bg-green-600 hover:bg-green-700 text-white text-sm py-1 px-3"
+                            >
+                                + Agregar Producto
+                            </Button>
+                            {data.detalles.length === 0 ? (
+                                <p>No se han agregado productos o medicamentos a esta consulta.</p>
+                            ) : (
+                                <div className="flex flex-col gap-4">
+                                    {data.detalles.map((detalle, i) => (
+                                        <div key={i} className="flex flex-col gap-3 p-3">
+                                            <div>
+                                                <label> Productos y Medicamentos</label>
+                                                <select
+                                                    value={detalle.producto_id}
+                                                    onChange={(e) => actualizarProducto(i, 'producto_id', Number(e.target.value))}
+                                                    className="w-full border rounded p-1.5 text-sm bg-white"
+                                                >
+                                                    <option value="">Seleccione un producto</option>
+                                                    {productos.map((prod) => (
+                                                        <option key={prod.id} value={prod.id}>
+                                                            {prod.nombre_producto} ({prod.tipo_producto})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                {errors[`detalles.${i}.producto_id`] && <span className="text-red-500 text-sm"> {errors[`detalles.${i}.producto_id`]} </span> }
+                                            </div>
+                                            <div>
+                                                <label> Dosis: </label>
+                                                <input
+                                                    type='number'
+                                                    value={detalle.dosis}
+                                                    onChange={(e) => actualizarProducto(i, 'dosis', Number(e.target.value))}
+                                                />
+                                                {errors[`detalles.${i}.dosis`] && <span className="text-red-500 text-sm"> {errors[`detalles.${i}.dosis`]} </span> }
+                                            </div>
+                                            <div>
+                                                <label> Cantidad: </label>
+                                                <input
+                                                    type='number'
+                                                    value={detalle.cantidad}
+                                                    onChange={(e) => actualizarProducto(i, 'cantidad', Number(e.target.value))}
+                                                />
+                                                {errors[`detalles.${i}.cantidad`] && <span className="text-red-500 text-sm"> {errors[`detalles.${i}.cantidad`]} </span> }
+                                            </div>
+                                            <div>
+                                                <label> Indicaciones: </label>
+                                                <textarea
+                                                    value={detalle.indicaciones}
+                                                    onChange={(e) => actualizarProducto(i, 'indicaciones', e.target.value)}
+                                                    className="w-full border rounded p-2"
+                                                />
+                                                {errors[`detalles.${i}.indicaciones`] && <span className="text-red-500 text-sm"> {errors[`detalles.${i}.indicaciones`]} </span> }
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => eliminarDetalle(i)}
+                                                className="text-red-600 hover:text-red-800 font-bold px-2 py-1 mt-5 md:mt-0 text-sm"
+                                                title="Eliminar ítem"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div>
                         <label className="font-semibold block mb-1">Observaciones:</label>

@@ -7,6 +7,8 @@ use App\Models\Consulta;
 use App\Models\Mascota;
 use App\Models\Cliente;
 use App\Models\Veterinario;
+use App\Models\Producto;
+use App\Models\Detalle_Consulta;
 use App\Http\Requests\StoreConsultaRequest;
 use App\Http\Requests\UpdateConsultaRequest;
 
@@ -23,7 +25,9 @@ class ConsultaController extends Controller
     public function indexpormascota(Mascota $mascota)
     {
         $mascota->load(['raza.especie']);
-        $consultas = $mascota->consultas()->with(['veterinario'])->get();
+        $consultas = $mascota->consultas()
+            ->with(['veterinario', 'detalles_consultas.producto'])
+            ->get();
 
         return Inertia::render('Consultas/Indexcliente', [
             'mascota' => $mascota,
@@ -36,7 +40,7 @@ class ConsultaController extends Controller
         $veterinario = Veterinario::where('user_id', auth()->id())->first();
 
         $consultas = Consulta::where('veterinario_id', $veterinario->id)
-            ->with(['mascota.cliente', 'mascota.raza.especie'])
+            ->with(['mascota.cliente', 'mascota.raza.especie', 'detalles_consultas.producto'])
             ->orderBy('fecha_hora', 'desc')
             ->get();
 
@@ -82,6 +86,7 @@ class ConsultaController extends Controller
     public function store(StoreConsultaRequest $request)
     {
         $validated= $request->validated();
+        
         Consulta::create([
             ...$validated,
             'fecha_hora' => now(),
@@ -111,10 +116,12 @@ class ConsultaController extends Controller
     {
         $consulta->load(['mascota.cliente', 'mascota.raza.especie']);
         $estados= ['pendiente','completado','cancelado'];
+        $productos = Producto::all();
 
         return Inertia::render('Consultas/Edit', [
             'estados' => $estados,
             'consulta' => $consulta,
+            'productos' => $productos,
         ]);
     }
 
@@ -124,7 +131,27 @@ class ConsultaController extends Controller
     public function update(UpdateConsultaRequest $request, Consulta $consulta)
     {
         $validated = $request->validated();
-        $consulta->update($validated);
+
+        $consulta->update([
+            'diagnostico'   => $validated['diagnostico'],
+            'peso'          => $validated['peso'] ?? $consulta->peso,
+            'estado'        => $validated['estado'],
+            'observaciones' => $validated['observaciones'],
+        ]);
+
+        $consulta->detalles_consultas()->delete();
+
+        if ($request->has('detalles')) {
+            foreach ($request->detalles as $detalle) {
+                Detalle_Consulta::create([
+                    'consulta_id'  => $consulta->id,
+                    'producto_id'  => $detalle['producto_id'],
+                    'dosis'        => $detalle['dosis'],
+                    'cantidad'     => $detalle['cantidad'],
+                    'indicaciones' => $detalle['indicaciones'] ?? null,
+                ]);
+            }
+        }
 
         return redirect()
             ->route('veterinario.consultas.index')

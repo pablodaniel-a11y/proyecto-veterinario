@@ -23,6 +23,22 @@ interface Mascota {
     raza?: Raza | null;
 }
 
+interface Producto{
+    id: number;
+    nombre_producto: string;
+    tipo_producto: string;
+    precio_venta: number;
+    stock_actual: number;
+}
+
+interface Detalle_Consulta {
+    id: number;
+    dosis: number;
+    cantidad: number;
+    indicaciones: string | null;
+    producto: Producto;
+}
+
 interface Consulta{
     id: number;
     fecha_hora: Date;
@@ -31,6 +47,7 @@ interface Consulta{
     peso: number;
     estado: string;
     observaciones: string;
+    detalles_consultas?: Detalle_Consulta[];
 }
 
 interface indexProps {
@@ -41,7 +58,7 @@ interface indexProps {
     };
 }
 
-export default function Index({ mascota, consultas, flash }: indexProps) {
+export default function Indexcliente({ mascota, consultas, flash }: indexProps) {
   return (
     <div>
         <div className="h-15 flex bg-orange-200">
@@ -79,6 +96,28 @@ export default function Index({ mascota, consultas, flash }: indexProps) {
                                 <h2 className="text-lg"> <span className="font-bold">Peso:</span> {consulta.peso}</h2>
                                 <h2 className="text-lg"> <span className="font-bold">Estado:</span> {consulta.estado}</h2>
                                 <h2 className="text-lg"> <span className="font-bold">Observaciones:</span> {consulta.observaciones}</h2>
+                                <div className="mt-3 pt-3 border-t">
+                                <h3 className="font-bold text-gray-800 mb-2">Medicamentos / Productos Recetados:</h3>
+                                
+                                {consulta.detalles_consultas && consulta.detalles_consultas.length > 0 ? (
+                                    <ul className="flex flex-col gap-2">
+                                        {consulta.detalles_consultas.map((detalle) => (
+                                            <li key={detalle.id} className="rounded border text-sm flex flex-col gap-1 p-1">
+                                                <div className="flex justify-between">
+                                                    <h3><span> {detalle.producto.nombre_producto} ({detalle.producto.tipo_producto}) </span></h3>
+                                                    <h3><span> Cantidad: {detalle.cantidad}</span></h3>
+                                                </div>
+                                                <div>
+                                                    <h3><span><strong>Dosis:</strong> {detalle.dosis}</span></h3>
+                                                    {detalle.indicaciones && <span className="ml-3"><strong>Indicaciones:</strong> {detalle.indicaciones}</span>}
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <p className="text-gray-400 text-sm italic">No se recetaron productos en esta consulta.</p>
+                                )}
+                            </div>
                             </div>
                         </div>
                     </li>

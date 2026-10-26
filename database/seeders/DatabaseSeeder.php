@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             VeterinarioSeeder::class,
             ConsultaSeeder::class,
             ProductoSeeder::class,
+            DetalleConsultaSeeder::class,
         ]);
     }
 }
