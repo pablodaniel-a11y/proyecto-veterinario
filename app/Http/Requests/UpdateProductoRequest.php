@@ -30,7 +30,7 @@ class UpdateProductoRequest extends FormRequest
         ];
     }
 
-    public function messajes(): array
+    public function messages(): array
     {
         return [
             'required' => 'El campo :attribute es obligatorio.',

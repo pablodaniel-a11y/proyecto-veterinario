@@ -21,17 +21,17 @@ class Cita extends Model
 
     public function cliente()
     {
-        return $this->BelongsTo(Cliente::class);
+        return $this->belongsTo(Cliente::class);
     }
 
 
     public function mascota()
     {
-        return $this->BelongsTo(Mascota::class);
+        return $this->belongsTo(Mascota::class);
     }
 
     public function veterinario()
     {
-        return $this->BelongsTo(Veterinario::class);
+        return $this->belongsTo(Veterinario::class);
     }
 }

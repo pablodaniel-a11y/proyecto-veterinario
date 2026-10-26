@@ -38,6 +38,14 @@ const mainNavItems: NavItem[] = [
         title: 'Consultas a Gestionar',
         href: '/veterinario/consultas',
     },
+    {
+        title: 'Citas Hechas',
+        href: '/citas',
+    },
+    {
+        title: 'Citas a Gestionar',
+        href: '/citas/admin',
+    },
 ];
 
 const footerNavItems: NavItem[] = [
