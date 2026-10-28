@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Producto;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class ProductoController extends Controller
 {
@@ -23,6 +24,7 @@ class ProductoController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    #[Middleware('permission:crear producto')]
     public function create()
     {
         $tiposProductosList=['Medicamento', 'Higiene', 'Accesorio', 'Servicio'];
@@ -35,6 +37,7 @@ class ProductoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[Middleware('permission:crear producto')]
     public function store(StoreProductoRequest $request)
     {
         $validated= $request->validated();
@@ -57,6 +60,7 @@ class ProductoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    #[Middleware('permission:editar producto')]
     public function edit(Producto $producto)
     {
         $tiposProductosList=['Medicamento', 'Higiene', 'Accesorio', 'Servicio'];
@@ -70,6 +74,7 @@ class ProductoController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[Middleware('permission:editar producto')]
     public function update(UpdateProductoRequest $request, Producto $producto)
     {
         $validated= $request->validated();
@@ -85,6 +90,7 @@ class ProductoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    #[Middleware('permission:eliminar producto')]
     public function destroy(Producto $producto)
     {
         $producto->delete();

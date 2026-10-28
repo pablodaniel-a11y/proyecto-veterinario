@@ -6,6 +6,9 @@ use App\Http\Controllers\VeterinarioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\CitaController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 
 Route::inertia('/', 'welcome')->name('home');
 Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.create');
@@ -29,6 +32,10 @@ Route::middleware(['auth'/*, 'verified'*/])->group(function () {
     Route::get('/veterinario/consultas', [ConsultaController::class, 'indexdelveterinario'])->name('veterinario.consultas.index');
     Route::get('/veterinario/consultas/{consulta}/edit', [ConsultaController::class, 'edit'])->name('veterinario.consultas.edit');
     Route::put('/veterinario/consultas/{consulta}', [ConsultaController::class, 'update'])->name('veterinario.consultas.update');
+
+    Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class); 
+    Route::resource('permissions', PermissionController::class)->except(['show', 'edit', 'create']);
 });
 
 require __DIR__.'/settings.php';

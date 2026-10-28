@@ -16,6 +16,7 @@ class ClienteSeeder extends Seeder
     {
         
         $usuario = User::first();
+        $usuariorecepcion = User::where('email', 'recepcion@recepcion.com')->firstOrFail();
 
         Cliente::create([
             'user_id' => $usuario->id,
@@ -25,9 +26,16 @@ class ClienteSeeder extends Seeder
         ]);
 
         Cliente::create([
-            'user_id' => null, // No tiene usuario registrado aún
+            'user_id' => null,
             'nombre' => 'Pablo Visitante',
             'email' => 'Pablo@visitante.com',
+            'telefono' => '987654321',
+        ]);
+
+        Cliente::create([
+            'user_id' => $usuariorecepcion->id,
+            'nombre' => 'María Recepción',
+            'email' => 'recepcion@recepcion.com',
             'telefono' => '987654321',
         ]);
     }

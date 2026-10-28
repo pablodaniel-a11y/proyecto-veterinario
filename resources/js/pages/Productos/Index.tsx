@@ -2,6 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link, router } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+//import FlashMessage from '@/components/FlashMessage';
 
 interface Producto{
     id: number;
@@ -20,6 +22,8 @@ interface indexProps{
 
 export default function Index({productos, flash}: indexProps){
 
+    const { can } = useAuth();
+
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar este Producto?')) {
             router.delete(`/productos/${id}`);
@@ -31,6 +35,7 @@ export default function Index({productos, flash}: indexProps){
             <div className="h-15 flex bg-orange-200">
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Tienda de Productos</span></h1>
             </div>
+            {can('crear producto') && (
             <div className="bg-orange-300">
                 <Button 
                     asChild 
@@ -41,6 +46,7 @@ export default function Index({productos, flash}: indexProps){
                     </Link> 
                 </Button>
             </div>
+            )}
             <div>
                 {flash?.success && <div>{flash.success}</div>}
                 <Table>
@@ -50,7 +56,7 @@ export default function Index({productos, flash}: indexProps){
                             <TableHead>Tipo del Producto</TableHead>
                             <TableHead className="w-[120px]">Precio</TableHead>
                             <TableHead className="w-[140px]">Stock Actual</TableHead>
-                            <TableHead className="w-[140px]">Acciones</TableHead>
+                            {(can('editar producto')||can('eliminar producto')) && (<TableHead className="w-[140px]">Acciones</TableHead>)}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -71,7 +77,8 @@ export default function Index({productos, flash}: indexProps){
                                 <TableCell className="text-muted-foreground text-sm">
                                     {producto.stock_actual}
                                 </TableCell>
-                                        
+                                
+                                {can('editar producto')||can('eliminar producto') && (
                                 <TableCell>
                                     <div className="flex  items-center gap-1">
 
@@ -91,6 +98,7 @@ export default function Index({productos, flash}: indexProps){
                                         </Button>
                                     </div>
                                 </TableCell>
+                                )}
                             </TableRow>
                         ))}
                     </TableBody>

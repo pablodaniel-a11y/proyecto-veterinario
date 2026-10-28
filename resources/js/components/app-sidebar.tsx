@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { BookOpen, FolderGit2, LayoutGrid, Shield, ShieldHalf, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
+import { useAuth } from '@/hooks/use-auth';
 
 const mainNavItems: NavItem[] = [
     {
@@ -45,6 +46,25 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Citas a Gestionar',
         href: '/citas/admin',
+        permission: 'gestionar citas',
+    },
+    {
+        title: 'Usuarios', 
+        href: '/users', 
+        icon: Users, 
+        //permission: 'listar usuarios',
+    }, 
+    { 
+        title: 'Roles', 
+        href: '/roles', 
+        icon: Shield, 
+        //permission: 'listar roles', 
+    }, 
+    { 
+        title: 'Permisos', 
+        href: '/permissions', 
+        icon: ShieldHalf, 
+        //permission: 'listar permisos',
     },
 ];
 
@@ -62,6 +82,15 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+
+    const { can } = useAuth();
+
+    const filteredNavItems = mainNavItems.filter((item) => {
+        // Si el ítem no tiene la propiedad 'permission', se muestra a todos (ej: Dashboard). 
+        // Si la tiene, evalúa si el usuario tiene el permiso asignado en Spatie. 
+        return !item.permission || can(item.permission); 
+    });
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -76,9 +105,16 @@ export function AppSidebar() {
                 </SidebarMenu>
             </SidebarHeader>
 
+            <SidebarContent> 
+                {/* Le pasamos el array filtrado en lugar del original estático */} 
+                <NavMain items={filteredNavItems} /> 
+            </SidebarContent>
+
+            {/*
             <SidebarContent>
                 <NavMain items={mainNavItems} />
             </SidebarContent>
+            */}
 
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
