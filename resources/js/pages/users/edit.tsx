@@ -52,7 +52,6 @@ export default function Edit({ user, roles, userRoles }: EditProps) {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Datos de perfil */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="name">Nombre Completo</Label>
@@ -76,7 +75,6 @@ export default function Edit({ user, roles, userRoles }: EditProps) {
                             </div>
                         </div>
 
-                        {/* Modificar Contraseña (Opcional) */}
                         <div className="space-y-2 p-4 border rounded-md bg-amber-50/20 border-amber-200/40">
                             <Label htmlFor="password">Nueva Contraseña (Dejar en blanco para mantener la actual)</Label>
                             <Input
@@ -89,11 +87,9 @@ export default function Edit({ user, roles, userRoles }: EditProps) {
                             {errors.password && <p className="text-destructive text-sm">{errors.password}</p>}
                         </div>
 
-                        {/* Modificar Roles */}
                         <div className="space-y-3">
                             <Label className="text-base font-semibold">Gestionar Roles Asignados</Label>
 
-                            {/* ALERTA DE ERROR: Se muestra al intentar quitar el rol crítico */} 
                             {errors.roles && ( 
                             <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm flex items-center gap-2 border border-destructive/20 animate-in fade-in-50 duration-200"> 
                                 <AlertTriangle className="w-4 h-4 shrink-0" /> 
@@ -117,7 +113,6 @@ export default function Edit({ user, roles, userRoles }: EditProps) {
                             </div>
                         </div>
 
-                        {/* Botones de acción */}
                         <div className="flex gap-2 justify-end pt-4 border-t">
                             <Button variant="outline" asChild>
                                 <Link href={'/users'}>Cancelar</Link>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link, useForm } from "@inertiajs/react";
 import { FormEvent } from "react";
+import { useAuth } from '@/hooks/use-auth';
 
 interface Usuario{
     id: number;
@@ -28,6 +29,8 @@ export default function Index({veterinario}: editProps){
         matricula: veterinario.matricula,
         especialidad: veterinario.especialidad,
     });
+
+    const { can } = useAuth();
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
@@ -70,6 +73,7 @@ export default function Index({veterinario}: editProps){
                             onChange={(e) => setData('telefono', e.target.value)}
                         />
                     </div>
+                    {can('crear veterinario') && (
                     <div>
                         <label> Matricula </label>
                         <input 
@@ -79,6 +83,7 @@ export default function Index({veterinario}: editProps){
                         />
                         {errors.matricula && <span className="text-red-500 text-sm">{errors.matricula}</span>}
                     </div>
+                    )}
                     <div>
                         <label> Especialidad </label>
                         <input 

@@ -49,7 +49,6 @@ export default function Index({ users }: IndexProps) {
         });
   };
 
-    // Filtrado interactivo por Nombre, Email o Roles asignados
     const filteredUsers = users.filter((user) => {
         const matchesName = user.name.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesEmail = user.email.toLowerCase().includes(searchQuery.toLowerCase());
@@ -190,7 +189,6 @@ export default function Index({ users }: IndexProps) {
                 </Table>
             </div>
 
-            {/* 🛑 MODAL DE CONFIRMACIÓN CON SHADCN/UI */}
             <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <AlertDialogContent className="sm:max-w-[425px]">
                 <AlertDialogHeader>
@@ -215,7 +213,7 @@ export default function Index({ users }: IndexProps) {
                     <AlertDialogAction
                     disabled={isDeleting}
                     onClick={(e) => {
-                        e.preventDefault(); // Controlamos el cierre de forma manual durante el procesamiento
+                        e.preventDefault();
                         ejecutarEliminacion();
                     }}
                     //className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs"
@@ -223,7 +221,6 @@ export default function Index({ users }: IndexProps) {
                     >
                     {isDeleting ? (
             <div className="flex items-center justify-center gap-2">
-            {/* 🔄 El spinner animado */}
             <Loader2 className="w-4 h-4 animate-spin" />
             <span>Eliminando...</span>
             </div>

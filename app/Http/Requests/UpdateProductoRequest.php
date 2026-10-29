@@ -25,7 +25,7 @@ class UpdateProductoRequest extends FormRequest
         return [
             'nombre_producto' => ['required', 'string', 'max:100'],
             'tipo_producto' => ['required', 'string', 'in:Medicamento,Higiene,Accesorio,Servicio', 'max:20'],
-            'precio_venta' => ['required', 'decimal', 'min:0'],
+            'precio_venta' => ['required', 'decimal:0,2', 'min:0'],
             'stock_actual' => ['required', 'integer', 'min:0'],
         ];
     }

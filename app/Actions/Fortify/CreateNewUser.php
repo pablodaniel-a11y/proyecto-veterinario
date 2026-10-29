@@ -31,6 +31,8 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $input['password'],
         ]);
 
+        $user->assignRole('registrado');
+
         $cliente = Cliente::where('email', $user->email)->first();
 
         if ($cliente) {

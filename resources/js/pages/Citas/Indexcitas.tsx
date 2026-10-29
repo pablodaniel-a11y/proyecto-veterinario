@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@inertiajs/react";
 import { Plus } from "lucide-react";
+import FlashMessage from '@/components/FlashMessage';
+import { useAuth } from '@/hooks/use-auth';
 
 type SexoMascota = 'Macho' | 'Hembra';
 
@@ -64,13 +66,15 @@ interface indexProps{
 
 export default function Indexcitas({citas, flash} : indexProps){
     
+    const { can } = useAuth()
+
     return (
         <div>
             <div className="h-15 flex bg-orange-200">
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold"> Citas a Gestionar </span></h1>
             </div>
             <div className="min-h-screen flex bg-gray-100">
-                {flash?.success && <div>{flash.success}</div>}
+                <FlashMessage />
                 <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
                     {citas.map((cita) => (
                         <li key={cita.id} className="mb-4 p-4 border bg-orange-100">
@@ -87,6 +91,7 @@ export default function Indexcitas({citas, flash} : indexProps){
                                 <h2 className="text-lg"> <span className="font-bold">Motivo de la consulta:</span> {cita.motivo}</h2>
                                 <h2 className="text-lg"> <span className="font-bold">Estado:</span> {cita.estado}</h2>
                             </div>
+                            {can('gestionar citas') && (
                             <div className="flex flex-col gap-2">
                                 <Button 
                                     asChild 
@@ -98,6 +103,7 @@ export default function Indexcitas({citas, flash} : indexProps){
                                     </Link> 
                                 </Button>
                             </div>
+                            )}
                         </li>
                     ))}
                 </ul>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link, router } from "@inertiajs/react";
 import { ImageIcon, Plus, Trash2 } from "lucide-react";
+import FlashMessage from '@/components/FlashMessage';
 
 type SexoMascota = 'Macho' | 'Hembra';
 
@@ -33,8 +34,6 @@ interface indexProps {
 
 export default function Index({mascotas, flash} : indexProps){
 
-
-
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar esta mascota?')) {
             router.delete(`/mascotas/${id}`);
@@ -65,7 +64,7 @@ export default function Index({mascotas, flash} : indexProps){
                 </Button>
             </div>
             <div className="min-h-screen flex bg-gray-100">
-                {flash?.success && <div>{flash.success}</div>}
+                <FlashMessage />
                 <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
                     {mascotas.map((mascota) => (
                         <li key={mascota.id} className="mb-4 p-4 border bg-orange-100">

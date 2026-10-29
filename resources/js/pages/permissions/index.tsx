@@ -3,9 +3,6 @@ import { useForm, router } from '@inertiajs/react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
-// Componentes adicionales opcionales de shadcn para refinar la UX (Select)
-// Si no tienes el select instalado de shadcn corre: npx shadcn@latest add select
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { AlertTriangle, Loader2 } from 'lucide-react';
@@ -24,19 +21,15 @@ interface IndexProps {
 
 export default function Index({ permissions }: IndexProps) {
     
-    // Estados para los filtros reactivos
     const [searchQuery, setSearchQuery] = useState('');
     const [actionFilter, setActionFilter] = useState('all');
 
-    // Estado para controlar si estamos editando en línea
     const [editingId, setEditingId] = useState<number | null>(null);
 
-    // Formulario de Inertia para Crear / Editar rápidamente
     const { data, setData, post, put, reset, processing, errors } = useForm({
         name: '',
     });
 
-    // Cambiar al modo edición precargando el string
     const startEdit = (permission: Permission) => {
         setEditingId(permission.id);
         setData('name', permission.name);
@@ -47,7 +40,6 @@ export default function Index({ permissions }: IndexProps) {
         reset();
     };
 
-    // Envío del formulario (Sabe si es actualización o inserción)
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (editingId) {
@@ -61,7 +53,6 @@ export default function Index({ permissions }: IndexProps) {
         }
     };
 
-    // Estados para el Modal de Confirmación
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [idSeleccionado, setIdSeleccionado] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -83,15 +74,12 @@ export default function Index({ permissions }: IndexProps) {
         });
     };
 
-    // ==========================================
-    // LÓGICA DE FILTRADO INTERACTIVO (CLIENT-SIDE)
-    // ==========================================
+
     const filteredPermissions = permissions.filter((perm) => {
         const matchesSearch = perm.name.toLowerCase().includes(searchQuery.toLowerCase());
         
         if (actionFilter === 'all') return matchesSearch;
         
-        // Filtra de acuerdo al prefijo clásico de Spatie (ej: "view-", "create-")
         return matchesSearch && perm.name.toLowerCase().startsWith(actionFilter);
     });
 
@@ -227,7 +215,7 @@ export default function Index({ permissions }: IndexProps) {
                     </div>
                 </div>
             </div>
-                        {/* 🛑 MODAL DE CONFIRMACIÓN CON SHADCN/UI */}
+
                   <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                     <AlertDialogContent className="sm:max-w-[425px]">
                       <AlertDialogHeader>
@@ -252,7 +240,7 @@ export default function Index({ permissions }: IndexProps) {
                         <AlertDialogAction
                           disabled={isDeleting}
                           onClick={(e) => {
-                            e.preventDefault(); // Controlamos el cierre de forma manual durante el procesamiento
+                            e.preventDefault();
                             ejecutarEliminacion();
                           }}
                           //className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs"
@@ -260,7 +248,6 @@ export default function Index({ permissions }: IndexProps) {
                         >
                           {isDeleting ? (
                 <div className="flex items-center justify-center gap-2">
-                  {/* 🔄 El spinner animado */}
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Eliminando...</span>
                 </div>

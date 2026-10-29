@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input"; // Componente shadcn/ui
+import { Input } from "@/components/ui/input";
 import { AlertTriangle, Eye, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import FlashMessage from '@/components/FlashMessage';
@@ -19,10 +19,8 @@ interface Role {
 }
 
 export default function Index({ roles }: { roles: Role[] }) {
-    // 1. Estado para almacenar el término de búsqueda
     const [searchQuery, setSearchQuery] = useState('');
 
-    // Estados para el Modal de Confirmación
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [idSeleccionado, setIdSeleccionado] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -44,11 +42,9 @@ export default function Index({ roles }: { roles: Role[] }) {
         });
   };
 
-    // 2. Lógica de filtrado interactivo en tiempo real
     const filteredRoles = roles.filter((role) => {
         const matchesRoleName = role.name.toLowerCase().includes(searchQuery.toLowerCase());
         
-        // Opcional: También busca si el término coincide con el nombre de algún permiso dentro del rol
         const matchesPermission = role.permissions.some(p => 
             p.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
@@ -58,7 +54,6 @@ export default function Index({ roles }: { roles: Role[] }) {
 
     return (
         <div className="p-8 max-w-6xl mx-auto space-y-6">
-                  {/* Encabezado Principal */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
                 <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Roles</h1>
@@ -73,7 +68,6 @@ export default function Index({ roles }: { roles: Role[] }) {
                 </Button>
             </div>
 
-            {/* 3. Barra de herramientas con el buscador interactivo */}
             <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-1 items-center space-x-2 max-w-md">
                     <Input
@@ -97,7 +91,6 @@ export default function Index({ roles }: { roles: Role[] }) {
                 </div>
             </div>
 
-            {/* 4. Tabla de Datos */}
             <div className="border rounded-md bg-white shadow-sm">
                 <FlashMessage />
                 <Table>
@@ -157,7 +150,6 @@ export default function Index({ roles }: { roles: Role[] }) {
                                         </Button>
                                         */}
 
-                                                                {/* Botón Editar */}
                                         <Button
                                             asChild
                                             variant="ghost"
@@ -171,7 +163,6 @@ export default function Index({ roles }: { roles: Role[] }) {
                                             </Link>
                                         </Button>
 
-                                        {/* Botón Eliminar */}
                                         <Button
                                             variant="ghost"
                                             size="sm"
@@ -190,7 +181,6 @@ export default function Index({ roles }: { roles: Role[] }) {
                 </Table>
             </div>
 
-            {/* 🛑 MODAL DE CONFIRMACIÓN CON SHADCN/UI */}
       <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <AlertDialogContent className="sm:max-w-[425px]">
           <AlertDialogHeader>
@@ -215,7 +205,7 @@ export default function Index({ roles }: { roles: Role[] }) {
             <AlertDialogAction
               disabled={isDeleting}
               onClick={(e) => {
-                e.preventDefault(); // Controlamos el cierre de forma manual durante el procesamiento
+                e.preventDefault();
                 ejecutarEliminacion();
               }}
               //className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xs"
@@ -223,7 +213,6 @@ export default function Index({ roles }: { roles: Role[] }) {
             >
               {isDeleting ? (
     <div className="flex items-center justify-center gap-2">
-      {/* 🔄 El spinner animado */}
       <Loader2 className="w-4 h-4 animate-spin" />
       <span>Eliminando...</span>
     </div>

@@ -99,7 +99,7 @@ class UserController extends Controller
         return Inertia::render('users/edit', [ 
             'user' => $user->only(['id', 'name', 'email']), 
             'roles' => Role::get(['id', 'name']), 
-            'userRoles' => $user->roles->pluck('name') // Array de strings para los checkboxes de React 
+            'userRoles' => $user->roles->pluck('name')
         ]);
     }
 

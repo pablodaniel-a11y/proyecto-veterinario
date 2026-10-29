@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@inertiajs/react";
+import FlashMessage from '@/components/FlashMessage';
 
 type SexoMascota = 'Macho' | 'Hembra';
 
@@ -79,7 +80,7 @@ export default function Index({citas, flash}: indexProps){
                 </Button>
             </div>
             <div className="min-h-screen flex bg-gray-100">
-                {flash?.success && <div>{flash.success}</div>}
+                <FlashMessage />
                 <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
                     {citas.map((cita) => (
                         <li key={cita.id} className="mb-4 p-4 border bg-orange-100">

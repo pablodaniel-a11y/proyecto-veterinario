@@ -16,6 +16,8 @@ class Veterinario extends Model
         'apellido',
         'telefono',
         'email',
+        'matricula',
+        'especialidad',
     ];
 
     public function citas()

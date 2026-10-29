@@ -2,20 +2,16 @@ import { useState, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
 
 export default function FlashMessage() {
-    // 1. Obtenemos el mensaje flash compartido desde Laravel/Inertia
     const { flash } = usePage().props as any;
 
-    // 2. Estado local para controlar si se muestra o se cierra en la UI
     const [visible, setVisible] = useState(false);
 
-    // 3. Cada vez que cambie el mensaje flash del backend, volvemos a mostrar el aviso
     useEffect(() => {
         if (flash?.success || flash?.error) {
             setVisible(true);
         }
     }, [flash]);
 
-    // Si no es visible o no hay mensajes, no renderizamos nada
     if (!visible || (!flash?.success && !flash?.error)) return null;
 
     const isSuccess = !!flash.success;

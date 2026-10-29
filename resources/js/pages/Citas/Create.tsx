@@ -271,12 +271,10 @@ export default function Create({mascotas, veterinarios, razas, especies}: create
                         >
                             {processing ? 'Guardando...' : 'Crear Cita'}
                         </Button>
-                        {!(mascotas.length > 0) && (
-                            <Link href="/dashboard" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">
-                                Cancelar
-                            </Link>
-                        )}
-                        <Link href="/citas/create" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">
+                        <Link 
+                            href={mascotas.length > 0 ? "/citas" : "/dashboard"} 
+                            className="px-4 py-2 bg-gray-300 rounded-md text-gray-700 text-center flex items-center"
+                        >
                             Cancelar
                         </Link>
                     </div>

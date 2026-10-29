@@ -16,20 +16,32 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        // Limpiar la caché de los permisos de Spatie
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        Permission::create(['name' => 'listar usuarios']);
+        Permission::create(['name' => 'listar roles']);
+        Permission::create(['name' => 'listar permisos']);
 
         Permission::create(['name' => 'crear veterinario']);  
         Permission::create(['name' => 'editar veterinario']); 
         Permission::create(['name' => 'eliminar veterinario']);
 
         Permission::create(['name' => 'ver mascotas']);
+        Permission::create(['name' => 'crear mascota']);
+        Permission::create(['name' => 'editar mascota']);
+        Permission::create(['name' => 'eliminar mascota']);
 
-        Permission::create(['name' => 'ver consultas']);
+        Permission::create(['name' => 'ver consultas mascota']);
+        Permission::create(['name' => 'ver consultas asignadas']);
         Permission::create(['name' => 'gestionar consultas']);
+        Permission::create(['name' => 'crear consulta']);
+        Permission::create(['name' => 'editar consulta']);
+        Permission::create(['name' => 'eliminar consulta']);
 
         Permission::create(['name' => 'ver citas']);
-        Permission::create(['name' => 'gestionar citas']); 
+        Permission::create(['name' => 'gestionar citas']);
+        Permission::create(['name' => 'editar cita']);
+        Permission::create(['name' => 'eliminar cita']); 
 
         Permission::create(['name' => 'crear producto']);
         Permission::create(['name' => 'eliminar producto']);
@@ -39,13 +51,68 @@ class RolesAndPermissionsSeeder extends Seeder
         $roleAdmin      = Role::create(['name' => 'admin']); 
         $roleVeterinario= Role::create(['name' => 'veterinario']);
         $roleRecepcionista = Role::create(['name' => 'recepcionista']);
-        $roleVisitante = Role::create(['name' => 'visitante']);
         $roleRegistrado = Role::create(['name' => 'registrado']);
 
-        $roleSuperAdmin->givePermissionTo(Permission::all()); 
-        $roleAdmin->givePermissionTo(['crear veterinario', 'editar veterinario', 'eliminar veterinario', 'gestionar consultas', 'gestionar citas', 'crear producto', 'editar producto', 'eliminar producto']); 
-        $roleVeterinario->givePermissionTo(['editar veterinario', 'gestionar consultas']); 
-        $roleRecepcionista->givePermissionTo(['gestionar citas']);
+        $roleSuperAdmin->givePermissionTo(Permission::all());
+
+        $roleAdmin->givePermissionTo([
+            'crear veterinario',
+            'editar veterinario',
+            'eliminar veterinario',
+            'ver mascotas',
+            'crear mascota',
+            'editar mascota',
+            'eliminar mascota',
+            'ver consultas mascota',
+            'crear consulta',
+            'editar consulta',
+            'eliminar consulta',
+            'ver citas',
+            'editar cita',
+            'eliminar cita',
+            'gestionar citas',
+            'crear producto',
+            'editar producto',
+            'eliminar producto'
+        ]);
+        
+        $roleVeterinario->givePermissionTo([
+            'ver mascotas',
+            'crear mascota',
+            'editar mascota',
+            'eliminar mascota',
+            'ver consultas mascota',
+            'ver consultas asignadas',
+            'crear consulta',
+            'editar consulta',
+            'eliminar consulta',
+            'gestionar consultas',
+            'editar veterinario',
+            'ver citas',
+        ]);
+
+        $roleRecepcionista->givePermissionTo([
+            'ver mascotas',
+            'crear mascota',
+            'editar mascota',
+            'eliminar mascota',
+            'ver consultas mascota',
+            'crear consulta',
+            'ver citas',
+            'gestionar citas',
+            'editar cita',
+            'eliminar cita'
+        ]);
+
+        $roleRegistrado->givePermissionTo([
+            'ver mascotas',
+            'crear mascota',
+            'editar mascota',
+            'eliminar mascota',
+            'ver consultas mascota',
+            'crear consulta',
+            'ver citas'
+        ]);
 
         $superAdminUser = User::firstOrCreate( 
             ['email' => 'superadmin@superadmin.com'],
@@ -86,6 +153,16 @@ class RolesAndPermissionsSeeder extends Seeder
             ] 
         ); 
         $recepcionUser->assignRole($roleRecepcionista);
+
+        $registradoUser = User::firstOrCreate(
+            ['email' => 'reg@reg.com'],
+            [
+                'name' => 'registrado',
+                'email_verified_at' => now(),
+                'password' => bcrypt('1234'),
+            ]
+        );
+        $registradoUser->assignRole($roleRegistrado);
 
     }
 }

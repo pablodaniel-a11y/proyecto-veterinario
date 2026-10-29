@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link, router } from "@inertiajs/react";
 import { Plus, Trash2 } from "lucide-react";
+import { useAuth } from '@/hooks/use-auth';
+import FlashMessage from '@/components/FlashMessage';
 
 interface Usuario{
     id: number;
@@ -10,6 +12,7 @@ interface Usuario{
 
 interface Veterinario{
     id: number;
+    user_id: number;
     user: Usuario;
     telefono: string;
     matricula: string;
@@ -25,6 +28,8 @@ interface indexProps{
 
 export default function Index({veterinarios, flash}: indexProps){
 
+    const { can, user} = useAuth();
+    
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar este perfil?')) {
             router.delete(`/veterinarios/${id}`);
@@ -36,6 +41,7 @@ export default function Index({veterinarios, flash}: indexProps){
             <div className="h-15 flex bg-orange-200">
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Personal de la Veterinaria</span></h1>
             </div>
+            { can('crear veterinario') && (
             <div className="bg-orange-300">
                 <Button 
                     asChild 
@@ -46,7 +52,8 @@ export default function Index({veterinarios, flash}: indexProps){
                     </Link> 
                 </Button>
             </div>
-             {flash?.success && <div>{flash.success}</div>}
+            )}
+            <FlashMessage />
             <div className="bg-gray-100 grid grid-cols-1 md:grid-cols-2 gap-6">
                 {veterinarios.map((veterinario) => (
                     <div key={veterinario.id} className="bg-white shadow-md rounded-lg p-6 border border-gray-200">
@@ -58,6 +65,7 @@ export default function Index({veterinarios, flash}: indexProps){
                             <p><span className="font-medium"> Teléfono: </span> {veterinario.telefono}</p>
                         </div>
                         <div className="mt-4 flex justify-end space-x-2">
+                            {(can('editar veterinario') && (user?.id === veterinario.user?.id || can('crear veterinario'))) && (
                             <Button 
                                 asChild 
                                 className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
@@ -67,6 +75,8 @@ export default function Index({veterinarios, flash}: indexProps){
                                     Editar Perfil
                                 </Link> 
                             </Button>
+                            )}
+                            {can('eliminar veterinario') && (
                             <Button  
                                 className="bg-red-600 hover:bg-red-700 text-white shadow-sm"
                                 onClick={() => eliminar(veterinario.id)}
@@ -74,6 +84,7 @@ export default function Index({veterinarios, flash}: indexProps){
                                 <Trash2 className="mr-1.5 h-4 w-4" />
                                 Eliminar Perfil
                             </Button>
+                            )}
                         </div>
                     </div>
                 ))}

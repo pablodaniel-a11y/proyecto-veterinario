@@ -11,12 +11,14 @@ use App\Models\Raza;
 use App\Models\Especie;
 use App\Http\Requests\StoreCitaRequest;
 use App\Http\Requests\UpdateCitaRequest;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class CitaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    #[Middleware('permission:ver citas')]
     public function index()
     {
         $cliente = Cliente::where('user_id', auth()->id())->first();
@@ -32,6 +34,7 @@ class CitaController extends Controller
         ]);
     }
 
+    #[Middleware('permission:gestionar citas')]
     public function indexcitas()
     {
         $citas = Cita::with(['cliente', 'mascota.raza.especie', 'veterinario.user'])->get();
@@ -47,6 +50,14 @@ class CitaController extends Controller
     public function create()
     {
         $cliente = Cliente::where('user_id', auth()->id())->first();
+
+        if (auth()->check()) {
+            if (!$cliente || Mascota::where('cliente_id', $cliente->id)->count() === 0) {
+                return redirect()
+                    ->route('mascotas.index')
+                    ->with('error', 'Debes registrar al menos una mascota antes de poder solicitar una cita.');
+            }
+        }
 
         if($cliente){
             $mascotas = Mascota::where('cliente_id', $cliente->id)->with(['raza.especie'])->get();
@@ -133,6 +144,7 @@ class CitaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    #[Middleware('permission:editar cita')]
     public function edit(Cita $cita)
     {
         $veterinarios = Veterinario::with('user')->get();
@@ -149,6 +161,7 @@ class CitaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[Middleware('permission:editar cita')]
     public function update(UpdateCitaRequest $request, Cita $cita)
     {
         $validated = $request->validated();
@@ -163,6 +176,7 @@ class CitaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    #[Middleware('permission:eliminar cita')]
     public function destroy(Cita $cita)
     {
         $cita->delete();

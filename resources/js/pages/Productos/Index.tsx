@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Link, router } from '@inertiajs/react';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-//import FlashMessage from '@/components/FlashMessage';
+import FlashMessage from '@/components/FlashMessage';
 
 interface Producto{
     id: number;
@@ -48,7 +48,7 @@ export default function Index({productos, flash}: indexProps){
             </div>
             )}
             <div>
-                {flash?.success && <div>{flash.success}</div>}
+                <FlashMessage />
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -78,7 +78,7 @@ export default function Index({productos, flash}: indexProps){
                                     {producto.stock_actual}
                                 </TableCell>
                                 
-                                {can('editar producto')||can('eliminar producto') && (
+                                {(can('editar producto')||can('eliminar producto')) && (
                                 <TableCell>
                                     <div className="flex  items-center gap-1">
 

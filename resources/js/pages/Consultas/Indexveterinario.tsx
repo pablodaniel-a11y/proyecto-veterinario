@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@inertiajs/react";
 import { Plus } from "lucide-react";
+import FlashMessage from '@/components/FlashMessage';
+
 
 type SexoMascota = 'Macho' | 'Hembra';
 
@@ -74,7 +76,7 @@ export default function Indexveterinario({ consultas, flash }: indexProps) {
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Consultas para Gestionar</span></h1>
             </div>
             <div className="min-h-screen flex bg-gray-100">
-                {flash?.success && <div>{flash.success}</div>}
+                <FlashMessage />
                 <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
                     {consultas.map((consulta) => (
                         <li key={consulta.id}>

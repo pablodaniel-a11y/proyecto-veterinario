@@ -22,7 +22,7 @@ interface User {
 
 interface ShowProps {
     user: User;
-    permissions: Permission[]; // Todos los permisos que tiene el usuario (vía roles)
+    permissions: Permission[];
 }
 
 export default function Show({ user, permissions }: ShowProps) {

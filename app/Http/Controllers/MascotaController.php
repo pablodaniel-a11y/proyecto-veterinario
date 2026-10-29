@@ -10,12 +10,14 @@ use App\Models\Cliente;
 use App\Http\Requests\StoreMascotaRequest;
 use App\Http\Requests\UpdateMascotaRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class MascotaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    #[Middleware('permission:ver mascotas')]
     public function index()
     {      
         
@@ -41,6 +43,7 @@ class MascotaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    #[Middleware('permission:crear mascota')]
     public function create()
     {
         return Inertia::render('Mascotas/Create', [
@@ -52,6 +55,7 @@ class MascotaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[Middleware('permission:crear mascota')]
     public function store(StoreMascotaRequest $request)
     {   
         $cliente = Cliente::firstOrCreate(
@@ -89,6 +93,7 @@ class MascotaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    #[Middleware('permission:editar mascota')]
     public function edit(Mascota $mascota)
     {
         $mascota->load('raza.especie');
@@ -103,6 +108,7 @@ class MascotaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[Middleware('permission:editar mascota')]
     public function update(UpdateMascotaRequest $request, Mascota $mascota)
     {
         $validated = $request->validated();
@@ -126,6 +132,7 @@ class MascotaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    #[Middleware('permission:eliminar mascota')]
     public function destroy(Mascota $mascota)
     {
         if ($mascota->foto && Storage::disk('public')->exists($mascota->foto)) {

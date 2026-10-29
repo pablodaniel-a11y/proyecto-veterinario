@@ -11,14 +11,18 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 
 Route::inertia('/', 'welcome')->name('home');
+
+Route::get('/veterinarios', [VeterinarioController::class, 'index'])->name('veterinarios.index');
+Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');
+
 Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.create');
 Route::post('/citas', [CitaController::class, 'store'])->name('citas.store');
 
 Route::middleware(['auth'/*, 'verified'*/])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::resource('mascotas', MascotaController::class);
-    Route::resource('veterinarios', VeterinarioController::class);
-    Route::resource('productos', ProductoController::class);
+    Route::resource('veterinarios', VeterinarioController::class)->except(['index']);;
+    Route::resource('productos', ProductoController::class)->except(['index']);
     Route::resource('consultas', ConsultaController::class);
     
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');

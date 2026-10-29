@@ -26,6 +26,7 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Tus Mascotas',
         href: '/mascotas',
+        necesitaAuth: true,
     },
     {
         title: 'Profesionales',
@@ -36,12 +37,20 @@ const mainNavItems: NavItem[] = [
         href: '/productos',
     },
     {
+        title: 'Crear una Cita',
+        href: '/citas/create',
+        esVisitante: true,
+    },
+    {
         title: 'Consultas a Gestionar',
         href: '/veterinario/consultas',
+        permission: 'gestionar consultas',
     },
     {
         title: 'Citas Hechas',
         href: '/citas',
+        permission: 'ver citas',
+        necesitaAuth: true,
     },
     {
         title: 'Citas a Gestionar',
@@ -52,19 +61,19 @@ const mainNavItems: NavItem[] = [
         title: 'Usuarios', 
         href: '/users', 
         icon: Users, 
-        //permission: 'listar usuarios',
+        permission: 'listar usuarios',
     }, 
     { 
         title: 'Roles', 
         href: '/roles', 
         icon: Shield, 
-        //permission: 'listar roles', 
+        permission: 'listar roles', 
     }, 
     { 
         title: 'Permisos', 
         href: '/permissions', 
         icon: ShieldHalf, 
-        //permission: 'listar permisos',
+        permission: 'listar permisos',
     },
 ];
 
@@ -83,12 +92,14 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
 
-    const { can } = useAuth();
+    const { can, user } = useAuth();
 
     const filteredNavItems = mainNavItems.filter((item) => {
-        // Si el ítem no tiene la propiedad 'permission', se muestra a todos (ej: Dashboard). 
-        // Si la tiene, evalúa si el usuario tiene el permiso asignado en Spatie. 
-        return !item.permission || can(item.permission); 
+        if (item.esVisitante && user) return false;
+
+        if (item.necesitaAuth && !user) return false;
+
+        if (!item.permission || can(item.permission)) return true; 
     });
 
     return (
@@ -106,7 +117,6 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent> 
-                {/* Le pasamos el array filtrado en lugar del original estático */} 
                 <NavMain items={filteredNavItems} /> 
             </SidebarContent>
 

@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Veterinario;
 use App\Models\User;
+use App\Models\Cliente;
 use App\Http\Requests\StoreVeterinarioRequest;
 use App\Http\Requests\UpdateVeterinarioRequest;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class VeterinarioController extends Controller
 {
@@ -25,6 +29,7 @@ class VeterinarioController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    #[Middleware('permission:crear veterinario')]
     public function create()
     {
         return Inertia::render('Veterinarios/Create');
@@ -33,6 +38,7 @@ class VeterinarioController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[Middleware('permission:crear veterinario')]
     public function store(StoreVeterinarioRequest $request)
     {
         $validated= $request->validated();
@@ -43,12 +49,30 @@ class VeterinarioController extends Controller
             'password' => Hash::make(Str::random(10)),
         ]);
 
+        $user->assignRole('veterinario');
+
         Veterinario::create([
             'user_id' => $user->id,
             'telefono' => $validated['telefono'],
             'matricula' => $validated['matricula'],
             'especialidad' => $validated['especialidad'],
         ]);
+
+        $cliente = Cliente::where('email', $user->email)->first();
+
+        if($cliente){
+            $cliente->update([
+                'user_id' => $user->id,
+                'nombre'  => $user->name,
+            ]);
+        }else{
+            Cliente::create([
+                'user_id'  => $user->id,
+                'nombre'   => $user->name,
+                'email'    => $user->email,
+                'telefono' => $validated['telefono'], 
+            ]);
+        }
 
         return redirect()
             ->route('veterinarios.index')
@@ -66,6 +90,7 @@ class VeterinarioController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    #[Middleware('permission:editar veterinario')]
     public function edit(Veterinario $veterinario)
     {
         $veterinario->load('user');
@@ -77,6 +102,7 @@ class VeterinarioController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[Middleware('permission:editar veterinario')]
     public function update(UpdateVeterinarioRequest $request, Veterinario $veterinario)
     {
         $validated = $request->validated();
@@ -86,11 +112,16 @@ class VeterinarioController extends Controller
             'email' => $validated['email'],
         ]);
 
-        $veterinario->update([
+        $datos = [
             'telefono' => $validated['telefono'],
-            'matricula' => $validated['matricula'],
             'especialidad' => $validated['especialidad'],
-        ]);
+        ];
+
+        if (auth()->user()->hasAnyRole(['admin', 'super-admin'])) {
+            $datos['matricula'] = $validated['matricula'];
+        }
+
+        $veterinario->update($datos);
 
         return redirect()
             ->route('veterinarios.index')
@@ -100,6 +131,7 @@ class VeterinarioController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    #[Middleware('permission:eliminar veterinario')]
     public function destroy(Veterinario $veterinario)
     {
         $veterinario->delete();

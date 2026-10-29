@@ -11,6 +11,7 @@ use App\Models\Producto;
 use App\Models\Detalle_Consulta;
 use App\Http\Requests\StoreConsultaRequest;
 use App\Http\Requests\UpdateConsultaRequest;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
 class ConsultaController extends Controller
 {
@@ -22,6 +23,7 @@ class ConsultaController extends Controller
 
     }
 
+    #[Middleware('permission:ver consultas mascota')]
     public function indexpormascota(Mascota $mascota)
     {
         $mascota->load(['raza.especie']);
@@ -35,6 +37,7 @@ class ConsultaController extends Controller
         ]);
     }
 
+    #[Middleware('permission:ver consultas asignadas')]
     public function indexdelveterinario()
     {
         $veterinario = Veterinario::where('user_id', auth()->id())->first();
@@ -52,9 +55,18 @@ class ConsultaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
+    #[Middleware('permission:crear consulta')]
     public function create()
     {
         $cliente = Cliente::where('user_id', auth()->id())->first();
+
+        if (auth()->check()) {
+            if (!$cliente || Mascota::where('cliente_id', $cliente->id)->count() === 0) {
+                return redirect()
+                    ->route('mascotas.index')
+                    ->with('error', 'Debes registrar al menos una mascota antes de poder solicitar una Consulta.');
+            }
+        }
 
         $mascotas = Mascota::where('cliente_id', $cliente->id)->with(['raza.especie'])->get();
         $veterinarios = Veterinario::with('user')->get();
@@ -67,6 +79,7 @@ class ConsultaController extends Controller
         ]);
     }
 
+    #[Middleware('permission:crear consulta')]
     public function createindividual(Mascota $mascota)
     {
         $mascota->load(['raza.especie']);
@@ -83,6 +96,7 @@ class ConsultaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    #[Middleware('permission:crear consulta')]
     public function store(StoreConsultaRequest $request)
     {
         $validated= $request->validated();
@@ -112,6 +126,7 @@ class ConsultaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    #[Middleware('permission:editar consulta')]
     public function edit(Consulta $consulta)
     {
         $consulta->load(['mascota.cliente', 'mascota.raza.especie']);
@@ -128,6 +143,7 @@ class ConsultaController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    #[Middleware('permission:editar consulta')]
     public function update(UpdateConsultaRequest $request, Consulta $consulta)
     {
         $validated = $request->validated();
@@ -161,6 +177,7 @@ class ConsultaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    #[Middleware('permission:eliminar consulta')]
     public function destroy(Consulta $consulta)
     {
         $consulta->delete();

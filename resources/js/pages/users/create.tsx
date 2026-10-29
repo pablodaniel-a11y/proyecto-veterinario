@@ -40,7 +40,6 @@ export default function Create({ roles }: { roles: Role[] }) {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Datos Básicos */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="name">Nombre Completo</Label>
@@ -65,8 +64,6 @@ export default function Create({ roles }: { roles: Role[] }) {
                                 {errors.email && <p className="text-destructive text-sm">{errors.email}</p>}
                             </div>
                         </div>
-
-                        {/* Contraseñas */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="password">Contraseña</Label>
@@ -90,7 +87,6 @@ export default function Create({ roles }: { roles: Role[] }) {
                             </div>
                         </div>
 
-                        {/* Listado de Roles */}
                         <div className="space-y-3">
                             <Label className="text-base font-semibold">Asignar Roles del Sistema</Label>
                             {roles.length === 0 ? (
@@ -113,7 +109,6 @@ export default function Create({ roles }: { roles: Role[] }) {
                             )}
                         </div>
 
-                        {/* Botones de acción */}
                         <div className="flex gap-2 justify-end pt-4 border-t">
                             <Button variant="outline" asChild>
                                 <Link href={'/users'}>Cancelar</Link>
