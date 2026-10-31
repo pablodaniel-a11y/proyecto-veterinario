@@ -1,9 +1,17 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link, router } from '@inertiajs/react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import FlashMessage from '@/components/FlashMessage';
+import { FormEvent, useState } from 'react';
+
+interface Filtro {
+    buscarname?: string;
+    tipobus?: string;
+    orden?: string;
+    direccion?: string;
+}
 
 interface Producto{
     id: number;
@@ -13,15 +21,44 @@ interface Producto{
     stock_actual: number;
 }
 
+interface ProductosPaginados { 
+    data: Producto[]; 
+    current_page: number; 
+    last_page: number; 
+    per_page: number; 
+    total: number; 
+    from: number | null; 
+    to: number | null; 
+    prev_page_url: string | null; 
+    next_page_url: string | null; 
+}
+
+
 interface indexProps{
-    productos: Producto[];
+    productos: ProductosPaginados;
+    diferentestipos: string[];
+    filtros?: Filtro;
     flash?:{
         success?: string;
     };
 }
 
-export default function Index({productos, flash}: indexProps){
+export default function Index({productos, filtros, diferentestipos, flash}: indexProps){
+    let mensaje="";
+    if(productos.total === 0){
+        mensaje="Aún no tienes Productos registrados.";
+    }else{
+        if (productos.total === 1){
+            mensaje="Mostrando tu unico Producto.";
+        }else{
+            mensaje=`Mostrando ${productos.from} a ${productos.to} de ${productos.total} Productos`;
+        }
+    }
 
+    const [buscarname,setBuscarname]=useState(filtros?.buscarname ?? '');
+    const [tipobus,setTiposbus]=useState(filtros?.tipobus ?? '');
+    const [orden, setOrden] = useState(filtros?.orden ?? 'nombre_producto'); 
+    const [direccion, setDireccion] = useState(filtros?.direccion ?? 'asc');
     const { can } = useAuth();
 
     const eliminar = (id:number) => {
@@ -29,6 +66,45 @@ export default function Index({productos, flash}: indexProps){
             router.delete(`/productos/${id}`);
         }
     };
+
+    const aplicarFiltros = (e: FormEvent) => { 
+        e.preventDefault(); 
+         
+        router.get('/productos', { 
+            buscarname, 
+            tipobus,
+            orden,
+            direccion,
+        },{
+            preserveState: true,
+            preserveScroll: true,
+        }); 
+    };
+
+    const indicadorOrden = (campo: string) => { 
+        if (orden !== campo) { 
+            return <span className="text-gray-400 ml-1">↕</span>; 
+        }
+        return direccion === 'asc' ? ' ↑' : ' ↓'; 
+    };
+
+    const ordenarPor = (campo: string) => { 
+        let nuevaDireccion = 'asc'; 
+ 
+        if (orden === campo && direccion === 'asc') { 
+            nuevaDireccion = 'desc'; 
+        } 
+ 
+        setOrden(campo); 
+        setDireccion(nuevaDireccion); 
+ 
+        router.get('/productos', { 
+            buscarname, 
+            tipobus, 
+            orden: campo, 
+            direccion: nuevaDireccion, 
+        }); 
+    }; 
 
     return (
         <div>
@@ -47,20 +123,87 @@ export default function Index({productos, flash}: indexProps){
                 </Button>
             </div>
             )}
+            <div className="p-4 bg-orange-100 flex justify-center">
+                <form onSubmit={aplicarFiltros} className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4"> 
+                    <input 
+                        type="text" 
+                        value={buscarname} 
+                        onChange={(e) => setBuscarname(e.target.value)} 
+                        placeholder="Ingresar Nombre del Producto..." 
+                    /> 
+                    <select
+                        value={tipobus}
+                        onChange={(e) => setTiposbus(e.target.value)}
+                    >
+                        <option value="">Todos los Tipos de Productos</option>
+                        {diferentestipos.map((tip, i) => (
+                            <option key={i} value={tip}>
+                                {tip}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">
+                        Buscar
+                    </button>
+                </form>
+            </div>
+            <div>
+                <p>{mensaje}</p>
+            </div>
+            {productos.last_page > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-6 max-w-2xl mx-auto"> 
+                {productos.prev_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(productos.prev_page_url!)} 
+                    > 
+                        Anterior 
+                    </button> 
+                )} 
+ 
+                <span> 
+                    Página {productos.current_page} de {productos.last_page} 
+                </span> 
+ 
+                {productos.next_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(productos.next_page_url!)} 
+                    > 
+                        Siguiente 
+                    </button> 
+                )} 
+            </div>
+            )}
             <div>
                 <FlashMessage />
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Nombre del Producto</TableHead>
+                            <TableHead
+                                className="cursor-pointer select-none hover:bg-orange-50"
+                                onClick={(e) => ordenarPor('nombre_producto')}
+                            >
+                                Nombre del Producto {indicadorOrden('nombre_producto')}
+                            </TableHead>
                             <TableHead>Tipo del Producto</TableHead>
-                            <TableHead className="w-[120px]">Precio</TableHead>
-                            <TableHead className="w-[140px]">Stock Actual</TableHead>
+                            <TableHead 
+                                className="w-[120px] cursor-pointer select-none hover:bg-orange-50" 
+                                onClick={(e) => ordenarPor('precio_venta')}
+                            >
+                                Precio {indicadorOrden('precio_venta')}
+                            </TableHead>
+                            <TableHead 
+                                className="w-[140px] cursor-pointer select-none hover:bg-orange-50"
+                                onClick={(e) => ordenarPor('stock_actual')}
+                            >
+                                Stock Actual {indicadorOrden('stock_actual')}
+                            </TableHead>
                             {(can('editar producto')||can('eliminar producto')) && (<TableHead className="w-[140px]">Acciones</TableHead>)}
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {productos.map((producto) => (
+                        {productos.data.map((producto) => (
                             <TableRow key={producto.id}>
                                 <TableCell className="font-medium">
                                     {producto.nombre_producto}

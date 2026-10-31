@@ -56,18 +56,21 @@ class UserController extends Controller
             $user->syncRoles($request->roles); 
         } 
 
-        $cliente = Cliente::where('email', $user->email)->first();
+        $cliente = Cliente::where('email', $user->email)
+            ->orWhere('user_id', $user->id)
+            ->first();
 
         if($cliente){
             $cliente->update([
                 'user_id' => $user->id,
                 'nombre'  => $user->name,
+                'email' => $user->email,
             ]);
         }else{
             Cliente::create([
-                'user_id'  => $user->id,
-                'nombre'   => $user->name,
-                'email'    => $user->email,
+                'user_id' => $user->id,
+                'nombre' => $user->name,
+                'email' => $user->email,
                 'telefono' => 'Pendiente', 
             ]);
         }
@@ -134,10 +137,22 @@ class UserController extends Controller
         $user->update($validated); 
         $user->syncRoles($request->input('roles', []));
 
-        if($user->cliente){
-            $user->cliente->update([
-                'nombre' => $user->name,
-                'email'  => $user->email,
+        $cliente = Cliente::where('user_id', $user->id)
+            ->orWhere('email', $user->email)
+            ->first();
+
+        if($cliente){
+            $cliente->update([
+                'user_id' => $user->id,
+                'nombre'  => $user->name,
+                'email'   => $user->email,
+            ]);
+        }else{
+            Cliente::create([
+                'user_id'  => $user->id,
+                'nombre'   => $user->name,
+                'email'    => $user->email,
+                'telefono' => 'Pendiente',
             ]);
         }
 
@@ -149,7 +164,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id): RedirectResponse
+    public function destroy(User $user): RedirectResponse
     {
         Gate::authorize('delete', $user);
         

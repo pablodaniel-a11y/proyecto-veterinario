@@ -2,8 +2,15 @@ import { Button } from "@/components/ui/button";
 import { Link, router } from "@inertiajs/react";
 import { ImageIcon, Plus, Trash2 } from "lucide-react";
 import FlashMessage from '@/components/FlashMessage';
+import { FormEvent, useState } from "react";
+import mascota from "@/routes/mascota";
 
 type SexoMascota = 'Macho' | 'Hembra';
+
+interface Filtro {
+    buscarname?: string;
+    especiebus?: number | string | null;
+}
 
 interface Especie {
   id: number;
@@ -25,14 +32,43 @@ interface Mascota {
     raza?: Raza | null;
 }
 
+interface MascotasPaginadas { 
+    data: Mascota[]; 
+    current_page: number; 
+    last_page: number; 
+    per_page: number; 
+    total: number; 
+    from: number | null; 
+    to: number | null; 
+    prev_page_url: string | null; 
+    next_page_url: string | null; 
+}
+
 interface indexProps {
-    mascotas: Mascota[];
+    mascotas: MascotasPaginadas;
+    especies: Especie[];
+    filtros?: Filtro;
     flash?:{
         success?: string;
     };
 }
 
-export default function Index({mascotas, flash} : indexProps){
+export default function Index({mascotas, especies, filtros, flash} : indexProps){
+
+    let mensaje="";
+    if(mascotas.total === 0){
+        mensaje="Aún no tienes mascotas registradas.";
+    }else{
+        if (mascotas.total === 1){
+            mensaje="Mostrando tu unica mascota.";
+        }else{
+            mensaje=`Mostrando ${mascotas.from} a ${mascotas.to} de ${mascotas.total} mascotas`;
+        }
+    }
+
+    const [buscarname, setBuscarname] = useState(filtros?.buscarname ?? ''); 
+    const [especiebus, setEspeciebus] = useState(filtros?.especiebus ?? '');
+    //const [porPagina, setPorPagina] = useState(filtros?.por_pagina ?? 5 ); 
 
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar esta mascota?')) {
@@ -40,9 +76,21 @@ export default function Index({mascotas, flash} : indexProps){
         }
     };
 
+    const aplicarFiltros = (e: FormEvent) => { 
+        e.preventDefault(); 
+ 
+        router.get('/mascotas', { 
+            buscarname, 
+            especiebus,
+        },{
+            preserveState: true,
+            preserveScroll: true,
+        }); 
+    };
+
     return(
         <div>
-            <div className="h-15 flex bg-orange-200">
+            <div className="h-16 flex bg-orange-200">
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Carnet de Mascotas</span></h1>
             </div>
             <div className="bg-orange-300 flex justify-between items-center">
@@ -63,10 +111,64 @@ export default function Index({mascotas, flash} : indexProps){
                     </Link> 
                 </Button>
             </div>
+            <div className="p-4 bg-orange-100 flex justify-center">
+                <form onSubmit={aplicarFiltros} className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4"> 
+                    <input 
+                        type="text" 
+                        value={buscarname} 
+                        onChange={(e) => setBuscarname(e.target.value)} 
+                        placeholder="Ingresar Nombre de tu mascota..." 
+                    /> 
+                    <select
+                        value={especiebus}
+                        onChange={(e) => setEspeciebus(e.target.value)}
+                    >
+                        <option value="">Todas las Especies</option>
+                        {especies.map((es) => (
+                            <option key={es.id} value={es.id}>
+                                {es.nombre}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">
+                        Buscar
+                    </button>
+                </form>
+            </div>
+            <div>
+                <p>
+                    {mensaje}
+                </p>
+            </div>
+            {mascotas.last_page > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-6 max-w-2xl mx-auto"> 
+                {mascotas.prev_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(mascotas.prev_page_url!)} 
+                    > 
+                        Anterior 
+                    </button> 
+                )} 
+ 
+                <span> 
+                    Página {mascotas.current_page} de {mascotas.last_page} 
+                </span> 
+ 
+                {mascotas.next_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(mascotas.next_page_url!)} 
+                    > 
+                        Siguiente 
+                    </button> 
+                )} 
+            </div>
+            )}
             <div className="min-h-screen flex bg-gray-100">
                 <FlashMessage />
                 <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
-                    {mascotas.map((mascota) => (
+                    {mascotas.data.map((mascota) => (
                         <li key={mascota.id} className="mb-4 p-4 border bg-orange-100">
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center">

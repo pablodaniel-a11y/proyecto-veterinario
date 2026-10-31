@@ -1,10 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import { Plus } from "lucide-react";
 import FlashMessage from '@/components/FlashMessage';
+import { FormEvent, useState } from "react";
 
 
 type SexoMascota = 'Macho' | 'Hembra';
+
+interface Filtro {
+    buscarname?: string;
+    fechabus?: string;
+    estadobus?: string;
+    especiebus?: number | string | null;
+    por_pagina: number;
+}
 
 interface Cliente{
     id: number;
@@ -61,24 +70,163 @@ interface Consulta{
     detalles_consultas?: Detalle_Consulta[];
 }
 
+interface ConsultasPaginadas { 
+    data: Consulta[]; 
+    current_page: number; 
+    last_page: number; 
+    per_page: number; 
+    total: number; 
+    from: number | null; 
+    to: number | null; 
+    prev_page_url: string | null; 
+    next_page_url: string | null; 
+}
+
 interface indexProps {
-    consultas: Consulta[];
+    consultas: ConsultasPaginadas;
+    estados: string[];
+    fechasdisponibles: string[];
+    filtros?: Filtro;
+    especies: Especie[];
     flash?:{
         success?: string;
     };
 }
 
-export default function Indexveterinario({ consultas, flash }: indexProps) {
+export default function Indexveterinario({ consultas, estados, fechasdisponibles, especies, filtros, flash }: indexProps) {
+
+    let mensaje="";
+    if(consultas.total === 0){
+        mensaje="No tienes Consultas para Gestionar.";
+    }else{
+        if (consultas.total === 1){
+            mensaje="Mostrando tu unica Consulta.";
+        }else{
+            mensaje=`Mostrando ${consultas.from} a ${consultas.to} de ${consultas.total} Consultas`;
+        }
+    }
+
+    const [buscarname, setBuscarname] = useState(filtros?.buscarname ?? ''); 
+    const [fechabus, setFechabus] = useState(filtros?.fechabus ?? ''); 
+    const [estadobus, setEstadobus] = useState(filtros?.estadobus ?? '');
+    const [especiebus, setEspeciebus] = useState(filtros?.especiebus ?? '');
+    const [porPagina, setPorPagina] = useState(filtros?.por_pagina ?? 10);
+
+    const aplicarFiltros = (e: FormEvent) => { 
+        e.preventDefault(); 
+    
+        router.get('/veterinario/consultas', {
+            buscarname, 
+            especiebus,
+            fechabus, 
+            estadobus,
+            por_pagina: porPagina,
+        },{
+            preserveState: true,
+            preserveScroll: true,
+        }); 
+    };
 
     return (
         <div>
             <div className="h-15 flex bg-orange-200">
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Consultas para Gestionar</span></h1>
             </div>
+            <div className="p-4 bg-orange-100 flex justify-center">
+                <form onSubmit={aplicarFiltros} className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4"> 
+                    <input 
+                        type="text" 
+                        value={buscarname} 
+                        onChange={(e) => setBuscarname(e.target.value)} 
+                        placeholder="Ingresar Nombre del Cliente..." 
+                    />
+                    <select
+                        value={fechabus}
+                        onChange={(e) => setFechabus(e.target.value)}
+                    >
+                        <option value="">Todas las Fechas Realizadas</option>
+                        {fechasdisponibles.map((fech, i) => (
+                            <option key={i} value={fech}>
+                                {fech}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        value={estadobus}
+                        onChange={(e) => setEstadobus(e.target.value)}
+                    >
+                        <option value="">Todos los Estados Disponibles</option>
+                        {estados.map((es,i) => (
+                            <option key={i} value={es}>
+                                {es}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        value={especiebus}
+                        onChange={(e) => setEspeciebus(e.target.value)}
+                    >
+                        <option value="">Todas las Especies</option>
+                        {especies.map((es) => (
+                            <option key={es.id} value={es.id}>
+                                {es.nombre}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">
+                        Buscar
+                    </button>
+                </form>
+            </div>
+            <div>
+                <label> 
+                    Mostrar: 
+ 
+                    <select 
+                        value={porPagina} 
+                        onChange={(e) => setPorPagina(Number(e.target.value))} 
+                    > 
+                        <option value={10}>10</option> 
+                        <option value={20}>20</option>
+                        <option value={50}>50</option> 
+                        <option value={100}>100</option>  
+                    </select> 
+ 
+                    filas 
+                </label>
+                <p>
+                    {mensaje}
+                </p>
+            </div>
+            {consultas.last_page > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-6 max-w-2xl mx-auto"> 
+                {consultas.prev_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(consultas.prev_page_url!)} 
+                    > 
+                        Anterior 
+                    </button> 
+                )} 
+ 
+                <span> 
+                    Página {consultas.current_page} de {consultas.last_page} 
+                </span> 
+ 
+                {consultas.next_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(consultas.next_page_url!)} 
+                    > 
+                        Siguiente 
+                    </button> 
+                )} 
+            </div>
+            )}
             <div className="min-h-screen flex bg-gray-100">
                 <FlashMessage />
                 <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
-                    {consultas.map((consulta) => (
+                    {consultas.data.map((consulta) => (
                         <li key={consulta.id}>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1 flex-col items-start gap-1 border border-black rounded-md p-4">

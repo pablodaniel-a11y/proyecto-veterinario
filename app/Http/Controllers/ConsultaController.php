@@ -6,12 +6,15 @@ use Inertia\Inertia;
 use App\Models\Consulta;
 use App\Models\Mascota;
 use App\Models\Cliente;
+use App\Models\Especie;
 use App\Models\Veterinario;
 use App\Models\Producto;
 use App\Models\Detalle_Consulta;
 use App\Http\Requests\StoreConsultaRequest;
 use App\Http\Requests\UpdateConsultaRequest;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ConsultaController extends Controller
 {
@@ -24,31 +27,123 @@ class ConsultaController extends Controller
     }
 
     #[Middleware('permission:ver consultas mascota')]
-    public function indexpormascota(Mascota $mascota)
+    public function indexpormascota(Mascota $mascota, Request $request)
     {
+        $fechabus = trim($request->input('fechabus') ?? '');
+        $estadobus = trim($request->input('estadobus') ?? '');
+        $vetbus = trim($request->input('vetbus') ?? '');
+
+
         $mascota->load(['raza.especie']);
         $consultas = $mascota->consultas()
-            ->with(['veterinario', 'detalles_consultas.producto'])
-            ->get();
+            ->with(['veterinario.user', 'detalles_consultas.producto'])
+            ->when($fechabus !== '', function ($query) use ($fechabus){
+                $query->whereDate('fecha_hora', $fechabus);
+            })
+            ->when($estadobus !== '', function ($query) use ($estadobus){
+                $query->where('estado', $estadobus);
+            })
+            ->when($vetbus !== '', function ($query) use ($vetbus) {
+                $query->where('veterinario_id', $vetbus);
+            })
+            ->paginate(5)
+            ->withQueryString();
+
+        $veterinarioconsultados= $mascota->consultas()
+            ->with('veterinario.user')
+            ->get()
+            ->pluck('veterinario')
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        $fechasdisponibles= $mascota->consultas()
+            ->select('fecha_hora')
+            ->distinct()
+            ->get()
+            ->map(function ($consulta) {
+                return Carbon::parse($consulta->fecha_hora)->format('Y-m-d');
+            })
+            ->unique()
+            ->values();
+
+        $estados= ['pendiente','completado','cancelado'];
 
         return Inertia::render('Consultas/Indexcliente', [
             'mascota' => $mascota,
             'consultas' => $consultas,
+            'estados' => $estados,
+            'fechasdisponibles' => $fechasdisponibles,
+            'veterinarioconsultados' => $veterinarioconsultados,
+            'filtros' => [
+                'fechabus' => $fechabus,
+                'estadobus' => $estadobus,
+                'vetbus' => $vetbus,
+            ],
         ]);
     }
 
     #[Middleware('permission:ver consultas asignadas')]
-    public function indexdelveterinario()
+    public function indexdelveterinario(Request $request)
     {
+        $buscarname = trim($request->input('buscarname') ?? '');
+        $especiebus = $request->input('especiebus', '');
+        $fechabus = trim($request->input('fechabus') ?? '');
+        $estadobus = trim($request->input('estadobus') ?? '');
+        $porPagina = (int) $request->input('por_pagina', 10);
+
+        if (!in_array($porPagina, [10, 20, 50, 100], true)) { 
+            $porPagina = 10; 
+        }
+
         $veterinario = Veterinario::where('user_id', auth()->id())->first();
 
         $consultas = Consulta::where('veterinario_id', $veterinario->id)
             ->with(['mascota.cliente', 'mascota.raza.especie', 'detalles_consultas.producto'])
-            ->orderBy('fecha_hora', 'desc')
-            ->get();
+            ->orderBy('fecha_hora', 'asc')
+            ->when($buscarname !== '', function ($query) use ($buscarname){
+                $query->whereHas('mascota.cliente', function ($q) use ($buscarname){
+                    $q->where('nombre', 'like', "%{$buscarname}%");
+                });
+            })
+            ->when($request->filled('especiebus'), function ($query) use ($especiebus){
+                $query->whereHas('mascota.raza.especie', function ($q) use ($especiebus){
+                    $q->where('id', $especiebus);
+                });
+            })
+            ->when($fechabus !== '', function ($query) use ($fechabus){
+                $query->whereDate('fecha_hora', $fechabus);
+            })
+            ->when($estadobus !== '', function ($query) use ($estadobus){
+                $query->where('estado', $estadobus);
+            })
+            ->paginate($porPagina)
+            ->withQueryString();
+
+        $fechasdisponibles= Consulta::where('veterinario_id', $veterinario->id)
+            ->select('fecha_hora')
+            ->distinct()
+            ->get()
+            ->map(function ($consulta) {
+                return Carbon::parse($consulta->fecha_hora)->format('Y-m-d');
+            })
+            ->unique()
+            ->values();
+
+        $estados= ['pendiente','completado','cancelado'];
 
         return Inertia::render('Consultas/Indexveterinario', [
             'consultas' => $consultas,
+            'especies' => Especie::all(),
+            'estados' => $estados,
+            'fechasdisponibles' => $fechasdisponibles,
+            'filtros' => [
+                'buscarname' => $buscarname,
+                'fechabus' => $fechabus,
+                'estadobus' => $estadobus,
+                'especiebus' => $especiebus,
+                'por_pagina' => $porPagina,
+            ],
         ]);   
     }
 
@@ -180,10 +275,12 @@ class ConsultaController extends Controller
     #[Middleware('permission:eliminar consulta')]
     public function destroy(Consulta $consulta)
     {
+        $mascotaId = $consulta->mascota_id;
+
         $consulta->delete();
 
         return redirect()
-            ->route('mascota.consultas')
+            ->route('mascota.consultas', $mascotaId)
             ->with('success', 'Consulta borrado correctamente');
     }
 }

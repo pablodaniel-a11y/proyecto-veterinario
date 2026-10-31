@@ -1,8 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import FlashMessage from '@/components/FlashMessage';
+import { FormEvent, useState } from "react";
 
 type SexoMascota = 'Macho' | 'Hembra';
+
+interface Filtro {
+    fechabus?: string;
+    estadobus?: string;
+    vetbus?: string;
+}
+
+interface Usuario{
+    id: number;
+    name: string;
+    email: string;
+}
+
+interface Veterinario{
+    id: number;
+    user: Usuario;
+    telefono: string;
+    matricula: string;
+    especialidad: string;
+}
 
 interface Especie {
   id: number;
@@ -51,15 +72,61 @@ interface Consulta{
     detalles_consultas?: Detalle_Consulta[];
 }
 
+interface ConsultasPaginadas { 
+    data: Consulta[]; 
+    current_page: number; 
+    last_page: number; 
+    per_page: number; 
+    total: number; 
+    from: number | null; 
+    to: number | null; 
+    prev_page_url: string | null; 
+    next_page_url: string | null; 
+}
+
 interface indexProps {
     mascota: Mascota;
-    consultas: Consulta[];
+    consultas: ConsultasPaginadas;
+    estados: string[];
+    fechasdisponibles: string[];
+    veterinarioconsultados: Veterinario[];
+    filtros?: Filtro;
     flash?:{
         success?: string;
     };
 }
 
-export default function Indexcliente({ mascota, consultas, flash }: indexProps) {
+export default function Indexcliente({ mascota, consultas, filtros, estados, fechasdisponibles, veterinarioconsultados, flash }: indexProps) {
+    
+    let mensaje="";
+    if(consultas.total === 0){
+        mensaje="Aún no tienes Consultas registradas.";
+    }else{
+        if (consultas.total === 1){
+            mensaje="Mostrando tu unica Consulta.";
+        }else{
+            mensaje=`Mostrando ${consultas.from} a ${consultas.to} de ${consultas.total} Consultas`;
+        }
+    }
+
+    const [fechabus, setFechabus] = useState(filtros?.fechabus ?? ''); 
+    const [estadobus, setEstadobus] = useState(filtros?.estadobus ?? '');
+    const [vetbus, setVetbus] = useState(filtros?.vetbus ?? '');
+
+    const aplicarFiltros = (e: FormEvent) => { 
+        e.preventDefault(); 
+         
+        router.get(`/mascotas/${mascota.id}/consultas`, { 
+            fechabus, 
+            estadobus,
+            vetbus,
+        },{
+            preserveState: true,
+            preserveScroll: true,
+        }); 
+    };
+
+
 
     return (
         <div>
@@ -84,10 +151,78 @@ export default function Indexcliente({ mascota, consultas, flash }: indexProps) 
                     </Link> 
                 </Button>
             </div>
+            <div className="p-4 bg-orange-100 flex justify-center">
+                <form onSubmit={aplicarFiltros} className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4"> 
+                    <select
+                        value={fechabus}
+                        onChange={(e) => setFechabus(e.target.value)}
+                    >
+                        <option value="">Todas las Fechas Realizadas</option>
+                        {fechasdisponibles.map((fech, i) => (
+                            <option key={i} value={fech}>
+                                {fech}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        value={estadobus}
+                        onChange={(e) => setEstadobus(e.target.value)}
+                    >
+                        <option value="">Todos los Estados Disponibles</option>
+                        {estados.map((es,i) => (
+                            <option key={i} value={es}>
+                                {es}
+                            </option>
+                        ))}
+                    </select>
+                    <select
+                        value={vetbus}
+                        onChange={(e) => setVetbus(e.target.value)}
+                    >
+                        <option value="">Todas los Veterinarios Consultados</option>
+                        {veterinarioconsultados.map((vet) => (
+                            <option key={vet.id} value={vet.id}>
+                                {vet.user.name}
+                            </option>
+                        ))}
+                    </select>
+                    <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">
+                        Buscar
+                    </button>
+                </form>
+            </div>
+            <div>
+                <p>{mensaje}</p>
+            </div>
+            {consultas.last_page > 1 && (
+            <div className="flex justify-center items-center gap-4 mt-6 max-w-2xl mx-auto"> 
+                {consultas.prev_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(consultas.prev_page_url!)} 
+                    > 
+                        Anterior 
+                    </button> 
+                )} 
+ 
+                <span> 
+                    Página {consultas.current_page} de {consultas.last_page} 
+                </span> 
+ 
+                {consultas.next_page_url && ( 
+                    <button 
+                        type="button" 
+                        onClick={() => router.get(consultas.next_page_url!)} 
+                    > 
+                        Siguiente 
+                    </button> 
+                )} 
+            </div>
+            )}
             <div className="min-h-screen flex bg-gray-100">
                 <FlashMessage />
                 <ul className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4">
-                    {consultas.map((consulta) => (
+                    {consultas.data.map((consulta) => (
                         <li key={consulta.id}>
                             <div className="flex items-center gap-4">
                                 <div className="flex-1 flex-col items-start gap-1 ">

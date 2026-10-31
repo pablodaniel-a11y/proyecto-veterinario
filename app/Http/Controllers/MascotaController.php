@@ -11,6 +11,7 @@ use App\Http\Requests\StoreMascotaRequest;
 use App\Http\Requests\UpdateMascotaRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Http\Request;
 
 class MascotaController extends Controller
 {
@@ -18,8 +19,10 @@ class MascotaController extends Controller
      * Display a listing of the resource.
      */
     #[Middleware('permission:ver mascotas')]
-    public function index()
-    {      
+    public function index(Request $request)
+    {
+        $buscarname = trim($request->input('buscarname', ''));
+        $especiebus = $request->input('especiebus', '');
         
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
@@ -32,12 +35,27 @@ class MascotaController extends Controller
             ]);
         }
 
-        $mascotas = Mascota::where('cliente_id', $cliente->id)->with(['raza.especie'])->get();
+        $mascotas = Mascota::where('cliente_id', $cliente->id)
+            ->with(['raza.especie'])
+            ->when($buscarname !== '', function ($query) use ($buscarname){
+                $query->where('nombre', 'like', "%{$buscarname}%");
+            })
+            ->when($request->filled('especiebus'), function ($query) use ($especiebus){
+                $query->whereHas('raza.especie', function ($q) use ($especiebus){
+                    $q->where('id', $especiebus);
+                });
+            })
+            ->paginate(5)
+            ->withQueryString();
 
         return Inertia::render('Mascotas/Index', [
-            'mascotas' => $mascotas
+            'mascotas' => $mascotas,
+            'especies' => Especie::all(),
+            'filtros' => [ 
+                'buscarname' => $buscarname, 
+                'especiebus' => $especiebus,
+            ],
         ]);
-
     }
 
     /**

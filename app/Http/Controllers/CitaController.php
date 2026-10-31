@@ -12,6 +12,8 @@ use App\Models\Especie;
 use App\Http\Requests\StoreCitaRequest;
 use App\Http\Requests\UpdateCitaRequest;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class CitaController extends Controller
 {
@@ -19,28 +21,168 @@ class CitaController extends Controller
      * Display a listing of the resource.
      */
     #[Middleware('permission:ver citas')]
-    public function index()
+    public function index(Request $request)
     {
+        $mascotabus = trim($request->input('mascotabus') ?? '');
+        $fechabus = trim($request->input('fechabus') ?? '');
+        $estadobus = trim($request->input('estadobus') ?? '');
+        $vetbus = trim($request->input('vetbus') ?? '');
+
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
-        if($cliente){
-            $citas = Cita::where('cliente_id', $cliente->id)->with(['cliente', 'mascota.raza.especie', 'veterinario.user'])->get();
-        }else{
-            $citas = [];
+        if (!$cliente) {
+            return Inertia::render('Citas/Index', [
+                'citas' => [
+                    'data' => [],
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'total' => 0,
+                ],
+                'estados' => ['pendiente', 'completado', 'cancelado'],
+                'fechasdisponibles' => [],
+                'veterinariolist' => [],
+                'mascotalist' => [],
+                'filtros' => [
+                    'mascotabus' => $mascotabus,
+                    'fechabus' => $fechabus,
+                    'estadobus' => $estadobus,
+                    'vetbus' => $vetbus,
+                ], 
+            ]);
         }
+
+        $citas = Cita::where('cliente_id', $cliente->id)
+            ->with(['cliente', 'mascota.raza.especie', 'veterinario.user'])
+            ->when($mascotabus !== '', function ($query) use ($mascotabus) {
+                $query->where('mascota_id', $mascotabus);
+            })
+            ->when($fechabus !== '', function ($query) use ($fechabus){
+                $query->whereDate('fecha_hora', $fechabus);
+            })
+            ->when($estadobus !== '', function ($query) use ($estadobus){
+                $query->where('estado', $estadobus);
+            })
+            ->when($vetbus !== '', function ($query) use ($vetbus) {
+                $query->where('veterinario_id', $vetbus);
+            })
+            ->orderBy('fecha_hora', 'asc')
+            ->paginate(10)
+            ->withQueryString();
+
+        $mascotalist= Cita::where('cliente_id', $cliente->id)
+            ->with('mascota')
+            ->get()
+            ->pluck('mascota')
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        $veterinariolist= Cita::where('cliente_id', $cliente->id)
+            ->with('veterinario.user')
+            ->get()
+            ->pluck('veterinario')
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        $fechasdisponibles= Cita::where('cliente_id', $cliente->id)
+            ->select('fecha_hora')
+            ->distinct()
+            ->get()
+            ->map(function ($consulta) {
+                return Carbon::parse($consulta->fecha_hora)->format('Y-m-d');
+            })
+            ->unique()
+            ->values();
+
+        $estados= ['pendiente','completado','cancelado'];
 
         return Inertia::render('Citas/Index', [
             'citas' => $citas,
+            'estados' => $estados,
+            'fechasdisponibles' => $fechasdisponibles,
+            'veterinariolist' => $veterinariolist,
+            'mascotalist' => $mascotalist,
+            'filtros' => [
+                'mascotabus' => $mascotabus,
+                'fechabus' => $fechabus,
+                'estadobus' => $estadobus,
+                'vetbus' => $vetbus,
+            ], 
         ]);
     }
 
     #[Middleware('permission:gestionar citas')]
-    public function indexcitas()
+    public function indexcitas(Request $request)
     {
-        $citas = Cita::with(['cliente', 'mascota.raza.especie', 'veterinario.user'])->get();
+        $buscarname = trim($request->input('buscarname') ?? '');
+        $especiebus = $request->input('especiebus', '');
+        $fechabus = trim($request->input('fechabus') ?? '');
+        $estadobus = trim($request->input('estadobus') ?? '');
+        $vetbus = trim($request->input('vetbus') ?? '');
+        $porPagina = (int) $request->input('por_pagina', 10);
+
+        if (!in_array($porPagina, [10, 20, 50, 100], true)) { 
+            $porPagina = 10; 
+        }
+
+        $citas = Cita::with(['cliente', 'mascota.raza.especie', 'veterinario.user'])
+            ->when($buscarname !== '', function ($query) use ($buscarname){
+                $query->whereHas('cliente', function ($q) use ($buscarname){
+                    $q->where('nombre', 'like', "%{$buscarname}%");
+                });
+            })
+            ->when($request->filled('especiebus'), function ($query) use ($especiebus){
+                $query->whereHas('mascota.raza.especie', function ($q) use ($especiebus){
+                    $q->where('id', $especiebus);
+                });
+            })
+            ->when($fechabus !== '', function ($query) use ($fechabus){
+                $query->whereDate('fecha_hora', $fechabus);
+            })
+            ->when($estadobus !== '', function ($query) use ($estadobus){
+                $query->where('estado', $estadobus);
+            })
+            ->when($vetbus !== '', function ($query) use ($vetbus) {
+                $query->where('veterinario_id', $vetbus);
+            })
+            ->orderBy('fecha_hora', 'asc')
+            ->paginate($porPagina)
+            ->withQueryString();
+
+        $veterinariolist= Cita::with(['cliente', 'mascota.raza.especie', 'veterinario.user'])
+            ->get()
+            ->pluck('veterinario')
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        $fechasdisponibles= Cita::with(['cliente', 'mascota.raza.especie', 'veterinario.user'])
+            ->select('fecha_hora')
+            ->distinct()
+            ->get()
+            ->map(function ($consulta) {
+                return Carbon::parse($consulta->fecha_hora)->format('Y-m-d');
+            })
+            ->unique()
+            ->values();
+
+        $estados= ['pendiente','completado','cancelado'];
 
         return Inertia::render('Citas/Indexcitas', [
             'citas' => $citas,
+            'especies' => Especie::all(),
+            'estados' => $estados,
+            'fechasdisponibles' => $fechasdisponibles,
+            'veterinariolist' => $veterinariolist,
+            'filtros' => [
+                'buscarname' => $buscarname,
+                'fechabus' => $fechabus,
+                'estadobus' => $estadobus,
+                'especiebus' => $especiebus,
+                'vetbus' => $vetbus,
+                'por_pagina' => $porPagina,
+            ],
         ]);
     }
 
@@ -96,9 +238,13 @@ class CitaController extends Controller
             [
                 'user_id' => $userId,
                 'nombre' => $nombre,
-                'teflono' => 'Pendiente',
+                'telefono' => 'Pendiente',
             ]
         );
+
+        if (auth()->check() && !$cliente->user_id) {
+            $cliente->update(['user_id' => auth()->id()]);
+        }
         
         $mascotaId = $request->input('mascota_id');
 

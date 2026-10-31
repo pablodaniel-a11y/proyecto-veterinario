@@ -7,17 +7,52 @@ use App\Models\Producto;
 use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $productos=Producto::all();
+        $buscarname = trim($request->input('buscarname', ''));
+        $tipobus = trim($request->input('tipobus', ''));
+        $orden = $request->input('orden', 'nombre_producto'); 
+        $direccion = $request->input('direccion', 'asc');
+
+        $camposPermitidos = ['nombre_producto', 'precio_venta', 'stock_actual'];
+
+        if (!in_array($orden, $camposPermitidos, true)) { 
+            $orden = 'nombre_producto'; 
+        }
+        if (!in_array($direccion, ['asc', 'desc'], true)) { 
+            $direccion = 'asc'; 
+        }
+
+        $productos=Producto::when($buscarname !== '', function ($query) use ($buscarname){
+                $query->where('nombre_producto', 'like', "%{$buscarname}%");
+            })
+            ->when($tipobus !== '', function ($query) use ($tipobus){
+                $query->where('tipo_producto', $tipobus);
+            })
+            ->orderBy($orden, $direccion)
+            ->paginate(20)
+            ->withQueryString();
+
+        $diferentestipos=Producto::select('tipo_producto')
+            ->distinct()
+            ->pluck('tipo_producto');
+        
         return Inertia::render('Productos/Index', [
             'productos' => $productos,
+            'diferentestipos' => $diferentestipos,
+            'filtros' => [
+                'buscarname' => $buscarname,
+                'tipobus' => $tipobus,
+                'orden' => $orden,
+                'direccion' => $direccion,
+            ],
         ]);
     }
 

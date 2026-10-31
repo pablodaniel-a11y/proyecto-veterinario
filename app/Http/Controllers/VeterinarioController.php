@@ -11,18 +11,42 @@ use App\Http\Requests\UpdateVeterinarioRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Http\Request;
 
 class VeterinarioController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $veterinarios= Veterinario::with('user')->get();
+        $buscarname = trim($request->input('buscarname', ''));
+        $especialidadbus = trim($request->input('especialidadbus', ''));
+
+
+        $veterinarios= Veterinario::with('user')
+            ->when($buscarname !== '', function ($query) use ($buscarname){
+                $query->whereHas('user', function ($q) use ($buscarname){
+                    $q->where('name', 'like', "%{$buscarname}%");
+                });
+            })
+            ->when($especialidadbus !== '', function ($query) use ($especialidadbus) {
+                $query->where('especialidad', $especialidadbus); 
+            })
+            ->paginate(10)
+            ->withQueryString();
+
+        $especialidades= Veterinario::select('especialidad')
+            ->distinct()
+            ->pluck('especialidad');
 
         return Inertia::render('Veterinarios/Index', [
             'veterinarios' => $veterinarios,
+            'especialidades' => $especialidades,
+            'filtros' => [
+                'buscarname' => $buscarname, 
+                'especialidadbus' => $especialidadbus,
+            ],
         ]);
     }
 
@@ -58,12 +82,16 @@ class VeterinarioController extends Controller
             'especialidad' => $validated['especialidad'],
         ]);
 
-        $cliente = Cliente::where('email', $user->email)->first();
+        $cliente = Cliente::where('user_id', $user->id)
+            ->orWhere('email', $user->email)
+            ->first();
 
         if($cliente){
             $cliente->update([
                 'user_id' => $user->id,
-                'nombre'  => $user->name,
+                'nombre' => $user->name,
+                'email' => $user->email,
+                'telefono' => $validated['telefono'],
             ]);
         }else{
             Cliente::create([
@@ -122,6 +150,26 @@ class VeterinarioController extends Controller
         }
 
         $veterinario->update($datos);
+
+        $cliente = Cliente::where('user_id', $veterinario->user->id)
+            ->orWhere('email', $veterinario->user->email)
+            ->first();
+
+        if($cliente){
+            $cliente->update([
+                'user_id' => $veterinario->user->id,
+                'nombre'  => $veterinario->user->name,
+                'email'   => $veterinario->user->email,
+                'telefono' => $validated['telefono'],
+            ]);
+        }else{
+            Cliente::create([
+                'user_id'  => $veterinario->user->id,
+                'nombre'   => $veterinario->user->name,
+                'email'    => $veterinario->user->email,
+                'telefono' => $validated['telefono'],
+            ]);
+        }
 
         return redirect()
             ->route('veterinarios.index')
