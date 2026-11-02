@@ -126,6 +126,17 @@ export default function Indexveterinario({ consultas, estados, fechasdisponibles
             preserveScroll: true,
         }); 
     };
+    
+    const gestionarExcel = () => {
+        const filtrosusados = new URLSearchParams({
+            buscarname: String(buscarname || ''),
+            especiebus: String(especiebus || ''),
+            fechabus: String(fechabus || ''),
+            estadobus: String(estadobus || ''),
+        }).toString();
+
+        window.open(`/veterinario/consultas/exportar-excel?${filtrosusados}`, '_blank');
+    };
 
     return (
         <div>
@@ -177,6 +188,14 @@ export default function Indexveterinario({ consultas, estados, fechasdisponibles
                         Buscar
                     </button>
                 </form>
+            </div>
+            <div>
+                <button 
+                    onClick={gestionarExcel}
+                    className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+                >
+                    Exportar Excel Filtrado
+                </button>
             </div>
             <div>
                 <label> 

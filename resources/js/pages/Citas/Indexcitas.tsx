@@ -129,6 +129,18 @@ export default function Indexcitas({citas, filtros, estados, especies, fechasdis
         }); 
     };
 
+    const gestionarPdf = () => {
+        const filtrosusados = new URLSearchParams({
+            buscarname: String(buscarname || ''),
+            especiebus: String(especiebus || ''),
+            fechabus: String(fechabus || ''),
+            estadobus: String(estadobus || ''),
+            vetbus: String(vetbus || ''),
+        }).toString();
+        
+        window.open(`/citas/admin/list?${filtrosusados}`, '_blank');
+    };
+
     return (
         <div>
             <div className="h-15 flex bg-orange-200">
@@ -190,6 +202,14 @@ export default function Indexcitas({citas, filtros, estados, especies, fechasdis
                         Buscar
                     </button>
                 </form>
+            </div>
+            <div>
+                <button 
+                    onClick={gestionarPdf}
+                    className="bg-orange-600 text-white px-4 py-2 rounded shadow hover:bg-orange-700"
+                >
+                    Descargar PDF Filtrado
+                </button>
             </div>
             <div>
                 <label> 

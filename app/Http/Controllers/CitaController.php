@@ -14,6 +14,7 @@ use App\Http\Requests\UpdateCitaRequest;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CitaController extends Controller
 {
@@ -330,5 +331,49 @@ class CitaController extends Controller
         return redirect()
             ->route('citas.index.admin')
             ->with('success', 'Cita borrada correctamente');
+    }
+
+    #[Middleware('permission:gestionar citas')]
+    public function list_citas(Request $request)
+    {
+        $buscarname = trim($request->input('buscarname') ?? '');
+        $especiebus = $request->input('especiebus', '');
+        $fechabus = trim($request->input('fechabus') ?? '');
+        $estadobus = trim($request->input('estadobus') ?? '');
+        $vetbus = trim($request->input('vetbus') ?? '');
+
+        $citas = Cita::with(['cliente', 'mascota.raza.especie', 'veterinario.user'])
+            ->when($buscarname !== '', function ($query) use ($buscarname){
+                $query->whereHas('cliente', function ($q) use ($buscarname){
+                    $q->where('nombre', 'like', "%{$buscarname}%");
+                });
+            })
+            ->when($request->filled('especiebus'), function ($query) use ($especiebus){
+                $query->whereHas('mascota.raza.especie', function ($q) use ($especiebus){
+                    $q->where('id', $especiebus);
+                });
+            })
+            ->when($fechabus !== '', function ($query) use ($fechabus){
+                $query->whereDate('fecha_hora', $fechabus);
+            })
+            ->when($estadobus !== '', function ($query) use ($estadobus){
+                $query->where('estado', $estadobus);
+            })
+            ->when($vetbus !== '', function ($query) use ($vetbus) {
+                $query->where('veterinario_id', $vetbus);
+            })
+            ->orderBy('fecha_hora', 'asc')
+            ->get();
+
+        $pdf = Pdf::loadView('citas.list', [
+            'citas' => $citas,
+            'filtros' => [
+                'fecha' => $fechabus,
+                'estado' => $estadobus,
+            ],
+        ]);
+        
+        return $pdf->stream('citas_programadas.pdf');
+        //return $pdf->download('citas_programadas.pdf');
     }
 }

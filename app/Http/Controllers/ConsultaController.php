@@ -15,6 +15,8 @@ use App\Http\Requests\UpdateConsultaRequest;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Exports\ConsultasExport; 
+use Maatwebsite\Excel\Facades\Excel;
 
 class ConsultaController extends Controller
 {
@@ -282,5 +284,16 @@ class ConsultaController extends Controller
         return redirect()
             ->route('mascota.consultas', $mascotaId)
             ->with('success', 'Consulta borrado correctamente');
+    }
+
+    #[Middleware('permission:ver consultas asignadas')]
+    public function export(Request $request)
+    {
+        $veterinario = Veterinario::where('user_id', auth()->id())->first();
+
+        return Excel::download(
+            new ConsultasExport($request, $veterinario->id), 
+            'mis_consultas.xlsx'
+        );
     }
 }
