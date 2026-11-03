@@ -15,6 +15,8 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Mail\SendMail;
+use Illuminate\Support\Facades\Mail;
 
 class CitaController extends Controller
 {
@@ -268,6 +270,25 @@ class CitaController extends Controller
             'motivo' => $request->input('motivo'),
             'estado' => 'pendiente',
         ]);
+
+        $ultimaCita= Cita::where('cliente_id', $cliente->id)
+            ->where('mascota_id', $mascotaId)
+            ->latest('id')
+            ->with(['cliente', 'mascota.raza.especie', 'veterinario.user'])
+            ->first();
+
+        if($ultimaCita){
+            $data = [
+                'cliente_nombre' => $cliente->nombre,
+                'mascota_nombre' => $ultimaCita->mascota->nombre ?? 'Tu mascota',
+                'veterinario_nombre' => $ultimaCita->veterinario->user->name ?? 'Personal médico',
+                'fecha_hora' => $ultimaCita->fecha_hora,
+                'motivo' => $ultimaCita->motivo ?? 'Consulta general',
+            ];
+
+            Mail::to($email->email ?? $cliente->email)
+                ->send(new SendMail($data, 'Confirmación de Cita - Veterinaria', 'emails.cita_confirmada'));
+        }
 
         if(!auth()->check()){
             return redirect()

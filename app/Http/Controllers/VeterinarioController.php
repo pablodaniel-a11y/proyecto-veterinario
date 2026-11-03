@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Http\Request;
+use App\Mail\SendMail;
+use Illuminate\Support\Facades\Mail;
 
 class VeterinarioController extends Controller
 {
@@ -67,10 +69,12 @@ class VeterinarioController extends Controller
     {
         $validated= $request->validated();
 
+        $contratemporal= Str::random(10);
+
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => Hash::make(Str::random(10)),
+            'password' => Hash::make($contratemporal),
         ]);
 
         $user->assignRole('veterinario');
@@ -96,11 +100,23 @@ class VeterinarioController extends Controller
         }else{
             Cliente::create([
                 'user_id'  => $user->id,
-                'nombre'   => $user->name,
-                'email'    => $user->email,
+                'nombre' => $user->name,
+                'email' => $user->email,
                 'telefono' => $validated['telefono'], 
             ]);
         }
+
+        $data= [
+            'name' => $user->name,
+            'email' => $user->email,
+            'password' => $contratemporal,
+        ];
+        
+        Mail::to($user->email)->send(new SendMail(
+            $data,
+            'Bienvenido - Cuenta de Veterinario Creada',
+            'emails.veterinario_email'
+        ));
 
         return redirect()
             ->route('veterinarios.index')

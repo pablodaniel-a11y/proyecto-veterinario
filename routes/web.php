@@ -9,6 +9,7 @@ use App\Http\Controllers\CitaController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController;
 
 Route::inertia('/', 'welcome')->name('home');
 
@@ -19,7 +20,9 @@ Route::get('/citas/create', [CitaController::class, 'create'])->name('citas.crea
 Route::post('/citas', [CitaController::class, 'store'])->name('citas.store');
 
 Route::middleware(['auth'/*, 'verified'*/])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    //Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
     Route::resource('mascotas', MascotaController::class);
     Route::resource('veterinarios', VeterinarioController::class)->except(['index']);;
     Route::resource('productos', ProductoController::class)->except(['index']);
