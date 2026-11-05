@@ -21,7 +21,7 @@ export default function Create(){
     return(
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Crear Perfil del Profecional: </span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Incorporar Profesional: </span></h1>
             </div>
             <div>
 
@@ -78,7 +78,7 @@ export default function Create(){
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Crear Perfil'}
+                            {processing ? 'Guardando...' : 'Incorporar Profesional'}
                         </Button>
                         
                         <Link href="/veterinarios" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">

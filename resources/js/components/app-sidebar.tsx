@@ -33,7 +33,7 @@ const mainNavItems: NavItem[] = [
         href: '/veterinarios',
     },
     {
-        title: 'Tienda de Productos',
+        title: 'Inventario de Productos',
         href: '/productos',
     },
     {
@@ -47,7 +47,7 @@ const mainNavItems: NavItem[] = [
         permission: 'gestionar consultas',
     },
     {
-        title: 'Citas Hechas',
+        title: 'Citas Agendadas',
         href: '/citas',
         permission: 'ver citas',
         necesitaAuth: true,
@@ -77,7 +77,9 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
+
 const footerNavItems: NavItem[] = [
+    /*
     {
         title: 'Repository',
         href: 'https://github.com/laravel/react-starter-kit',
@@ -88,7 +90,9 @@ const footerNavItems: NavItem[] = [
         href: 'https://laravel.com/docs/starter-kits#react',
         icon: BookOpen,
     },
+    */
 ];
+
 
 export function AppSidebar() {
 
@@ -126,6 +130,7 @@ export function AppSidebar() {
             </SidebarContent>
             */}
 
+            
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 <NavUser />

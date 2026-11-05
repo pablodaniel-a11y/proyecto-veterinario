@@ -40,7 +40,7 @@ export default function Index({veterinario}: editProps){
     return(
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Editar Perfil del Profecional: {veterinario.user.name} </span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Actualizar Información del Profecional: {veterinario.user.name} </span></h1>
             </div>
             <div>
 
@@ -99,7 +99,7 @@ export default function Index({veterinario}: editProps){
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Actualizar Perfil'}
+                            {processing ? 'Guardando...' : 'Actualizar Información'}
                         </Button>
                         
                         <Link href="/veterinarios" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">

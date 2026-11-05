@@ -97,7 +97,7 @@ class MascotaController extends Controller
 
         return redirect()
             ->route('mascotas.index')
-            ->with('success', 'Mascota creado correctamente.');
+            ->with('success', 'Mascota Añadida Correctamente.');
     }
 
     /**
@@ -144,7 +144,7 @@ class MascotaController extends Controller
 
         return redirect()
             ->route('mascotas.index')
-            ->with('success', 'Mascota actualizado correctamente.');
+            ->with('success', 'Carnet Actualizado Correctamente.');
     }
 
     /**
@@ -161,6 +161,6 @@ class MascotaController extends Controller
 
         return redirect()
             ->route('mascotas.index')
-            ->with('success', 'Mascota eliminado correctamente.');
+            ->with('success', 'Mascota Quitada Correctamente.');
     }
 }

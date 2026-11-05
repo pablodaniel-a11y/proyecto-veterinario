@@ -131,7 +131,7 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
     return (
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Consultas de: {mascota.nombre}</span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Atenciones y Consultas de: {mascota.nombre}</span></h1>
             </div>
             <div className="bg-orange-300 flex justify-between items-center">
                 <Button 
@@ -147,7 +147,7 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
                     className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
                 > 
                     <Link href={`/mascotas`}>
-                        Volver
+                        Volver al Carnet
                     </Link> 
                 </Button>
             </div>
@@ -229,7 +229,7 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
                                     <h2 className="text-lg"> <span className="font-bold">Datos de la Consulta:</span></h2>
                                     <h2 className="text-lg"> <span className="font-bold">Fecha y Hora:</span> {new Date(consulta.fecha_hora).toLocaleString()}</h2>
                                     <h2 className="text-lg"> <span className="font-bold">Motivo de la Consulta:</span> {consulta.motivo_consulta}</h2>
-                                    <h2 className="text-lg"> <span className="font-bold">Diagnostico:</span> {consulta.diagnostico}</h2>
+                                    <h2 className="text-lg"> <span className="font-bold">Diagnóstico:</span> {consulta.diagnostico}</h2>
                                     <h2 className="text-lg"> <span className="font-bold">Peso:</span> {consulta.peso}</h2>
                                     <h2 className="text-lg"> <span className="font-bold">Estado:</span> {consulta.estado}</h2>
                                     <h2 className="text-lg"> <span className="font-bold">Observaciones:</span> {consulta.observaciones}</h2>

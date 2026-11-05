@@ -54,7 +54,7 @@ export default function Create({razas,especies} : createProps ){
     return(
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Agregar una Nueva Mascota</span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Añadir Nueva Mascota</span></h1>
             </div>
             <div className="min-h-screen flex bg-gray-100">
                 <form className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4" onSubmit={submit}>
@@ -163,7 +163,7 @@ export default function Create({razas,especies} : createProps ){
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Crear Mascota'}
+                            {processing ? 'Guardando...' : 'Añadir Mascota'}
                         </Button>
                         
                         <Link href="/mascotas" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">

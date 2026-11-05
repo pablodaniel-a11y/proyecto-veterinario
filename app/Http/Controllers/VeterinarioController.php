@@ -120,7 +120,7 @@ class VeterinarioController extends Controller
 
         return redirect()
             ->route('veterinarios.index')
-            ->with('success', 'Perfil creado correctamente');
+            ->with('success', 'Profesional incorporado correctamente.');
     }
 
     /**
@@ -189,7 +189,7 @@ class VeterinarioController extends Controller
 
         return redirect()
             ->route('veterinarios.index')
-            ->with('success', 'Perfil actualizado correctamente.');
+            ->with('success', 'Datos del profecional actualizados correctamente.');
     }
 
     /**
@@ -202,6 +202,6 @@ class VeterinarioController extends Controller
 
         return redirect()
             ->route('veterinarios.index')
-            ->with('success', 'Perfil borrado correctamente.');
+            ->with('success', 'Profecional dado de baja correctamente.');
     }
 }

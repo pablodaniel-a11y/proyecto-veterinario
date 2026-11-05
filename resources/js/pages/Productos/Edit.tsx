@@ -33,7 +33,7 @@ export default function Edit({producto,  tiposProductosList}: editProps){
     return(
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Editar Producto de la Tienda: {producto.nombre_producto} </span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Actualizar Producto: {producto.nombre_producto} </span></h1>
             </div>
             <div>
 
@@ -88,7 +88,7 @@ export default function Edit({producto,  tiposProductosList}: editProps){
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Actualizar Producto'}
+                            {processing ? 'Guardando...' : 'Actualizar'}
                         </Button>
                         
                         <Link href="/productos" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">

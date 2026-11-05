@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, router } from "@inertiajs/react";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import FlashMessage from '@/components/FlashMessage';
 import { FormEvent, useState } from "react";
 
@@ -141,7 +141,7 @@ export default function Indexveterinario({ consultas, estados, fechasdisponibles
     return (
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Consultas para Gestionar</span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Consultas Pendientes y Atendidas</span></h1>
             </div>
             <div className="p-4 bg-orange-100 flex justify-center">
                 <form onSubmit={aplicarFiltros} className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4"> 
@@ -300,8 +300,8 @@ export default function Indexveterinario({ consultas, estados, fechasdisponibles
                                             className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
                                         > 
                                             <Link href={`/veterinario/consultas/${consulta.id}/edit`}> 
-                                                <Plus className="w-4 h-4 mr-2" /> 
-                                                Responder Consulta
+                                                <Pencil className="w-4 h-4 mr-2" /> 
+                                                Atender Consulta
                                             </Link> 
                                         </Button>
                                     </div>

@@ -115,7 +115,7 @@ export default function Edit({consulta, estados, productos}: editProps) {
     return(
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Completar Consulta </span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Atender Consulta</span></h1>
             </div>
             <div>
 
@@ -246,7 +246,7 @@ export default function Edit({consulta, estados, productos}: editProps) {
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Editar Consulta'}
+                            {processing ? 'Guardando...' : 'Completar Consulta'}
                         </Button>
                         <Link href="/veterinario/consultas" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">
                             Cancelar

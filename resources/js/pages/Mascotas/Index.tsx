@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link, router } from "@inertiajs/react";
-import { ImageIcon, Plus, Trash2 } from "lucide-react";
+import { FileText, ImageIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import FlashMessage from '@/components/FlashMessage';
 import { FormEvent, useState } from "react";
-import mascota from "@/routes/mascota";
 
 type SexoMascota = 'Macho' | 'Hembra';
 
@@ -67,8 +66,7 @@ export default function Index({mascotas, especies, filtros, flash} : indexProps)
     }
 
     const [buscarname, setBuscarname] = useState(filtros?.buscarname ?? ''); 
-    const [especiebus, setEspeciebus] = useState(filtros?.especiebus ?? '');
-    //const [porPagina, setPorPagina] = useState(filtros?.por_pagina ?? 5 ); 
+    const [especiebus, setEspeciebus] = useState(filtros?.especiebus ?? ''); 
 
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar esta mascota?')) {
@@ -99,7 +97,7 @@ export default function Index({mascotas, especies, filtros, flash} : indexProps)
                     className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
                 > 
                     <Link href={`/mascotas/create`}>
-                        Agregar una Mascota Nueva
+                        Añadir Mascota
                     </Link> 
                 </Button>
                 <Button 
@@ -202,8 +200,8 @@ export default function Index({mascotas, especies, filtros, flash} : indexProps)
                                         className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
                                     > 
                                         <Link href={`/mascotas/${mascota.id}/edit`}> 
-                                            <Plus className="w-4 h-4 mr-2" /> 
-                                            Editar Mascota
+                                            <Pencil className="w-4 h-4 mr-2" />
+                                            Actualizar Carnet
                                         </Link> 
                                     </Button>
                                     <Button  
@@ -211,15 +209,15 @@ export default function Index({mascotas, especies, filtros, flash} : indexProps)
                                         onClick={() => eliminar(mascota.id)}
                                     >
                                         <Trash2 className="mr-1.5 h-4 w-4" />
-                                        Eliminar Mascota
+                                        Quitar Mascota
                                     </Button>
                                     <Button 
                                         asChild 
                                         className="bg-purple-600 hover:bg-purple-700 text-white shadow-sm"
                                     > 
                                         <Link href={`/mascotas/${mascota.id}/consultas`}> 
-                                            <Plus className="w-4 h-4 mr-2" /> 
-                                            Consultas de la Mascota
+                                            <FileText className="w-4 h-4 mr-2" /> 
+                                            Historial de Consultas
                                         </Link> 
                                     </Button>
                                 </div>

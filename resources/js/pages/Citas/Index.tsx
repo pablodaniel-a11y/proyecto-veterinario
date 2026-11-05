@@ -122,7 +122,7 @@ export default function Index({citas, filtros, estados, fechasdisponibles, masco
     return(
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold"> Citas Hechas: </span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold"> Mis Citas Agendadas </span></h1>
             </div>
             <div className="bg-orange-300 flex justify-between items-center">
                 <Button 
@@ -130,7 +130,7 @@ export default function Index({citas, filtros, estados, fechasdisponibles, masco
                     className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
                 > 
                     <Link href={`/citas/create`}>
-                        Realizar una cita
+                        Solicitar una Cita
                     </Link> 
                 </Button>
             </div>
@@ -221,7 +221,7 @@ export default function Index({citas, filtros, estados, fechasdisponibles, masco
                     {citas.data.map((cita) => (
                         <li key={cita.id} className="mb-4 p-4 border bg-orange-100">
                             <div className="flex-1 flex-col items-start gap-1 ">
-                                <h2 className="text-lg"> <span className="font-bold">Citas para Programar:</span></h2>
+                                <h2 className="text-lg"> <span className="font-bold">Detalle de la Cita:</span></h2>
                                 <h2 className="text-lg"> <span className="font-bold">Fecha:</span> {new Date(cita.fecha_hora).toLocaleString()}</h2>
                                 <h2 className="text-lg"> <span className="font-bold">Nombre del Cliente:</span> {cita.cliente.nombre}</h2>
                                 <h2 className="text-lg"> 

@@ -81,7 +81,7 @@ class ProductoController extends Controller
 
         return redirect()
             ->route('productos.index')
-            ->with('success', 'Producto creado correctamente');
+            ->with('success', 'Producto registrado correctamente');
     }
 
     /**
@@ -119,7 +119,7 @@ class ProductoController extends Controller
 
         return redirect()
             ->route('productos.index')
-            ->with('success', 'Producto actualizado correctamente');
+            ->with('success', 'Inventario actualizado correctamente');
     }
 
     /**

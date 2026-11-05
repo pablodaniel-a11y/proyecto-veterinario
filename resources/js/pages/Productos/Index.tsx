@@ -109,7 +109,7 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
     return (
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Tienda de Productos</span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Catálogo de Productos e Inventario</span></h1>
             </div>
             {can('crear producto') && (
             <div className="bg-orange-300">
@@ -118,7 +118,7 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
                     className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
                 > 
                     <Link href={`/productos/create`}>
-                        Crear un nuevo Producto para la tienda
+                        Registrar Nuevo Producto
                     </Link> 
                 </Button>
             </div>

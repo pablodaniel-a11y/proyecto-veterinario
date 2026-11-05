@@ -25,7 +25,7 @@ export default function Create({tiposProductosList}: createProps){
     return(
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Crear un Producto para la Tienda: </span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Registrar Nuevo Producto: </span></h1>
             </div>
             <div>
 
@@ -80,7 +80,7 @@ export default function Create({tiposProductosList}: createProps){
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Crear Producto'}
+                            {processing ? 'Guardando...' : 'Registrar Producto'}
                         </Button>
                         
                         <Link href="/productos" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">

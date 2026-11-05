@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, router } from "@inertiajs/react";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import FlashMessage from '@/components/FlashMessage';
 import { useAuth } from '@/hooks/use-auth';
 import { FormEvent, useState } from "react";
@@ -262,7 +262,7 @@ export default function Indexcitas({citas, filtros, estados, especies, fechasdis
                     {citas.data.map((cita) => (
                         <li key={cita.id} className="mb-4 p-4 border bg-orange-100">
                             <div className="flex-1 flex-col items-start gap-1 ">
-                                <h2 className="text-lg"> <span className="font-bold">Citas Programadas:</span></h2>
+                                <h2 className="text-lg"> <span className="font-bold">Información de la Cita:</span></h2>
                                 <h2 className="text-lg"> <span className="font-bold">Fecha:</span> {new Date(cita.fecha_hora).toLocaleString()}</h2>
                                 <h2 className="text-lg"> <span className="font-bold">Nombre del Cliente:</span> {cita.cliente.nombre}</h2>
                                 <h2 className="text-lg"> 
@@ -281,8 +281,8 @@ export default function Indexcitas({citas, filtros, estados, especies, fechasdis
                                     className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
                                 > 
                                     <Link href={`/citas/${cita.id}/edit`}> 
-                                        <Plus className="w-4 h-4 mr-2" /> 
-                                        Reprogramar Cita / Responder Cita
+                                        <Pencil className="w-4 h-4 mr-2" /> 
+                                        Gestionar Turno
                                     </Link> 
                                 </Button>
                             </div>

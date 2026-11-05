@@ -286,18 +286,18 @@ class CitaController extends Controller
                 'motivo' => $ultimaCita->motivo ?? 'Consulta general',
             ];
 
-            Mail::to($email->email ?? $cliente->email)
+            Mail::to($cliente->email)
                 ->send(new SendMail($data, 'Confirmación de Cita - Veterinaria', 'emails.cita_confirmada'));
         }
 
         if(!auth()->check()){
             return redirect()
                 ->route('home')
-                ->with('success', 'Cita creada correctamente');
+                ->with('success', 'Turno médico agendado correctamente. Te enviamos los detalles a tu correo.');
         }else{
             return redirect()
                 ->route('citas.index')
-                ->with('success', 'Cita creada correctamente');
+                ->with('success', 'Turno médico agendado correctamente.');
         }
     }
 
@@ -338,7 +338,7 @@ class CitaController extends Controller
 
         return redirect()
             ->route('citas.index.admin')
-            ->with('success', 'Cita actualizada correctamente');
+            ->with('success', 'Cita Gestionada Correctamente');
     }
 
     /**

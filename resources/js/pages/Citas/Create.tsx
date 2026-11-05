@@ -108,7 +108,7 @@ export default function Create({mascotas, veterinarios, razas, especies}: create
     return (
         <div>
             <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Realizar una Cita</span></h1>
+                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Solicitar Cita Previa</span></h1>
             </div>
             <div className="min-h-screen flex bg-gray-100">
                 <form className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4" onSubmit={submit}>
@@ -235,7 +235,7 @@ export default function Create({mascotas, veterinarios, razas, especies}: create
                         {errors.motivo && <span className="text-red-500 text-sm">{errors.motivo}</span>}
                     </div>
                     <div>
-                        <label> Veterinarios Disponibles </label>
+                        <label> Profesional Asignado </label>
                         <select
                             value={data.veterinario_id}
                             onChange={(e) => setData('veterinario_id', Number(e.target.value))}
@@ -249,7 +249,7 @@ export default function Create({mascotas, veterinarios, razas, especies}: create
                     </div>
                     {(mascotas.length > 0) && (
                         <div>
-                            <label> Mascota para la Cita </label>
+                            <label> Mascota Seleccionada </label>
                             <select
                                 value={data.mascota_id}
                                 onChange={(e) => setData('mascota_id', Number(e.target.value))}
@@ -269,7 +269,7 @@ export default function Create({mascotas, veterinarios, razas, especies}: create
                             disabled={processing}
                             className="bg-blue-600 hover:bg-blue-700 text-white"
                         >
-                            {processing ? 'Guardando...' : 'Crear Cita'}
+                            {processing ? 'Guardando...' : 'Solicitar Cita'}
                         </Button>
                         <Link 
                             href={mascotas.length > 0 ? "/citas" : "/dashboard"} 

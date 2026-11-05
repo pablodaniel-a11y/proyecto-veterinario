@@ -100,37 +100,71 @@ class ConsultaController extends Controller
 
         $veterinario = Veterinario::where('user_id', auth()->id())->first();
 
-        $consultas = Consulta::where('veterinario_id', $veterinario->id)
-            ->with(['mascota.cliente', 'mascota.raza.especie', 'detalles_consultas.producto'])
-            ->orderBy('fecha_hora', 'asc')
-            ->when($buscarname !== '', function ($query) use ($buscarname){
-                $query->whereHas('mascota.cliente', function ($q) use ($buscarname){
-                    $q->where('nombre', 'like', "%{$buscarname}%");
-                });
-            })
-            ->when($request->filled('especiebus'), function ($query) use ($especiebus){
-                $query->whereHas('mascota.raza.especie', function ($q) use ($especiebus){
-                    $q->where('id', $especiebus);
-                });
-            })
-            ->when($fechabus !== '', function ($query) use ($fechabus){
-                $query->whereDate('fecha_hora', $fechabus);
-            })
-            ->when($estadobus !== '', function ($query) use ($estadobus){
-                $query->where('estado', $estadobus);
-            })
-            ->paginate($porPagina)
-            ->withQueryString();
+        if (auth()->user()->hasAnyRole(['admin', 'super-admin'])) {
+            $consultas = Consulta::with(['mascota.cliente', 'mascota.raza.especie', 'detalles_consultas.producto'])
+                ->orderBy('fecha_hora', 'asc')
+                ->when($buscarname !== '', function ($query) use ($buscarname){
+                    $query->whereHas('mascota.cliente', function ($q) use ($buscarname){
+                        $q->where('nombre', 'like', "%{$buscarname}%");
+                    });
+                })
+                ->when($request->filled('especiebus'), function ($query) use ($especiebus){
+                    $query->whereHas('mascota.raza.especie', function ($q) use ($especiebus){
+                        $q->where('id', $especiebus);
+                    });
+                })
+                ->when($fechabus !== '', function ($query) use ($fechabus){
+                    $query->whereDate('fecha_hora', $fechabus);
+                })
+                ->when($estadobus !== '', function ($query) use ($estadobus){
+                    $query->where('estado', $estadobus);
+                })
+                ->paginate($porPagina)
+                ->withQueryString();
 
-        $fechasdisponibles= Consulta::where('veterinario_id', $veterinario->id)
-            ->select('fecha_hora')
-            ->distinct()
-            ->get()
-            ->map(function ($consulta) {
-                return Carbon::parse($consulta->fecha_hora)->format('Y-m-d');
-            })
-            ->unique()
-            ->values();
+            $fechasdisponibles= Consulta::select('fecha_hora')
+                ->distinct()
+                ->get()
+                ->map(function ($consulta) {
+                    return Carbon::parse($consulta->fecha_hora)->format('Y-m-d');
+                })
+                ->unique()
+                ->values();
+
+            
+        }else{
+            $consultas = Consulta::where('veterinario_id', $veterinario->id)
+                ->with(['mascota.cliente', 'mascota.raza.especie', 'detalles_consultas.producto'])
+                ->orderBy('fecha_hora', 'asc')
+                ->when($buscarname !== '', function ($query) use ($buscarname){
+                    $query->whereHas('mascota.cliente', function ($q) use ($buscarname){
+                        $q->where('nombre', 'like', "%{$buscarname}%");
+                    });
+                })
+                ->when($request->filled('especiebus'), function ($query) use ($especiebus){
+                    $query->whereHas('mascota.raza.especie', function ($q) use ($especiebus){
+                        $q->where('id', $especiebus);
+                    });
+                })
+                ->when($fechabus !== '', function ($query) use ($fechabus){
+                    $query->whereDate('fecha_hora', $fechabus);
+                })
+                ->when($estadobus !== '', function ($query) use ($estadobus){
+                    $query->where('estado', $estadobus);
+                })
+                ->paginate($porPagina)
+                ->withQueryString();
+
+            $fechasdisponibles= Consulta::where('veterinario_id', $veterinario->id)
+                ->select('fecha_hora')
+                ->distinct()
+                ->get()
+                ->map(function ($consulta) {
+                    return Carbon::parse($consulta->fecha_hora)->format('Y-m-d');
+                })
+                ->unique()
+                ->values();
+        }
 
         $estados= ['pendiente','completado','cancelado'];
 
@@ -161,7 +195,7 @@ class ConsultaController extends Controller
             if (!$cliente || Mascota::where('cliente_id', $cliente->id)->count() === 0) {
                 return redirect()
                     ->route('mascotas.index')
-                    ->with('error', 'Debes registrar al menos una mascota antes de poder solicitar una Consulta.');
+                    ->with('error', 'No puedes realizar una consulta sin antes tener una mascota registrada.');
             }
         }
 
@@ -208,7 +242,7 @@ class ConsultaController extends Controller
 
         return redirect()
             ->route('mascota.consultas', $validated['mascota_id'])
-            ->with('success', 'Se creo correctamente la Consulta');
+            ->with('success', 'Consulta Realizada Correctamente');
 
     }
 
@@ -268,7 +302,7 @@ class ConsultaController extends Controller
 
         return redirect()
             ->route('veterinario.consultas.index')
-            ->with('success', 'La consulta se ha actualizado correctamente.');
+            ->with('success', 'Consulta Atendida Correctamente.');
     }
 
     /**
