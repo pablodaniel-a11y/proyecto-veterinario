@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password; 
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
+ #[Middleware('permission:listar usuarios')]
 class UserController extends Controller
 {
     /**

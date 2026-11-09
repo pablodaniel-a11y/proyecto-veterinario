@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Link, router } from '@inertiajs/react';
-import { Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Head, Link, router } from '@inertiajs/react';
+import { Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, UserPlus } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import FlashMessage from '@/components/FlashMessage';
 import { FormEvent, useState } from 'react';
@@ -59,7 +59,8 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
     const [tipobus,setTiposbus]=useState(filtros?.tipobus ?? '');
     const [orden, setOrden] = useState(filtros?.orden ?? 'nombre_producto'); 
     const [direccion, setDireccion] = useState(filtros?.direccion ?? 'asc');
-    const { can } = useAuth();
+    const {can, user} = useAuth();
+    const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar este Producto?')) {
@@ -107,76 +108,99 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
     }; 
 
     return (
-        <div>
-            <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Catálogo de Productos e Inventario</span></h1>
+        <div className="min-h-screen bg-gray-50 pb-12">
+            <Head title="Productos - Veterinaria Chiquititos" />
+            <div className="bg-orange-200 shadow-sm border-b border-orange-300">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="w-full md:w-1/4 flex justify-start">
+                            {!user && (
+                            <Link 
+                                href="/" 
+                                className="inline-flex items-center gap-2 text-sm font-semibold text-orange-700 hover:text-orange-900 hover:underline transition"
+                            >
+                                ← Volver al inicio
+                            </Link>
+                            )}
+                        </div>
+                        <div className="w-full md:w-2/4 flex flex-col items-center text-center gap-3">
+                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                                Catálogo de Productos e Inventario
+                            </h1>
+                            {can('crear producto') && (
+                                <Button 
+                                    asChild 
+                                    className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
+                                > 
+                                    <Link href={`/productos/create`}>
+                                        <UserPlus className="w-4 h-4 mr-2" />
+                                        Registrar Nuevo Producto
+                                    </Link> 
+                                </Button>
+                            )}
+                        </div>
+                        <div className="w-full md:w-1/4 flex justify-end">
+                            <span className="text-sm font-medium text-slate-700">
+                                Veterinaria Chiquititos
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {can('crear producto') && (
-            <div className="bg-orange-300">
-                <Button 
-                    asChild 
-                    className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
-                > 
-                    <Link href={`/productos/create`}>
-                        Registrar Nuevo Producto
-                    </Link> 
-                </Button>
-            </div>
-            )}
-            <div className="p-4 bg-orange-100 flex justify-center">
-                <form onSubmit={aplicarFiltros} className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4"> 
-                    <input 
-                        type="text" 
-                        value={buscarname} 
-                        onChange={(e) => setBuscarname(e.target.value)} 
-                        placeholder="Ingresar Nombre del Producto..." 
-                    /> 
-                    <select
-                        value={tipobus}
-                        onChange={(e) => setTiposbus(e.target.value)}
+            <div className="bg-orange-100 border-b border-orange-200 py-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+                    <button
+                        onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                        type="button"
+                        className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-colors text-sm"
                     >
-                        <option value="">Todos los Tipos de Productos</option>
-                        {diferentestipos.map((tip, i) => (
-                            <option key={i} value={tip}>
-                                {tip}
-                            </option>
-                        ))}
-                    </select>
-                    <button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white">
-                        Buscar
+                        <svg className={`w-4 h-4 transition-transform duration-200 ${mostrarFiltros ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                        {mostrarFiltros ? 'Ocultar Filtros' : 'Filtrar Profesionales'}
                     </button>
-                </form>
+                    <div className={`w-full transition-all duration-300 ease-in-out overflow-hidden ${mostrarFiltros ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                        <form onSubmit={aplicarFiltros} className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 items-center bg-white/60 p-4 rounded-xl border border-orange-200 shadow-inner">
+                            <input 
+                                type="text" 
+                                value={buscarname} 
+                                onChange={(e) => setBuscarname(e.target.value)} 
+                                placeholder="Ingresar Nombre del Producto..." 
+                                className="w-full sm:flex-1 rounded-lg border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-sm bg-white p-2.5"
+                            />
+                            <select
+                                value={tipobus}
+                                onChange={(e) => setTiposbus(e.target.value)}
+                                className="w-full sm:w-auto rounded-lg border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-sm bg-white p-2.5 min-w-[220px]"
+                            >
+                                <option value="">Todos los Tipos de Productos</option>
+                                {diferentestipos.map((tip, i) => (
+                                    <option key={i} value={tip}>
+                                        {tip}
+                                    </option>
+                                ))}
+                            </select>
+                            <button 
+                                type="submit" 
+                                className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-medium px-6 py-2.5 rounded-lg shadow-sm transition-colors"
+                            >
+                                Aplicar
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div>
-                <p>{mensaje}</p>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                <div className="bg-white border border-gray-200 px-4 py-3 rounded-lg shadow-sm flex items-center justify-between">
+                    <p className="text-sm font-medium text-gray-700">{mensaje}</p>
+                </div>
             </div>
-            {productos.last_page > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-6 max-w-2xl mx-auto"> 
-                {productos.prev_page_url && ( 
-                    <button 
-                        type="button" 
-                        onClick={() => router.get(productos.prev_page_url!)} 
-                    > 
-                        Anterior 
-                    </button> 
-                )} 
- 
-                <span> 
-                    Página {productos.current_page} de {productos.last_page} 
-                </span> 
- 
-                {productos.next_page_url && ( 
-                    <button 
-                        type="button" 
-                        onClick={() => router.get(productos.next_page_url!)} 
-                    > 
-                        Siguiente 
-                    </button> 
-                )} 
-            </div>
-            )}
-            <div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
                 <FlashMessage />
+            </div>
+
+            {/* falta corregir la tabla para adaptarce al celular */}
+            <div>
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -247,6 +271,34 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
                     </TableBody>
                 </Table>
             </div>
+            
+            {productos.last_page > 1 && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-center items-center gap-4 mt-8 bg-white p-4 rounded-xl border border-gray-200 shadow-sm max-w-md mx-auto">
+                        {productos.prev_page_url && ( 
+                            <button 
+                                type="button" 
+                                onClick={() => router.get(productos.prev_page_url!)}
+                                className="px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 text-sm font-semibold rounded-lg transition-colors border border-orange-200"
+                            > 
+                                Anterior 
+                            </button> 
+                        )}
+                        <span className="text-sm font-medium text-gray-700">
+                            Página {productos.current_page} de {productos.last_page} 
+                        </span>
+                        {productos.next_page_url && ( 
+                            <button 
+                                type="button" 
+                                onClick={() => router.get(productos.next_page_url!)} 
+                                className="px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 text-sm font-semibold rounded-lg transition-colors border border-orange-200"
+                            > 
+                                Siguiente 
+                            </button> 
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -10,8 +10,10 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
+Route::get('/agendarcita', function () { return Inertia::render('agendarcita'); })->name('agendar.cita');
 
 Route::get('/veterinarios', [VeterinarioController::class, 'index'])->name('veterinarios.index');
 Route::get('/productos', [ProductoController::class, 'index'])->name('productos.index');

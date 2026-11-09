@@ -8,7 +8,9 @@ use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia; 
 use Inertia\Response; 
 use Spatie\Permission\Models\Permission;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
+ #[Middleware('permission:listar permisos')]
 class PermissionController extends Controller
 {
     

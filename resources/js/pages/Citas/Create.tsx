@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link, useForm } from "@inertiajs/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 import { FormEvent, useMemo } from "react";
 
 type SexoMascota = 'Macho' | 'Hembra';
@@ -60,13 +60,16 @@ interface createProps{
     veterinarios: Veterinario[];
     razas: Raza[];
     especies: Especie[];
+    Urlanterior?: string;
     flash?:
     {
         success?: string;
     }
 }
 
-export default function Create({mascotas, veterinarios, razas, especies}: createProps){
+export default function Create({mascotas, veterinarios, razas, especies, Urlanterior}: createProps){
+
+    const rutaCancelar= Urlanterior || '/agendarcita';
     
     const {data,setData,post,processing,errors} = useForm({
         fecha_hora: '',
@@ -272,7 +275,7 @@ export default function Create({mascotas, veterinarios, razas, especies}: create
                             {processing ? 'Guardando...' : 'Solicitar Cita'}
                         </Button>
                         <Link 
-                            href={mascotas.length > 0 ? "/citas" : "/dashboard"} 
+                            href={rutaCancelar} 
                             className="px-4 py-2 bg-gray-300 rounded-md text-gray-700 text-center flex items-center"
                         >
                             Cancelar

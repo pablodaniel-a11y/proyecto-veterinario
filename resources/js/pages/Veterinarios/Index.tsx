@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Pencil, Plus, Trash2, UserPlus, UserX } from "lucide-react";
 import { useAuth } from '@/hooks/use-auth';
 import FlashMessage from '@/components/FlashMessage';
@@ -84,24 +84,42 @@ export default function Index({veterinarios, especialidades, filtros, flash}: in
 
     return(
         <div className="min-h-screen bg-gray-50 pb-12">
+            <Head title="Profesionales - Veterinaria Chiquititos" />
             <div className="bg-orange-200 shadow-sm border-b border-orange-300">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col justify-between items-center gap-4">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center sm:text-left">
-                        Personal de la Veterinaria
-                    </h1>
-                    { can('crear veterinario') && (
-                    <div className="bg-orange-200 p-2">
-                        <Button 
-                            asChild 
-                            className="bg-orange-600 hover:bg-orange-700 text-white"
-                        > 
-                            <Link href={`/veterinarios/create`}>
-                                <UserPlus className="w-4 h-4 mr-2" />
-                                Incorporar Profesional
-                            </Link> 
-                        </Button>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="w-full md:w-1/4 flex justify-start">
+                            {!user && (
+                            <Link 
+                                href="/" 
+                                className="inline-flex items-center gap-2 text-sm font-semibold text-orange-700 hover:text-orange-900 hover:underline transition"
+                            >
+                                ← Volver al inicio
+                            </Link>
+                            )}
+                        </div>
+                        <div className="w-full md:w-2/4 flex flex-col items-center text-center gap-3">
+                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                                Personal de la Veterinaria
+                            </h1>
+                            {can('crear veterinario') && (
+                                <Button 
+                                    asChild 
+                                    className="bg-orange-600 hover:bg-orange-700 text-white shadow-sm"
+                                > 
+                                    <Link href={`/veterinarios/create`}>
+                                        <UserPlus className="w-4 h-4 mr-2" />
+                                        Incorporar Profesional
+                                    </Link> 
+                                </Button>
+                            )}
+                        </div>
+                        <div className="w-full md:w-1/4 flex justify-end">
+                            <span className="text-sm font-medium text-slate-700">
+                                Veterinaria Chiquititos
+                            </span>
+                        </div>
                     </div>
-                    )}
                 </div>
             </div>
             <div className="bg-orange-100 border-b border-orange-200 py-4">

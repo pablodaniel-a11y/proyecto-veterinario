@@ -194,6 +194,8 @@ class CitaController extends Controller
      */
     public function create()
     {
+        $Urlanterior = url()->previous() ?? route('agendar.cita');
+
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
         if (auth()->check()) {
@@ -217,6 +219,7 @@ class CitaController extends Controller
             'veterinarios' => $veterinarios,
             'razas' => Raza::all(),
             'especies' => Especie::all(),
+            'Urlanterior' => $Urlanterior,
         ]);
     }
 
@@ -292,7 +295,7 @@ class CitaController extends Controller
 
         if(!auth()->check()){
             return redirect()
-                ->route('home')
+                ->route('agendar.cita')
                 ->with('success', 'Turno médico agendado correctamente. Te enviamos los detalles a tu correo.');
         }else{
             return redirect()

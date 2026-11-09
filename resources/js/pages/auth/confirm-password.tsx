@@ -14,8 +14,9 @@ import PasskeyVerify from '@/components/passkey-verify';
 export default function ConfirmPassword() {
     return (
         <>
-            <Head title="Confirm password" />
+            <Head title="Confirmar Contraseña" />
 
+            {/* 
             <PasskeyVerify
                 routes={{
                     options: confirmOptions(),
@@ -25,16 +26,17 @@ export default function ConfirmPassword() {
                 loadingLabel="Confirming..."
                 separator="Or confirm with password"
             />
+            */}
 
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
                     <div className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">Contraseña</Label>
                             <PasswordInput
                                 id="password"
                                 name="password"
-                                placeholder="Password"
+                                placeholder="••••••••"
                                 autoComplete="current-password"
                                 autoFocus
                             />
@@ -44,7 +46,7 @@ export default function ConfirmPassword() {
 
                         <div className="flex items-center">
                             <Button
-                                className="w-full"
+                                className="w-full bg-orange-600"
                                 disabled={processing}
                                 data-test="confirm-password-button"
                             >
@@ -60,7 +62,7 @@ export default function ConfirmPassword() {
 }
 
 ConfirmPassword.layout = {
-    title: 'Confirm password',
+    title: 'Confirmar Contraseña',
     description:
-        'This is a secure area of the application. Please confirm your password before continuing.',
+        'Esta es una zona segura de la aplicación. Por favor, confirme su contraseña antes de continuar.',
 };

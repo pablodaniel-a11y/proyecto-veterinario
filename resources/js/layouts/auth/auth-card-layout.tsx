@@ -26,8 +26,13 @@ export default function AuthCardLayout({
                     href={home()}
                     className="flex items-center gap-2 self-center font-medium"
                 >
-                    <div className="flex h-9 w-9 items-center justify-center">
-                        <AppLogoIcon className="size-9 fill-current text-black dark:text-white" />
+                    <div className="flex items-center justify-center p-2.5 bg-background border border-border shadow-xl">
+                        <img 
+                            src="/storage/imagenes/logo.png" 
+                            alt="Veterinaria Chiquititos" 
+                            className="h-16 w-auto object-contain" 
+                        />
+                        {/*<AppLogoIcon className="size-9 fill-current text-black dark:text-white" />*/}
                     </div>
                 </Link>
 
