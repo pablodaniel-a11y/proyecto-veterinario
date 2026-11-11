@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Head, Link, router } from '@inertiajs/react';
-import { Pencil, Trash2, ArrowUpDown, ArrowUp, ArrowDown, UserPlus } from 'lucide-react';
+import { Pencil, Trash2, UserPlus, ChevronDown, Check } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import FlashMessage from '@/components/FlashMessage';
 import { FormEvent, useState } from 'react';
@@ -61,6 +61,9 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
     const [direccion, setDireccion] = useState(filtros?.direccion ?? 'asc');
     const {can, user} = useAuth();
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
+
+    const [abiertoTipo, setAbiertoTipo] = useState(false);
+    const textoSeleccionado = tipobus === '' ? 'Todos los Tipos de Productos' : tipobus;
 
     const eliminar = (id:number) => {
         if (confirm('¿Está seguro de eliminar este Producto?')) {
@@ -140,9 +143,11 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
                             )}
                         </div>
                         <div className="w-full md:w-1/4 flex justify-end">
+                            {!user && (
                             <span className="text-sm font-medium text-slate-700">
                                 Veterinaria Chiquititos
                             </span>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -159,27 +164,57 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
                         </svg>
                         {mostrarFiltros ? 'Ocultar Filtros' : 'Filtrar Profesionales'}
                     </button>
-                    <div className={`w-full transition-all duration-300 ease-in-out overflow-hidden ${mostrarFiltros ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                    <div className={`w-full transition-all duration-300 ease-in-out ${mostrarFiltros ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 overflow-hidden'}`}>
                         <form onSubmit={aplicarFiltros} className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 items-center bg-white/60 p-4 rounded-xl border border-orange-200 shadow-inner">
                             <input 
                                 type="text" 
                                 value={buscarname} 
                                 onChange={(e) => setBuscarname(e.target.value)} 
                                 placeholder="Ingresar Nombre del Producto..." 
-                                className="w-full sm:flex-1 rounded-lg border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-sm bg-white p-2.5"
+                                className="w-full sm:flex-1 rounded-lg border border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-sm bg-white p-2.5"
                             />
-                            <select
-                                value={tipobus}
-                                onChange={(e) => setTiposbus(e.target.value)}
-                                className="w-full sm:w-auto rounded-lg border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-sm bg-white p-2.5 min-w-[220px]"
-                            >
-                                <option value="">Todos los Tipos de Productos</option>
-                                {diferentestipos.map((tip, i) => (
-                                    <option key={i} value={tip}>
-                                        {tip}
-                                    </option>
-                                ))}
-                            </select>
+                            <div className="relative w-full sm:w-auto min-w-[220px]">
+                                <div 
+                                    onClick={() => setAbiertoTipo(!abiertoTipo)}
+                                    className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500 hover:border-orange-400 transition"
+                                >
+                                    <span className={`truncate ${tipobus === '' ? 'text-gray-500' : 'text-gray-900 font-medium'}`}>
+                                        {textoSeleccionado}
+                                    </span>
+                                    <ChevronDown className={`w-4 h-4 text-gray-400 ml-2 shrink-0 transition-transform duration-200 ${abiertoTipo ? 'rotate-180' : ''}`} />
+                                </div>
+                                {abiertoTipo && (
+                                    <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg overflow-hidden py-1">
+                                        <div
+                                            onClick={() => {
+                                                setTiposbus('');
+                                                setAbiertoTipo(false);
+                                            }}
+                                            className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 transition-colors ${
+                                                tipobus === '' ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                            }`}
+                                        >
+                                            <span>Todos los Tipos de Productos</span>
+                                            {tipobus === '' && <Check className="w-4 h-4 text-orange-600" />}
+                                        </div>
+                                        {diferentestipos.map((tip, i) => (
+                                            <div
+                                                key={i}
+                                                onClick={() => {
+                                                    setTiposbus(tip);
+                                                    setAbiertoTipo(false);
+                                                }}
+                                                className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 transition-colors ${
+                                                    tipobus === tip ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                                }`}
+                                            >
+                                                <span>{tip}</span>
+                                                {tipobus === tip && <Check className="w-4 h-4 text-orange-600" />}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                             <button 
                                 type="submit" 
                                 className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-medium px-6 py-2.5 rounded-lg shadow-sm transition-colors"
@@ -199,77 +234,138 @@ export default function Index({productos, filtros, diferentestipos, flash}: inde
                 <FlashMessage />
             </div>
 
-            {/* falta corregir la tabla para adaptarce al celular */}
             <div>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead
-                                className="cursor-pointer select-none hover:bg-orange-50"
-                                onClick={(e) => ordenarPor('nombre_producto')}
-                            >
-                                Nombre del Producto {indicadorOrden('nombre_producto')}
-                            </TableHead>
-                            <TableHead>Tipo del Producto</TableHead>
-                            <TableHead 
-                                className="w-[120px] cursor-pointer select-none hover:bg-orange-50" 
-                                onClick={(e) => ordenarPor('precio_venta')}
-                            >
-                                Precio {indicadorOrden('precio_venta')}
-                            </TableHead>
-                            <TableHead 
-                                className="w-[140px] cursor-pointer select-none hover:bg-orange-50"
-                                onClick={(e) => ordenarPor('stock_actual')}
-                            >
-                                Stock Actual {indicadorOrden('stock_actual')}
-                            </TableHead>
-                            {(can('editar producto')||can('eliminar producto')) && (<TableHead className="w-[140px]">Acciones</TableHead>)}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {productos.data.map((producto) => (
-                            <TableRow key={producto.id}>
-                                <TableCell className="font-medium">
-                                    {producto.nombre_producto}
-                                </TableCell>
-
-                                <TableCell className="text-muted-foreground text-sm">
-                                    {producto.tipo_producto}
-                                </TableCell>
-
-                                <TableCell className="text-muted-foreground text-sm">
-                                    {producto.precio_venta}
-                                </TableCell>
-                                
-                                <TableCell className="text-muted-foreground text-sm">
-                                    {producto.stock_actual}
-                                </TableCell>
-                                
+                <div className="hidden md:block rounded-xl border border-orange-200 bg-white shadow-sm overflow-hidden">
+                    <Table>
+                        <TableHeader className="bg-orange-50/50">
+                            <TableRow>
+                                <TableHead
+                                    className="cursor-pointer select-none hover:bg-orange-100 font-semibold text-orange-900"
+                                    onClick={() => ordenarPor('nombre_producto')}
+                                >
+                                    Nombre del Producto {indicadorOrden('nombre_producto')}
+                                </TableHead>
+                                <TableHead className="font-semibold text-orange-900">Tipo del Producto</TableHead>
+                                <TableHead 
+                                    className="w-[120px] cursor-pointer select-none hover:bg-orange-100 font-semibold text-orange-900" 
+                                    onClick={() => ordenarPor('precio_venta')}
+                                >
+                                    Precio {indicadorOrden('precio_venta')}
+                                </TableHead>
                                 {(can('editar producto')||can('eliminar producto')) && (
-                                <TableCell>
-                                    <div className="flex  items-center gap-1">
-
-                                        <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-400 hover:text-white" asChild>
-                                            <Link href={`/productos/${producto.id}/edit`}>
-                                                <Pencil className="h-4 w-4" />
-                                            </Link>
-                                        </Button>
-
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="h-8 w-8 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                                            onClick={() => eliminar(producto.id)}
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
+                                    <TableHead 
+                                        className="w-[140px] cursor-pointer select-none hover:bg-orange-100 font-semibold text-orange-900"
+                                        onClick={() => ordenarPor('stock_actual')}
+                                    >
+                                        Stock Actual {indicadorOrden('stock_actual')}
+                                    </TableHead>
+                                )}
+                                {(can('editar producto')||can('eliminar producto')) && (
+                                    <TableHead className="w-[140px] text-right font-semibold text-orange-900">Acciones</TableHead>
                                 )}
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                        </TableHeader>
+                        <TableBody>
+                            {productos.data.map((producto) => (
+                                <TableRow key={producto.id} className="hover:bg-orange-50/30 transition-colors">
+                                    <TableCell className="font-medium text-gray-900">
+                                        {producto.nombre_producto}
+                                    </TableCell>
+                                    <TableCell className="text-muted-foreground text-sm">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                            {producto.tipo_producto}
+                                        </span>
+                                    </TableCell>
+                                    <TableCell className="text-gray-700 font-medium text-sm">
+                                        ${producto.precio_venta}
+                                    </TableCell>
+                                    {(can('editar producto')||can('eliminar producto')) && (
+                                        <TableCell className="text-muted-foreground text-sm font-medium">
+                                            <span className={producto.stock_actual <= 5 ? 'text-red-600 font-bold' : ''}>
+                                                {producto.stock_actual} un.
+                                            </span>
+                                        </TableCell>
+                                    )}
+                                    {(can('editar producto')||can('eliminar producto')) && (
+                                        <TableCell className="text-right">
+                                            <div className="flex items-center justify-end gap-1">
+                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-orange-600 hover:bg-orange-100" asChild>
+                                                    <Link href={`/productos/${producto.id}/edit`}>
+                                                        <Pencil className="h-4 w-4" />
+                                                    </Link>
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                                                    onClick={() => eliminar(producto.id)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:hidden">
+                    {productos.data.map((producto) => (
+                        <div 
+                            key={producto.id} 
+                            className="bg-white rounded-xl border border-orange-200 p-4 shadow-sm flex flex-col gap-3 relative hover:border-orange-300 transition-all"
+                        >
+                            <div className="flex justify-between items-start gap-2">
+                                <div>
+                                    <span className="text-xs font-semibold text-orange-600 uppercase tracking-wider">
+                                        {producto.tipo_producto}
+                                    </span>
+                                    <h3 className="font-bold text-gray-900 text-base mt-0.5">
+                                        {producto.nombre_producto}
+                                    </h3>
+                                </div>
+                                <div className="text-right bg-orange-50 px-2.5 py-1 rounded-lg border border-orange-100">
+                                    <span className="text-xs text-gray-500 block">Precio</span>
+                                    <span className="font-bold text-orange-700 text-sm">${producto.precio_venta}</span>
+                                </div>
+                            </div>
+                            {(can('editar producto') || can('eliminar producto')) && (
+                                <div className="flex items-center justify-between text-sm text-gray-600 pt-2 border-t border-gray-100">
+                                    <span>Stock disponible:</span>
+                                    <span className={`font-bold ${producto.stock_actual <= 5 ? 'text-red-600' : 'text-gray-800'}`}>
+                                        {producto.stock_actual} unidades
+                                    </span>
+                                </div>
+                            )}
+                            {(can('editar producto') || can('eliminar producto')) && (
+                                <div className="flex items-center gap-2 pt-2 border-t border-gray-100 mt-1">
+                                    <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="w-1/2 border-orange-200 text-orange-700 hover:bg-orange-50" 
+                                        asChild
+                                    >
+                                        <Link href={`/productos/${producto.id}/edit`}>
+                                            <Pencil className="h-4 w-4 mr-1.5" />
+                                            Editar
+                                        </Link>
+                                    </Button>
+
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-1/2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                                        onClick={() => eliminar(producto.id)}
+                                    >
+                                        <Trash2 className="h-4 w-4 mr-1.5" />
+                                        Eliminar
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
             </div>
             
             {productos.last_page > 1 && (

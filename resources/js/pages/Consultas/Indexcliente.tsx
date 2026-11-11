@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Link, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import FlashMessage from '@/components/FlashMessage';
 import { FormEvent, useState } from "react";
 
@@ -129,7 +129,15 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
 
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-50 pb-12">
+            <Head title="Atencion y Consultas - Veterinaria Chiquititos" />
+            <div className="bg-orange-200 shadow-sm border-b border-orange-300">
+                <div className="w-full flex justify-center items-center py-4 text-center">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                        Atenciones y Consultas de: {mascota.nombre}
+                    </h1>
+                </div>
+            </div>
             <div className="h-15 flex bg-orange-200">
                 <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Atenciones y Consultas de: {mascota.nombre}</span></h1>
             </div>
