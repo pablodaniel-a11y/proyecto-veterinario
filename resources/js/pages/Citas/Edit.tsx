@@ -97,74 +97,86 @@ export default function Edit({veterinarios, cita, estados}: editProps){
     };
 
     return (
-        <div>
-            <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Gestionar Turno</span></h1>
-            </div>
-            <div className="min-h-screen flex bg-gray-100">
-                <form className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4" onSubmit={submit}>
-                    <div>
-                        <label> Fechas Disponibles (Si es necesario):  </label>
-                        <select
-                            value={data.fecha_hora}
-                            onChange={(e) => setData('fecha_hora', e.target.value)}
-                            className="w-full border rounded p-2 mt-1"
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-12 w-full">
+            <div className="bg-white border border-orange-200 rounded-xl p-6 sm:p-8 shadow-sm">
+                <div className="border-b border-orange-100 pb-4 mb-6">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                        Gestionar Turno
+                    </h1>
+                    <p className="text-sm text-gray-500 mt-1">Modifica los campos necesarios y guarda los cambios de la cita.</p>
+                </div>
+                <form onSubmit={submit} className="space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Fecha y Hora (Si es necesario):</label>
+                            <select
+                                value={data.fecha_hora}
+                                onChange={(e) => setData('fecha_hora', e.target.value)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            >
+                                {fechasDisponibles.map((fecha, index) => (
+                                    <option key={index} value={fecha}>
+                                        {fecha}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.fecha_hora && <span className="text-red-500 text-xs mt-0.5">{errors.fecha_hora}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Estado del Turno:</label>
+                            <select
+                                value={data.estado}
+                                onChange={(e) => setData('estado', e.target.value as Estados)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            >
+                                {estados.map((est) => (
+                                    <option key={est} value={est}>
+                                        {est}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.estado && <span className="text-red-500 text-xs mt-0.5">{errors.estado}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5 sm:col-span-2">
+                            <label className="text-sm font-semibold text-gray-700">Veterinario Asignado</label>
+                            <select
+                                value={data.veterinario_id}
+                                onChange={(e) => setData('veterinario_id', Number(e.target.value))}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            >
+                                {veterinarios.map((vet) => (
+                                    <option key={vet.id} value={vet.id}>
+                                        {vet.user.name} — Especialidad: {vet.especialidad}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.veterinario_id && <span className="text-red-500 text-xs mt-0.5">{errors.veterinario_id}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5 sm:col-span-2">
+                            <label className="text-sm font-semibold text-gray-700">Motivo de la Cita:</label>
+                            <textarea
+                                value={data.motivo}
+                                onChange={(e) => setData('motivo', e.target.value)}
+                                rows={3}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            />
+                            {errors.motivo && <span className="text-red-500 text-xs mt-0.5">{errors.motivo}</span>}
+                        </div>
+                    </div>
+                    <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-6 border-t border-orange-100 mt-6">
+                        <Link 
+                            href="/citas/admin" 
+                            className="w-full sm:w-auto px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-semibold text-center transition-colors"
                         >
-                            {fechasDisponibles.map((fecha, index) => (
-                                <option key={index} value={fecha}>
-                                    {fecha}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.fecha_hora && <span className="text-red-500 text-sm">{errors.fecha_hora}</span>}
-                    </div>
-                    <div>
-                        <label> Motivo de la Cita:  </label>
-                        <textarea
-                            value={data.motivo}
-                            onChange={(e) => setData('motivo', e.target.value)}
-                            className="w-full border rounded p-2"
-                        />
-                        {errors.motivo && <span className="text-red-500 text-sm">{errors.motivo}</span>}
-                    </div>
-                    <div>
-                        <label> Veterinarios Disponibles </label>
-                        <select
-                            value={data.veterinario_id}
-                            onChange={(e) => setData('veterinario_id', Number(e.target.value))}
-                        >
-                            {veterinarios.map((vet) => (
-                                <option key={vet.id} value={vet.id}>
-                                    Nombre: {vet.user.name} y Especialidad: {vet.especialidad}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div>
-                        <label> Estado: </label>
-                        <select
-                            value={data.estado}
-                            onChange={(e) => setData('estado', e.target.value as Estados)}
-                        >
-                            {estados.map((est) => (
-                                <option key={est} value={est}>
-                                    {est}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.estado && <span className="text-red-500 text-sm">{errors.estado}</span> }
-                    </div>
-                    <div className="flex gap-4 mt-4">
+                            Cancelar
+                        </Link>
                         <Button 
                             type="submit" 
                             disabled={processing}
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white shadow-sm font-semibold text-sm px-5 py-2"
                         >
-                            {processing ? 'Guardando...' : 'Confirmar'}
+                            {processing ? 'Actualizando...' : 'Confirmar Cambios'}
                         </Button>
-                        <Link href="/citas/admin" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">
-                            Cancelar
-                        </Link>
                     </div>
                 </form>
             </div>

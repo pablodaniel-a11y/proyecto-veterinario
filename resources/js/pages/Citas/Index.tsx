@@ -105,8 +105,8 @@ export default function Index({citas, filtros, estados, fechasdisponibles, masco
     const [fechabus, setFechabus] = useState(filtros?.fechabus ?? ''); 
     const [estadobus, setEstadobus] = useState(filtros?.estadobus ?? '');
     const [vetbus, setVetbus] = useState(filtros?.vetbus ?? '');
+
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
-    const [abiertoTipo, setAbiertoTipo] = useState(false);
 
     const [busquedaMascota, setBusquedaMascota] = useState(filtros?.mascotabus ?? '');
     const [abiertoMascota, setAbiertoMascota] = useState(false);
@@ -181,240 +181,234 @@ export default function Index({citas, filtros, estados, fechasdisponibles, masco
                         </svg>
                         {mostrarFiltros ? 'Ocultar Filtros' : 'Filtrar Profesionales'}
                     </button>
-                    <div className={`w-full grid transition-all duration-300 ease-in-out ${mostrarFiltros ? 'grid-rows-[1fr] opacity-100 mt-4' : 'grid-rows-[0fr] opacity-0 overflow-hidden'}`}>
-                        <div className="overflow-hidden">
-                        <form onSubmit={aplicarFiltros} className="max-w-4xl mx-auto bg-white/70 p-5 rounded-xl border border-orange-200 shadow-inner flex flex-col gap-4">
-                            <div className="relative w-full lg:flex-1 min-w-[220px]">
-                                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Buscar por Mascota</label>
-                                <div 
-                                    onClick={() => setAbiertoMascota(!abiertoMascota)}
-                                    className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500"
-                                >
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar o filtrar mascotas..."
-                                        value={busquedaMascota}
-                                        onChange={(e) => {
-                                            setBusquedaMascota(e.target.value);
-                                            setAbiertoMascota(true);
-                                            if (e.target.value === '') {setMascotabus('')};
-                                        }}
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="w-full outline-none bg-transparent cursor-text text-sm"
-                                    />
-                                    <ChevronDown className="w-4 h-4 text-gray-400 ml-2 shrink-0" />
-                                </div>
-
-                                {abiertoMascota && (
-                                    <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                        <div
-                                            onClick={() => {
-                                                setMascotabus('');
-                                                setBusquedaMascota('');
-                                                setAbiertoMascota(false);
+                    {mostrarFiltros && (
+                        <div className="w-full mt-4 transition-all duration-300 ease-in-out">
+                            <form onSubmit={aplicarFiltros} className="max-w-4xl mx-auto bg-white/70 p-5 rounded-xl border border-orange-200 shadow-inner flex flex-col gap-4">
+                                <div className="relative w-full lg:flex-1 min-w-[220px]">
+                                    <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Buscar por Mascota</label>
+                                    <div 
+                                        onClick={() => setAbiertoMascota(!abiertoMascota)}
+                                        className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500"
+                                    >
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar o filtrar mascotas..."
+                                            value={busquedaMascota}
+                                            onChange={(e) => {
+                                                setBusquedaMascota(e.target.value);
+                                                setAbiertoMascota(true);
+                                                if (e.target.value === '') {setMascotabus('')};
                                             }}
-                                            className="px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer font-medium border-b border-gray-100"
-                                        >
-                                            Todas las Mascotas
-                                        </div>
-
-                                        {mascotasFiltradas.length === 0 ? (
-                                            <div className="px-3 py-2 text-sm text-gray-400 text-center">
-                                                No se encontraron mascotas
-                                            </div>
-                                        ) : (
-                                            mascotasFiltradas.map((mas, i) => (
-                                                <div
-                                                    key={i}
-                                                    onClick={() => {
-                                                        setMascotabus(mas.nombre);
-                                                        setBusquedaMascota(mas.nombre);
-                                                        setAbiertoMascota(false);
-                                                    }}
-                                                    className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 ${
-                                                        mascotabus === mas.nombre ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
-                                                    }`}
-                                                >
-                                                    <span>{mas.nombre}</span>
-                                                    {mascotabus === mas.nombre && <Check className="w-4 h-4 text-orange-600" />}
-                                                </div>
-                                            ))
-                                        )}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="w-full outline-none bg-transparent cursor-text text-sm"
+                                        />
+                                            <ChevronDown className="w-4 h-4 text-gray-400 ml-2 shrink-0" />
                                     </div>
-                                )}
-                            </div>
-                            <div className="relative w-full lg:flex-1 min-w-[220px]">
-                                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Veterinario</label>
-                                <div 
-                                    onClick={() => setAbiertoVet(!abiertoVet)}
-                                    className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500"
-                                >
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar o filtrar veterinarios..."
-                                        value={busquedaVet}
-                                        onChange={(e) => {
-                                            setBusquedaVet(e.target.value);
-                                            setAbiertoVet(true);
-                                            if (e.target.value === '') {setVetbus('')};
-                                        }}
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="w-full outline-none bg-transparent cursor-text text-sm"
-                                    />
-                                    <ChevronDown className="w-4 h-4 text-gray-400 ml-2 shrink-0" />
-                                </div>
-
-                                {abiertoVet && (
-                                    <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                        <div
-                                            onClick={() => {
-                                                setVetbus('');
-                                                setBusquedaVet('');
-                                                setAbiertoVet(false);
-                                            }}
-                                            className="px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer font-medium border-b border-gray-100"
-                                        >
-                                            Todos los Veterinarios
-                                        </div>
-
-                                        {veterinariosFiltrados.length === 0 ? (
-                                            <div className="px-3 py-2 text-sm text-gray-400 text-center">
-                                                No se encontraron Veterinarios
-                                            </div>
-                                        ) : (
-                                            veterinariosFiltrados.map((v, i) => (
-                                                <div
-                                                    key={i}
-                                                    onClick={() => {
-                                                        setVetbus(v.user.name);
-                                                        setBusquedaVet(v.user.name);
-                                                        setAbiertoVet(false);
-                                                    }}
-                                                    className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 ${
-                                                        vetbus === v.user.name ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
-                                                    }`}
-                                                >
-                                                    <span>{v.user.name}</span>
-                                                    {vetbus === v.user.name && <Check className="w-4 h-4 text-orange-600" />}
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="relative w-full lg:flex-1 min-w-[220px]">
-                                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Fecha</label>
-                                <div 
-                                    onClick={() => setAbiertoFecha(!abiertoFecha)}
-                                    className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500"
-                                >
-                                    <input
-                                        type="text"
-                                        placeholder="Buscar fecha (ej: 2026)..."
-                                        value={busquedaFecha}
-                                        onChange={(e) => {
-                                            setBusquedaFecha(e.target.value);
-                                            setAbiertoFecha(true);
-                                            if (e.target.value === '') { setFechabus(''); }
-                                        }}
-                                        onClick={(e) => e.stopPropagation()}
-                                        className="w-full outline-none bg-transparent cursor-text text-sm"
-                                    />
-                                    <ChevronDown className="w-4 h-4 text-gray-400 ml-2 shrink-0" />
-                                </div>
-
-                                {abiertoFecha && (
-                                    <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                                        <div
-                                            onClick={() => {
-                                                setFechabus('');
-                                                setBusquedaFecha('');
-                                                setAbiertoFecha(false);
-                                            }}
-                                            className="px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer font-medium border-b border-gray-100"
-                                        >
-                                            Todas las Fechas Realizadas
-                                        </div>
-
-                                        {fechasFiltradas.length === 0 ? (
-                                            <div className="px-3 py-2 text-sm text-gray-400 text-center">
-                                                No se encontraron fechas
-                                            </div>
-                                        ) : (
-                                            fechasFiltradas.map((fech, i) => (
-                                                <div
-                                                    key={i}
-                                                    onClick={() => {
-                                                        setFechabus(fech);
-                                                        setBusquedaFecha(fech);
-                                                        setAbiertoFecha(false);
-                                                    }}
-                                                    className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 ${
-                                                        fechabus === fech ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
-                                                    }`}
-                                                >
-                                                    <span>{fech}</span>
-                                                    {fechabus === fech && <Check className="w-4 h-4 text-orange-600" />}
-                                                </div>
-                                            ))
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="relative w-full lg:flex-1 min-w-[200px]">
-                                <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Estado</label>
-                                <div 
-                                    onClick={() => setAbiertoEstado(!abiertoEstado)}
-                                    className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500 hover:border-orange-400 transition"
-                                >
-                                    <span className={`truncate ${estadobus === '' ? 'text-gray-500' : 'text-gray-900 font-medium'}`}>
-                                        {textoSeleccionado}
-                                    </span>
-                                    <ChevronDown className={`w-4 h-4 text-gray-400 ml-2 shrink-0 transition-transform duration-200 ${abiertoTipo ? 'rotate-180' : ''}`} />
-                                </div>
-                                {abiertoEstado && (
-                                    <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg overflow-hidden py-1">
-                                        <div
-                                            onClick={() => {
-                                                setEstadobus('');
-                                                setAbiertoEstado(false);
-                                            }}
-                                            className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 transition-colors ${
-                                                estadobus === '' ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
-                                            }`}
-                                        >
-                                            <span>Todos los Estados</span>
-                                            {estadobus === '' && <Check className="w-4 h-4 text-orange-600" />}
-                                        </div>
-                                        {estados.map((es, i) => (
+                                    {abiertoMascota && (
+                                        <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                             <div
-                                                key={i}
                                                 onClick={() => {
-                                                    setEstadobus(es);
+                                                    setMascotabus('');
+                                                    setBusquedaMascota('');
+                                                    setAbiertoMascota(false);
+                                                }}
+                                                className="px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer font-medium border-b border-gray-100"
+                                            >
+                                                Todas las Mascotas
+                                            </div>
+                                            {mascotasFiltradas.length === 0 ? (
+                                                <div className="px-3 py-2 text-sm text-gray-400 text-center">
+                                                    No se encontraron mascotas
+                                                </div>
+                                            ) : (
+                                                mascotasFiltradas.map((mas, i) => (
+                                                    <div
+                                                        key={i}
+                                                        onClick={() => {
+                                                            setMascotabus(mas.nombre);
+                                                            setBusquedaMascota(mas.nombre);
+                                                            setAbiertoMascota(false);
+                                                        }}
+                                                        className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 ${
+                                                            mascotabus === mas.nombre ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                                        }`}
+                                                    >
+                                                        <span>{mas.nombre}</span>
+                                                        {mascotabus === mas.nombre && <Check className="w-4 h-4 text-orange-600" />}
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="relative w-full lg:flex-1 min-w-[220px]">
+                                    <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Veterinario</label>
+                                    <div 
+                                        onClick={() => setAbiertoVet(!abiertoVet)}
+                                        className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500"
+                                    >
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar o filtrar veterinarios..."
+                                            value={busquedaVet}
+                                            onChange={(e) => {
+                                                setBusquedaVet(e.target.value);
+                                                setAbiertoVet(true);
+                                                if (e.target.value === '') {setVetbus('')};
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="w-full outline-none bg-transparent cursor-text text-sm"
+                                        />
+                                        <ChevronDown className="w-4 h-4 text-gray-400 ml-2 shrink-0" />
+                                    </div>
+                                    {abiertoVet && (
+                                        <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                            <div
+                                                onClick={() => {
+                                                    setVetbus('');
+                                                    setBusquedaVet('');
+                                                    setAbiertoVet(false);
+                                                }}
+                                                className="px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer font-medium border-b border-gray-100"
+                                            >
+                                                Todos los Veterinarios
+                                            </div>
+                                            {veterinariosFiltrados.length === 0 ? (
+                                                <div className="px-3 py-2 text-sm text-gray-400 text-center">
+                                                    No se encontraron Veterinarios
+                                                </div>
+                                            ):(
+                                                veterinariosFiltrados.map((v, i) => (
+                                                    <div
+                                                        key={i}
+                                                        onClick={() => {
+                                                            setVetbus(v.user.name);
+                                                            setBusquedaVet(v.user.name);
+                                                            setAbiertoVet(false);
+                                                        }}
+                                                        className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 ${
+                                                            vetbus === v.user.name ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                                        }`}
+                                                    >
+                                                        <span>{v.user.name}</span>
+                                                        {vetbus === v.user.name && <Check className="w-4 h-4 text-orange-600" />}
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="relative w-full lg:flex-1 min-w-[220px]">
+                                    <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Fecha</label>
+                                    <div 
+                                        onClick={() => setAbiertoFecha(!abiertoFecha)}
+                                        className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500"
+                                    >
+                                        <input
+                                            type="text"
+                                            placeholder="Buscar fecha (ej: 2026)..."
+                                            value={busquedaFecha}
+                                            onChange={(e) => {
+                                                setBusquedaFecha(e.target.value);
+                                                setAbiertoFecha(true);
+                                                if (e.target.value === '') { setFechabus(''); }
+                                            }}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="w-full outline-none bg-transparent cursor-text text-sm"
+                                        />
+                                        <ChevronDown className="w-4 h-4 text-gray-400 ml-2 shrink-0" />
+                                    </div>
+                                    {abiertoFecha && (
+                                        <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                            <div
+                                                onClick={() => {
+                                                    setFechabus('');
+                                                    setBusquedaFecha('');
+                                                    setAbiertoFecha(false);
+                                                }}
+                                                className="px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer font-medium border-b border-gray-100"
+                                            >
+                                                Todas las Fechas Realizadas
+                                            </div>
+                                            {fechasFiltradas.length === 0 ? (
+                                                <div className="px-3 py-2 text-sm text-gray-400 text-center">
+                                                    No se encontraron fechas
+                                                </div>
+                                            ) : (
+                                                fechasFiltradas.map((fech, i) => (
+                                                    <div
+                                                        key={i}
+                                                        onClick={() => {
+                                                            setFechabus(fech);
+                                                            setBusquedaFecha(fech);
+                                                            setAbiertoFecha(false);
+                                                        }}
+                                                        className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 ${
+                                                            fechabus === fech ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                                        }`}
+                                                    >
+                                                        <span>{fech}</span>
+                                                        {fechabus === fech && <Check className="w-4 h-4 text-orange-600" />}
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="relative w-full lg:flex-1 min-w-[200px]">
+                                    <label className="block text-xs font-semibold text-gray-700 uppercase mb-1">Estado</label>
+                                    <div 
+                                        onClick={() => setAbiertoEstado(!abiertoEstado)}
+                                        className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500 hover:border-orange-400 transition"
+                                    >
+                                        <span className={`truncate ${estadobus === '' ? 'text-gray-500' : 'text-gray-900 font-medium'}`}>
+                                            {textoSeleccionado}
+                                        </span>
+                                        <ChevronDown className={`w-4 h-4 text-gray-400 ml-2 shrink-0 transition-transform duration-200 ${abiertoEstado ? 'rotate-180' : ''}`} />
+                                    </div>
+                                    {abiertoEstado && (
+                                        <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg overflow-hidden py-1">
+                                            <div
+                                                onClick={() => {
+                                                    setEstadobus('');
                                                     setAbiertoEstado(false);
                                                 }}
                                                 className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 transition-colors ${
-                                                    estadobus === es ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                                    estadobus === '' ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
                                                 }`}
                                             >
-                                                <span>{es}</span>
-                                                {estadobus === es && <Check className="w-4 h-4 text-orange-600" />}
+                                                <span>Todos los Estados</span>
+                                                {estadobus === '' && <Check className="w-4 h-4 text-orange-600" />}
                                             </div>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="pt-2 flex justify-end">
-                                <button 
-                                    type="submit" 
-                                    className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-medium px-8 py-2.5 rounded-lg shadow-sm transition-colors"
-                                >
-                                    Aplicar
-                                </button>   
-                            </div>
-                        </form>
+                                            {estados.map((es, i) => (
+                                                <div
+                                                    key={i}
+                                                    onClick={() => {
+                                                        setEstadobus(es);
+                                                        setAbiertoEstado(false);
+                                                    }}
+                                                    className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 transition-colors ${
+                                                        estadobus === es ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                                    }`}
+                                                >
+                                                    <span>{es}</span>
+                                                    {estadobus === es && <Check className="w-4 h-4 text-orange-600" />}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="pt-2 flex justify-end">
+                                    <button 
+                                        type="submit" 
+                                        className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-medium px-8 py-2.5 rounded-lg shadow-sm transition-colors"
+                                    >
+                                        Aplicar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">

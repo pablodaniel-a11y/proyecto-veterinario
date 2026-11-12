@@ -31,69 +31,77 @@ export default function Edit({producto,  tiposProductosList}: editProps){
     }
 
     return(
-        <div>
-            <div className="h-15 flex bg-orange-200">
-                <h1 className="p-4 mx-auto text-[20px]"><span className="font-bold">Actualizar Producto: {producto.nombre_producto} </span></h1>
-            </div>
-            <div>
-
-            </div>
-            <div className="min-h-screen flex bg-gray-100">
-                <form className="w-full max-w-2xl mx-auto mt-4 flex flex-col gap-4" onSubmit={submit}>
-                    <div>
-                        <label> Nombre del Producto </label>
-                        <input
-                            type='text'
-                            value={data.nombre_producto}
-                            onChange={(e) => setData('nombre_producto', e.target.value)}
-                        />
-                        {errors.nombre_producto && <span className="text-red-500 text-sm">{errors.nombre_producto}</span>}
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-12 w-full">
+            <div className="bg-white border border-orange-200 rounded-xl p-6 sm:p-8 shadow-sm">
+                <div className="border-b border-orange-100 pb-4 mb-6">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+                        Actualizar Producto: <span className="text-orange-600 text-lg font-normal block sm:inline">{producto.nombre_producto}</span>
+                    </h1>
+                    <p className="text-sm text-gray-500 mt-1">Modifica los campos necesarios y guarda los cambios.</p>
+                </div>
+                <form onSubmit={submit} className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Nombre del Producto</label>
+                            <input
+                                type="text"
+                                value={data.nombre_producto}
+                                onChange={(e) => setData('nombre_producto', e.target.value)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            />
+                            {errors.nombre_producto && <span className="text-red-500 text-xs mt-0.5">{errors.nombre_producto}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Tipo Producto</label>
+                            <select
+                                value={data.tipo_producto}
+                                onChange={(e) => setData('tipo_producto', e.target.value as tipoproductos)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            >
+                                <option value="" disabled>Seleccione un tipo</option>
+                                {tiposProductosList.map((tipo) => (
+                                    <option key={tipo} value={tipo}>
+                                        {tipo}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.tipo_producto && <span className="text-red-500 text-xs mt-0.5">{errors.tipo_producto}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Precio Venta</label>
+                            <input
+                                type='number'
+                                value={data.precio_venta}
+                                onChange={(e) => setData('precio_venta', Number(e.target.value))}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            />
+                            {errors.precio_venta && <span className="text-red-500 text-xs mt-0.5">{errors.precio_venta}</span>}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Stock Actual</label>
+                            <input
+                                type='number'
+                                value={data.stock_actual}
+                                onChange={(e) => setData('stock_actual', Number(e.target.value))}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            />
+                            {errors.stock_actual && <span className="text-red-500 text-xs mt-0.5">{errors.stock_actual}</span>}
+                        </div>
                     </div>
-                    <div>
-                        <label> Tipo Producto </label>
-                        <select
-                            value={data.tipo_producto}
-                            onChange={(e) => setData('tipo_producto', e.target.value as tipoproductos)}
+                    <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-6 border-t border-orange-100 mt-6">
+                        <Link 
+                            href="/productos" 
+                            className="w-full sm:w-auto px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-semibold text-center transition-colors"
                         >
-                            <option value="" disabled>Seleccione un tipo</option>
-                            {tiposProductosList.map((tipo) => (
-                                <option key={tipo} value={tipo}>
-                                    {tipo}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.tipo_producto && <span className="text-red-500 text-sm">{errors.tipo_producto}</span>}
-                    </div>
-                    <div>
-                        <label> Precio Venta </label>
-                        <input
-                            type='number'
-                            value={data.precio_venta}
-                            onChange={(e) => setData('precio_venta', Number(e.target.value))}
-                        />
-                        {errors.precio_venta && <span className="text-red-500 text-sm">{errors.precio_venta}</span>}
-                    </div>
-                    <div>
-                        <label> Precio Venta </label>
-                        <input
-                            type='number'
-                            value={data.stock_actual}
-                            onChange={(e) => setData('stock_actual', Number(e.target.value))}
-                        />
-                        {errors.stock_actual && <span className="text-red-500 text-sm">{errors.stock_actual}</span>}
-                    </div>
-                    <div className="flex gap-4 mt-4">
+                            Cancelar
+                        </Link>
                         <Button 
                             type="submit" 
                             disabled={processing}
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white shadow-sm font-semibold text-sm px-5 py-2"
                         >
-                            {processing ? 'Guardando...' : 'Actualizar'}
+                            {processing ? 'Actualizando...' : 'Actualizar Cambios'}
                         </Button>
-                        
-                        <Link href="/productos" className="px-4 py-2 bg-gray-300 rounded-md text-gray-700">
-                            Cancelar
-                        </Link>
                     </div>
                 </form>
             </div>
