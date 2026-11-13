@@ -21,8 +21,29 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'veterinarioPrueba',
-            'email' => 'algo2@algo2.com',
+            'name' => 'veterinarioPrueba1',
+            'email' => 'vp1@vp1.com',
+            'email_verified_at' => now(),
+            'password' => bcrypt('1234'),
+        ]);
+
+        User::create([
+            'name' => 'veterinarioPrueba2',
+            'email' => 'vp2@vp2.com',
+            'email_verified_at' => now(),
+            'password' => bcrypt('1234'),
+        ]);
+
+        User::create([
+            'name' => 'veterinarioPrueba3',
+            'email' => 'vp3@vp3.com',
+            'email_verified_at' => now(),
+            'password' => bcrypt('1234'),
+        ]);
+
+        User::create([
+            'name' => 'veterinarioPrueba4',
+            'email' => 'vp4@vp4.com',
             'email_verified_at' => now(),
             'password' => bcrypt('1234'),
         ]);

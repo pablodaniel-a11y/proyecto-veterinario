@@ -10,6 +10,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AgendaController;
+use App\Http\Controllers\BloqueoAgendaController;
 use Inertia\Inertia;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -29,6 +31,8 @@ Route::middleware(['auth'/*, 'verified'*/])->group(function () {
     Route::resource('veterinarios', VeterinarioController::class)->except(['index']);;
     Route::resource('productos', ProductoController::class)->except(['index']);
     Route::resource('consultas', ConsultaController::class);
+    Route::resource('agendas', AgendaController::class);
+    Route::resource('bloqueos', BloqueoAgendaController::class);
     
     Route::get('/citas', [CitaController::class, 'index'])->name('citas.index');
     Route::get('/citas/admin', [CitaController::class, 'indexcitas'])->name('citas.index.admin');

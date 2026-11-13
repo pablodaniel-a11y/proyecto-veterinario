@@ -62,4 +62,9 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
     {
         return $this->hasOne(Veterinario::class);
     }
+
+    public function bloqueoagendas()
+    {
+        return $this->hasMany(BloqueoAgenda::class);
+    }
 }

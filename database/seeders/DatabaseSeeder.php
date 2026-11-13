@@ -32,6 +32,8 @@ class DatabaseSeeder extends Seeder
             ClienteSeeder::class,
             MascotaSeeder::class,
             VeterinarioSeeder::class,
+            AgendaSeeder::class,
+            BloqueoAgendaSeeder::class,
             ConsultaSeeder::class,
             ProductoSeeder::class,
             DetalleConsultaSeeder::class,

@@ -9,6 +9,8 @@ use App\Models\Cliente;
 use App\Models\Veterinario;
 use App\Models\Raza;
 use App\Models\Especie;
+use App\Models\BloqueoAgenda;
+use App\Models\Agenda;
 use App\Http\Requests\StoreCitaRequest;
 use App\Http\Requests\UpdateCitaRequest;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
@@ -41,7 +43,7 @@ class CitaController extends Controller
                     'last_page' => 1,
                     'total' => 0,
                 ],
-                'estados' => ['pendiente', 'completado', 'cancelado'],
+                'estados' => ['pendiente', 'completado', 'cancelado', 'confirmada'],
                 'fechasdisponibles' => [],
                 'veterinariolist' => [],
                 'mascotalist' => [],
@@ -98,7 +100,7 @@ class CitaController extends Controller
             ->unique()
             ->values();
 
-        $estados= ['pendiente','completado','cancelado'];
+        $estados= ['pendiente','completado','cancelado', 'confirmada'];
 
         return Inertia::render('Citas/Index', [
             'citas' => $citas,
@@ -170,7 +172,7 @@ class CitaController extends Controller
             ->unique()
             ->values();
 
-        $estados= ['pendiente','completado','cancelado'];
+        $estados= ['pendiente','completado','cancelado', 'confirmada'];
 
         return Inertia::render('Citas/Indexcitas', [
             'citas' => $citas,
@@ -194,8 +196,12 @@ class CitaController extends Controller
      */
     public function create()
     {
-        $Urlanterior = url()->previous() ?? route('agendar.cita');
-
+        $previous = url()->previous();
+        if (!str_contains($previous, '/citas/create')) {
+            session(['cita_cancel_url' => $previous]);
+        }
+        $Urlanterior = session('cita_cancel_url', route('agendar.cita'));
+        
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
         if (auth()->check()) {
@@ -212,13 +218,18 @@ class CitaController extends Controller
             $mascotas = [];
         }
 
-        $veterinarios = Veterinario::with('user')->get();
+        $veterinarios = Veterinario::with(['user', 'agendas' => function($q) {
+            $q->where('activo', true);
+        }])->get();
+
+        $bloqueos = BloqueoAgenda::where('fecha', '>=', now()->format('Y-m-d'))->get();
         
         return Inertia::render('Citas/Create', [
             'mascotas' => $mascotas,
             'veterinarios' => $veterinarios,
             'razas' => Raza::all(),
             'especies' => Especie::all(),
+            'bloqueos' => $bloqueos,
             'Urlanterior' => $Urlanterior,
         ]);
     }
@@ -318,14 +329,19 @@ class CitaController extends Controller
     #[Middleware('permission:editar cita')]
     public function edit(Cita $cita)
     {
-        $veterinarios = Veterinario::with('user')->get();
+        $veterinarios = Veterinario::with(['user', 'agendas' => function($q) {
+            $q->where('activo', true);
+        }])->get();
+
         $cita->load(['cliente', 'mascota', 'veterinario']);
-        $estados= ['pendiente','completado','cancelado'];
+        $estados= ['pendiente','completado','cancelado', 'confirmada'];
+        $bloqueos = BloqueoAgenda::where('fecha', '>=', now()->format('Y-m-d'))->get();
 
         return Inertia::render('Citas/Edit', [
             'cita' => $cita,
             'veterinarios' => $veterinarios,
             'estados' => $estados,
+            'bloqueos' => $bloqueos,
         ]);
     }
 

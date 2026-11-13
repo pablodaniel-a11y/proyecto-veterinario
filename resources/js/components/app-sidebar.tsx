@@ -11,7 +11,9 @@ import {
     LayoutGrid,
     Shield,
     ShieldHalf,
-    Users 
+    Users, 
+    Clock,
+    CalendarOff
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -81,6 +83,18 @@ const exclusivoNavItems: NavItem[] = [
         href: '/citas/admin',
         permission: 'gestionar citas',
         icon: CalendarCog,
+    },
+    {
+        title: 'Agendas de Veterinarios',
+        href: '/agendas',
+        permission: 'ver agendas',
+        icon: Clock,
+    },
+    {
+        title: 'Feriados y Bloqueos',
+        href: '/bloqueos',
+        permission: 'gestionar citas',
+        icon: CalendarOff,
     },
     {
         title: 'Usuarios', 

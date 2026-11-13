@@ -3,12 +3,28 @@ import { Link, useForm } from "@inertiajs/react";
 import { FormEvent, useMemo } from "react";
 
 type SexoMascota = 'Macho' | 'Hembra';
-type Estados = 'pendiente' | 'completado' | 'cancelado';
+type Estados = 'pendiente' | 'completado' | 'cancelado' | 'confirmada';
 
 interface Usuario{
     id: number;
     name: string;
     email: string;
+}
+
+interface Agenda {
+    id: number;
+    dia_semana: number;
+    hora_inicio: string;
+    hora_fin: string;
+    activo: boolean;
+}
+
+interface Bloqueo {
+    id: number;
+    fecha: string;
+    hora_inicio: string | null;
+    hora_fin: string | null;
+    motivo: string;
 }
 
 interface Especie {
@@ -44,6 +60,7 @@ interface Veterinario{
     telefono: string;
     matricula: string;
     especialidad: string;
+    agendas?: Agenda[];
 }
 
 interface Cita{
@@ -60,40 +77,40 @@ interface editProps{
     veterinarios: Veterinario[];
     estados: Estados[];
     cita: Cita;
+    bloqueos?: Bloqueo[];
     flash?:
     {
         success?: string;
     }
 }
 
-export default function Edit({veterinarios, cita, estados}: editProps){
+export default function Edit({veterinarios, bloqueos, cita, estados}: editProps){
+
+    const fechaInicial = cita.fecha_hora ? cita.fecha_hora.split(' ')[0] : '';
+    const horaInicial = cita.fecha_hora ? cita.fecha_hora.split(' ')[1]?.slice(0, 5) : '10:00';
     
     const {data,setData,put,processing,errors} = useForm({
         fecha_hora: cita.fecha_hora,
+        fecha: fechaInicial,
+        hora: horaInicial,
         motivo: cita.motivo,
-        estado: cita.estado,
+        estado: cita.estado as Estados,
         veterinario_id: cita.veterinario.id ?? veterinarios[0]?.id ?? 0,
     });
 
-    const fechasDisponibles = useMemo(() => {
-        const fechas = [];
-        let fechaActual = new Date();
-        
-        while (fechas.length < 6) {
-            fechaActual.setDate(fechaActual.getDate() + 1);
-            const diaSemana = fechaActual.getDay();
-            
-            if (diaSemana === 1 || diaSemana === 3 || diaSemana === 5) {
-                fechaActual.setHours(10, 0, 0, 0);
-                fechas.push(new Date(fechaActual).toISOString().slice(0, 19).replace('T', ' '));
-            }
-        }
-        return fechas;
-    }, []);
+    const diasSemanaNombres = ['', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const veterinarioSeleccionado = veterinarios.find(v => v.id === data.veterinario_id);
+    const agendasVeterinario = veterinarioSeleccionado?.agendas?.filter(a => a.activo) ?? [];
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
-        put(`/citas/${cita.id}`);
+        const fechaHoraCombinada = `${data.fecha} ${data.hora}:00`;
+        data.fecha_hora = fechaHoraCombinada;
+        put(`/citas/${cita.id}`, {
+            onBefore: () => {
+                data.fecha_hora = `${data.fecha} ${data.hora}:00`;
+            }
+        });
     };
 
     return (
@@ -107,36 +124,6 @@ export default function Edit({veterinarios, cita, estados}: editProps){
                 </div>
                 <form onSubmit={submit} className="space-y-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Fecha y Hora (Si es necesario):</label>
-                            <select
-                                value={data.fecha_hora}
-                                onChange={(e) => setData('fecha_hora', e.target.value)}
-                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                            >
-                                {fechasDisponibles.map((fecha, index) => (
-                                    <option key={index} value={fecha}>
-                                        {fecha}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.fecha_hora && <span className="text-red-500 text-xs mt-0.5">{errors.fecha_hora}</span>}
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Estado del Turno:</label>
-                            <select
-                                value={data.estado}
-                                onChange={(e) => setData('estado', e.target.value as Estados)}
-                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                            >
-                                {estados.map((est) => (
-                                    <option key={est} value={est}>
-                                        {est}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.estado && <span className="text-red-500 text-xs mt-0.5">{errors.estado}</span>}
-                        </div>
                         <div className="flex flex-col gap-1.5 sm:col-span-2">
                             <label className="text-sm font-semibold text-gray-700">Veterinario Asignado</label>
                             <select
@@ -151,6 +138,84 @@ export default function Edit({veterinarios, cita, estados}: editProps){
                                 ))}
                             </select>
                             {errors.veterinario_id && <span className="text-red-500 text-xs mt-0.5">{errors.veterinario_id}</span>}
+                            <div className="bg-orange-50/60 border border-orange-200 rounded-lg p-3 text-xs text-orange-900 mt-1">
+                                <span className="font-semibold block mb-1">Horarios de atención de este profesional:</span>
+                                {agendasVeterinario.length === 0 ? (
+                                    <span className="text-gray-500 italic">No tiene horarios configurados actualmente.</span>
+                                ) : (
+                                    <ul className="list-disc list-inside space-y-0.5">
+                                        {agendasVeterinario.map((agenda) => (
+                                            <li key={agenda.id}>
+                                                <span className="font-medium">{diasSemanaNombres[agenda.dia_semana]}</span>: {agenda.hora_inicio.slice(0, 5)} a {agenda.hora_fin.slice(0, 5)} hs
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Fecha de la Cita:</label>
+                            <input 
+                                type="date"
+                                value={data.fecha}
+                                onChange={e => setData('fecha', e.target.value)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            />
+                            {errors.fecha_hora && <span className="text-red-500 text-xs mt-0.5">{errors.fecha_hora}</span>}
+                            {data.fecha && bloqueos
+                                ?.filter(b => b.fecha.substring(0, 10) === data.fecha)
+                                .map((bloqueo) => (
+                                    <div 
+                                        key={bloqueo.id} 
+                                        className={`border rounded-lg p-3 text-xs flex flex-col gap-1 mt-1 ${
+                                            !bloqueo.hora_inicio ? 'bg-red-50 border-red-200 text-red-800' : 'bg-amber-50 border-amber-200 text-amber-900'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between font-semibold">
+                                            <span className="flex items-center gap-1.5">
+                                                <span>⚠️</span> 
+                                                <span>{bloqueo.motivo}</span>
+                                            </span>
+                                            <span 
+                                                className={`px-2 py-0.5 rounded font-medium text-[10px] ${
+                                                    !bloqueo.hora_inicio ? 'bg-red-200 text-red-900' : 'bg-amber-200 text-amber-900'
+                                                }`}
+                                            >
+                                                {!bloqueo.hora_inicio ? 'Bloqueo Total (Todo el día)' : `${bloqueo.hora_inicio} a ${bloqueo.hora_fin}`}
+                                            </span>
+                                        </div>
+                                        <p className="text-[11px] opacity-90">
+                                            {!bloqueo.hora_inicio ? 'La clínica se encuentra inhabilitada en esta fecha.' : 'Existe una restricción programada parcial en este intervalo de horas.'}
+                                        </p>
+                                    </div>
+                                ))
+                            }
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Hora de la Cita:</label>
+                            <input 
+                                type="time"
+                                value={data.hora}
+                                onChange={e => setData('hora', e.target.value)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            />
+                        </div>
+                        
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Estado del Turno:</label>
+                            <select
+                                value={data.estado}
+                                onChange={(e) => setData('estado', e.target.value as Estados)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                            >
+                                {estados.map((est) => (
+                                    <option key={est} value={est}>
+                                        {est}
+                                    </option>
+                                ))}
+                            </select>
+                            {errors.estado && <span className="text-red-500 text-xs mt-0.5">{errors.estado}</span>}
                         </div>
                         <div className="flex flex-col gap-1.5 sm:col-span-2">
                             <label className="text-sm font-semibold text-gray-700">Motivo de la Cita:</label>

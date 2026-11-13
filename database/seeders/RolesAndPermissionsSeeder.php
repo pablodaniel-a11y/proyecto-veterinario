@@ -47,6 +47,9 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'eliminar producto']);
         Permission::create(['name' => 'editar producto']);
 
+        Permission::create(['name' => 'ver agendas']);
+        Permission::create(['name' => 'gestionar agendas']);
+
         $roleSuperAdmin = Role::create(['name' => 'super-admin']); 
         $roleAdmin      = Role::create(['name' => 'admin']); 
         $roleVeterinario= Role::create(['name' => 'veterinario']);
@@ -75,7 +78,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'gestionar citas',
             'crear producto',
             'editar producto',
-            'eliminar producto'
+            'eliminar producto',
+            'ver agendas',
+            'gestionar agendas'
         ]);
         
         $roleVeterinario->givePermissionTo([
@@ -90,7 +95,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'eliminar consulta',
             'gestionar consultas',
             'editar veterinario',
-            'ver citas',
+            'ver agendas',
+            'ver citas'
         ]);
 
         $roleRecepcionista->givePermissionTo([
@@ -103,7 +109,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'ver citas',
             'gestionar citas',
             'editar cita',
-            'eliminar cita'
+            'eliminar cita',
+            'ver agendas'
         ]);
 
         $roleRegistrado->givePermissionTo([
@@ -136,15 +143,45 @@ class RolesAndPermissionsSeeder extends Seeder
         ); 
         $adminUser->assignRole($roleAdmin);
 
-        $veterinarioUser = User::firstOrCreate( 
-            ['email' => 'algo2@algo2.com'], 
+        $veterinarioUser1 = User::firstOrCreate( 
+            ['email' => 'vp1@vp1.com'], 
             [
-                'name' => 'veterinarioPrueba',
+                'name' => 'veterinarioPrueba1',
                 'email_verified_at' => now(),
                 'password' => bcrypt('1234'),
             ] 
         ); 
-        $veterinarioUser->assignRole($roleVeterinario);
+        $veterinarioUser1->assignRole($roleVeterinario);
+
+        $veterinarioUser2 = User::firstOrCreate( 
+            ['email' => 'vp2@vp2.com'], 
+            [
+                'name' => 'veterinarioPrueba2',
+                'email_verified_at' => now(),
+                'password' => bcrypt('1234'),
+            ] 
+        ); 
+        $veterinarioUser2->assignRole($roleVeterinario);
+
+        $veterinarioUser3 = User::firstOrCreate( 
+            ['email' => 'vp3@vp3.com'], 
+            [
+                'name' => 'veterinarioPrueba3',
+                'email_verified_at' => now(),
+                'password' => bcrypt('1234'),
+            ] 
+        ); 
+        $veterinarioUser3->assignRole($roleVeterinario);
+
+        $veterinarioUser4 = User::firstOrCreate( 
+            ['email' => 'vp4@vp4.com'], 
+            [
+                'name' => 'veterinarioPrueba4',
+                'email_verified_at' => now(),
+                'password' => bcrypt('1234'),
+            ] 
+        ); 
+        $veterinarioUser4->assignRole($roleVeterinario);
 
         $recepcionUser = User::firstOrCreate( 
             ['email' => 'recepcion@recepcion.com'], 

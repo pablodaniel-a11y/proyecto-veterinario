@@ -20,6 +20,7 @@ class RazaSeeder extends Seeder
         $reptil = Especie::where('nombre', 'Reptil')->firstOrFail();
         $roedor = Especie::where('nombre', 'Roedor')->firstOrFail();
 
+        Raza::create(['especie_id' => $perro->id, 'nombre' => 'Mestizo/Otro']);
         Raza::create(['especie_id' => $perro->id, 'nombre' => 'Labrador']);
         Raza::create(['especie_id' => $perro->id, 'nombre' => 'Caniche']);
         Raza::create(['especie_id' => $perro->id, 'nombre' => 'Pastor Aleman']);
@@ -30,6 +31,7 @@ class RazaSeeder extends Seeder
         Raza::create(['especie_id' => $perro->id, 'nombre' => 'Husky Siberiano']);
         Raza::create(['especie_id' => $perro->id, 'nombre' => 'Chihuahua']);
 
+        Raza::create(['especie_id' => $gato->id, 'nombre' => 'Mestizo/Otro']);
         Raza::create(['especie_id' => $gato->id, 'nombre' => 'Siames']);
         Raza::create(['especie_id' => $gato->id, 'nombre' => 'Persa']);
         Raza::create(['especie_id' => $gato->id, 'nombre' => 'Maine Coon']);
@@ -37,6 +39,7 @@ class RazaSeeder extends Seeder
         Raza::create(['especie_id' => $gato->id, 'nombre' => 'Esfinge']);
         Raza::create(['especie_id' => $gato->id, 'nombre' => 'Angora Turco']);
 
+        Raza::create(['especie_id' => $ave->id, 'nombre' => 'Mestizo/Otro']);
         Raza::create(['especie_id' => $ave->id, 'nombre' => 'Canario']);
         Raza::create(['especie_id' => $ave->id, 'nombre' => 'Periquito']);
         Raza::create(['especie_id' => $ave->id, 'nombre' => 'Diamantes']);
@@ -46,6 +49,7 @@ class RazaSeeder extends Seeder
         Raza::create(['especie_id' => $ave->id, 'nombre' => 'Loros']);
         Raza::create(['especie_id' => $ave->id, 'nombre' => 'Cacatuas']);
 
+        Raza::create(['especie_id' => $reptil->id, 'nombre' => 'Mestizo/Otro']);
         Raza::create(['especie_id' => $reptil->id, 'nombre' => 'Dragón barbudo']);
         Raza::create(['especie_id' => $reptil->id, 'nombre' => 'Gecko leopardo']);
         Raza::create(['especie_id' => $reptil->id, 'nombre' => 'Camaleón']);
@@ -56,6 +60,7 @@ class RazaSeeder extends Seeder
         Raza::create(['especie_id' => $reptil->id, 'nombre' => 'Tortuga de hermann']);
         Raza::create(['especie_id' => $reptil->id, 'nombre' => 'Tortugas acuáticas']);
 
+        Raza::create(['especie_id' => $roedor->id, 'nombre' => 'Mestizo/Otro']);
         Raza::create(['especie_id' => $roedor->id, 'nombre' => 'Hámster Sirio']);
         Raza::create(['especie_id' => $roedor->id, 'nombre' => 'Hámster Ruso/Campbell']);
         Raza::create(['especie_id' => $roedor->id, 'nombre' => 'Hámster Roborowski']);

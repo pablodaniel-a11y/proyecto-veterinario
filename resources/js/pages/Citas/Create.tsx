@@ -31,6 +31,23 @@ interface Mascota {
     raza?: Raza | null;
 }
 
+interface Agenda {
+    id: number;
+    dia_semana: number;
+    hora_inicio: string;
+    hora_fin: string;
+    duracion_turno_minutos: number;
+    activo: boolean;
+}
+
+interface Bloqueo {
+    id: number;
+    fecha: string;
+    hora_inicio: string | null;
+    hora_fin: string | null;
+    motivo: string;
+}
+
 interface Cliente{
     id: number;
     nombre: string;
@@ -43,16 +60,7 @@ interface Veterinario{
     telefono: string;
     matricula: string;
     especialidad: string;
-}
-
-interface Cita{
-    id: number;
-    cliente: Cliente;
-    veterinario: Veterinario;
-    mascota: Mascota;
-    fecha_hora: string;
-    motivo: string;
-    estado: string;
+    agendas?: Agenda[];
 }
 
 interface createProps{
@@ -60,6 +68,7 @@ interface createProps{
     veterinarios: Veterinario[];
     razas: Raza[];
     especies: Especie[];
+    bloqueos?: Bloqueo[];
     Urlanterior?: string;
     flash?:
     {
@@ -67,12 +76,14 @@ interface createProps{
     }
 }
 
-export default function Create({mascotas, veterinarios, razas, especies, Urlanterior}: createProps){
+export default function Create({mascotas, veterinarios, bloqueos, razas, especies, Urlanterior}: createProps){
 
     const rutaCancelar= Urlanterior || '/agendarcita';
     
     const {data,setData,post,processing,errors} = useForm({
         fecha_hora: '',
+        fecha: '',
+        hora: '10:00',
         motivo: '',
         estado: 'pendiente',
         veterinario_id: veterinarios[0]?.id ?? 0,
@@ -87,25 +98,19 @@ export default function Create({mascotas, veterinarios, razas, especies, Urlante
         raza_id: razas.find(r => r.especie_id === especies[0]?.id)?.id ?? 0,
     });
 
-    const fechasDisponibles = useMemo(() => {
-        const fechas = [];
-        let fechaActual = new Date();
-        
-        while (fechas.length < 6) {
-            fechaActual.setDate(fechaActual.getDate() + 1);
-            const diaSemana = fechaActual.getDay();
-            
-            if (diaSemana === 1 || diaSemana === 3 || diaSemana === 5) {
-                fechaActual.setHours(10, 0, 0, 0);
-                fechas.push(new Date(fechaActual).toISOString().slice(0, 19).replace('T', ' '));
-            }
-        }
-        return fechas;
-    }, []);
+    const diasSemanaNombres = ['', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const veterinarioSeleccionado = veterinarios.find(v => v.id === data.veterinario_id);
+    const agendasVeterinario = veterinarioSeleccionado?.agendas?.filter(a => a.activo) ?? [];
 
     const submit = (e: FormEvent) => {
         e.preventDefault();
-        post(`/citas`);
+        const fechaHoraCombinada = `${data.fecha} ${data.hora}:00`;
+        data.fecha_hora = fechaHoraCombinada;
+        post(`/citas`, {
+            onBefore: () => {
+                data.fecha_hora = `${data.fecha} ${data.hora}:00`;
+            }
+        });
     };
 
     return (
@@ -243,22 +248,7 @@ export default function Create({mascotas, veterinarios, razas, especies, Urlante
                         </div>
                     )}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Fechas Disponibles</label>
-                            <select
-                                value={data.fecha_hora}
-                                onChange={(e) => setData('fecha_hora', e.target.value)}
-                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                            >
-                                {fechasDisponibles.map((fecha, index) => (
-                                    <option key={index} value={fecha}>
-                                        {fecha}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.fecha_hora && <span className="text-red-500 text-xs mt-0.5">{errors.fecha_hora}</span>}
-                        </div>
-                        <div className="flex flex-col gap-1.5">
+                        <div className="flex flex-col gap-1.5 sm:col-span-2">
                             <label className="text-sm font-semibold text-gray-700">Profesional Asignado</label>
                             <select
                                 value={data.veterinario_id}
@@ -272,6 +262,46 @@ export default function Create({mascotas, veterinarios, razas, especies, Urlante
                                 ))}
                             </select>
                             {errors.veterinario_id && <span className="text-red-500 text-xs mt-0.5">{errors.veterinario_id}</span>}
+                            <div className="bg-orange-50/60 border border-orange-200 rounded-lg p-3 text-xs text-orange-900 mt-1">
+                                <span className="font-semibold block mb-1">Horarios de atención de este profesional:</span>
+                                {agendasVeterinario.length === 0 ? (
+                                    <span className="text-gray-500 italic">No tiene horarios configurados actualmente.</span>
+                                ) : (
+                                    <ul className="list-disc list-inside space-y-0.5">
+                                        {agendasVeterinario.map((agenda) => (
+                                            <li key={agenda.id}>
+                                                <span className="font-medium">{diasSemanaNombres[agenda.dia_semana]}</span>: {agenda.hora_inicio.slice(0, 5)} a {agenda.hora_fin.slice(0, 5)} hs
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Fecha de la Cita</label>
+                            <input 
+                                type="date"
+                                value={data.fecha}
+                                onChange={e => setData('fecha', e.target.value)}
+                                min={new Date().toISOString().split('T')[0]}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            />
+                            {errors.fecha_hora && <span className="text-red-500 text-xs mt-0.5">{errors.fecha_hora}</span>}
+                            {data.fecha && bloqueos?.some(b => b.fecha === data.fecha && !b.hora_inicio) && (
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-2.5 text-xs text-red-700 flex items-center gap-2 mt-1">
+                                    <span className="font-semibold">⚠️ ¡Atención!</span> 
+                                    <span>La clínica se encuentra cerrada en esta fecha por feriado o bloqueo administrativo.</span>
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-sm font-semibold text-gray-700">Hora de la Cita</label>
+                            <input 
+                                type="time"
+                                value={data.hora}
+                                onChange={e => setData('hora', e.target.value)}
+                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            />
                         </div>
                         {mascotas.length > 0 && (
                             <div className="flex flex-col gap-1.5 sm:col-span-2">
