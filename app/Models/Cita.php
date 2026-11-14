@@ -34,4 +34,9 @@ class Cita extends Model
     {
         return $this->belongsTo(Veterinario::class);
     }
+
+    public function consulta()
+    {
+        return $this->hasOne(Consulta::class);
+    }
 }

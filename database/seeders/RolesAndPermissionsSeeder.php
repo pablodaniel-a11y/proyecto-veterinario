@@ -49,6 +49,9 @@ class RolesAndPermissionsSeeder extends Seeder
 
         Permission::create(['name' => 'ver agendas']);
         Permission::create(['name' => 'gestionar agendas']);
+        Permission::create(['name' => 'editar agenda']);
+        Permission::create(['name' => 'crear agenda']);
+        Permission::create(['name' => 'eliminar agenda']);
 
         $roleSuperAdmin = Role::create(['name' => 'super-admin']); 
         $roleAdmin      = Role::create(['name' => 'admin']); 
@@ -80,7 +83,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'editar producto',
             'eliminar producto',
             'ver agendas',
-            'gestionar agendas'
+            'gestionar agendas',
+            'editar agenda',
+            'crear agenda',
+            'eliminar agenda'
         ]);
         
         $roleVeterinario->givePermissionTo([
@@ -95,8 +101,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'eliminar consulta',
             'gestionar consultas',
             'editar veterinario',
+            'ver citas',
             'ver agendas',
-            'ver citas'
+            'gestionar agendas',
+            'editar agenda',
+            'crear agenda',
+            'eliminar agenda'
         ]);
 
         $roleRecepcionista->givePermissionTo([
@@ -110,7 +120,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'gestionar citas',
             'editar cita',
             'eliminar cita',
-            'ver agendas'
+            'ver agendas',
+            'gestionar agendas',
+            'editar agenda',
+            'crear agenda',
+            'eliminar agenda'
         ]);
 
         $roleRegistrado->givePermissionTo([

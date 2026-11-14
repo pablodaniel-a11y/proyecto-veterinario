@@ -17,9 +17,17 @@ class AgendaController extends Controller
     #[Middleware('permission:ver agendas')]
     public function index()
     {
-        $agendas = Agenda::with('veterinario.user')
-            ->orderBy('dia_semana')
-            ->paginate(10);
+        $user = auth()->user();
+        $query = Agenda::with('veterinario.user')
+            ->orderBy('dia_semana');
+
+        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])) {
+            $query->whereHas('veterinario', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
+        $agendas = $query->paginate(10);
 
         return Inertia::render('Agendas/Index', [
             'agendas' => $agendas,
@@ -32,8 +40,17 @@ class AgendaController extends Controller
     #[Middleware('permission:gestionar agendas')]
     public function create()
     {
+        $user = auth()->user();
+        
+        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin','super-admin', 'recepcionista'])) {
+            $veterinarios = Veterinario::where('user_id', $user->id)->with('user')->get();
+        } else {
+            $veterinarios = Veterinario::with('user')->get();
+        }
+
         return Inertia::render('Agendas/Create', [
-            'veterinarios' => Veterinario::with('user')->get(),
+            'veterinarios' => $veterinarios,
+            'esVeterinarioRestringido' => $user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista']),
         ]);
     }
 
@@ -43,6 +60,13 @@ class AgendaController extends Controller
     #[Middleware('permission:gestionar agendas')]
     public function store(StoreAgendaRequest $request)
     {
+        $user = auth()->user();
+        $data = $request->validated();
+        if($user->hasRole('veterinario') && !$user->hasAnyRole(['admin','super-admin','recepcionista'])) {
+            $veterinario = Veterinario::where('user_id', $user->id)->firstOrFail();
+            $data['veterinario_id'] = $veterinario->id;
+        }
+
         Agenda::create($request->validated());
 
         return redirect()
@@ -62,21 +86,39 @@ class AgendaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    #[Middleware('permission:gestionar agendas')]
+    #[Middleware('permission:editar agenda')]
     public function edit(Agenda $agenda)
     {
+        $user = auth()->user();
+
+        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])) {
+            if ($agenda->veterinario->user_id !== $user->id) {
+                abort(403, 'No tienes permiso para editar esta agenda.');
+            }
+        }
+
+
         return Inertia::render('Agendas/Edit', [
             'agenda' => $agenda,
             'veterinarios' => Veterinario::with('user')->get(),
+            'esVeterinarioRestringido' => $user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista']),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    #[Middleware('permission:gestionar agendas')]
+    #[Middleware('permission:editar agenda')]
     public function update(UpdateAgendaRequest $request, Agenda $agenda)
     {
+        $user = auth()->user();
+
+        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])) {
+            if ($agenda->veterinario->user_id !== $user->id) {
+                abort(403, 'No tienes permiso para actualizar esta agenda.');
+            }
+        }
+
         $agenda->update($request->validated());
 
         return redirect()
@@ -87,7 +129,7 @@ class AgendaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    #[Middleware('permission:gestionar agendas')]
+    #[Middleware('permission:eliminar agenda')]
     public function destroy(Agenda $agenda)
     {
         $agenda->delete();

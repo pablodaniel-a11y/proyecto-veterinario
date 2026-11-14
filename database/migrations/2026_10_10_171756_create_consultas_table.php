@@ -21,11 +21,16 @@ return new class extends Migration
             $table->foreignId('mascota_id')
                 ->constrained('mascotas')
                 ->cascadeOnDelete();
+            
+            $table->foreignId('cita_id')
+                ->nullable()
+                ->constrained('citas')
+                ->cascadeOnDelete();
 
             $table->dateTime('fecha_hora');
             $table->string('motivo_consulta')->nullable();
             $table->string('diagnostico');
-            $table->decimal('peso', 5, 2)->nullable(); //esto es el limite 999.99 son 3 digitos para entero y 2 para decimales
+            $table->decimal('peso', 5, 2)->nullable(); 
             $table->string('estado')->default('pendiente');
             $table->string('observaciones')->nullable();
             

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Cita;
+use App\Models\Consulta;
 use App\Models\Mascota;
 use App\Models\Cliente;
 use App\Models\Veterinario;
@@ -301,7 +302,7 @@ class CitaController extends Controller
             ];
 
             Mail::to($cliente->email)
-                ->send(new SendMail($data, 'Confirmación de Cita - Veterinaria', 'emails.cita_confirmada'));
+                ->send(new SendMail($data, 'Confirmación de Cita - Veterinaria', 'emails.cita_pendiente'));
         }
 
         if(!auth()->check()){
@@ -334,7 +335,7 @@ class CitaController extends Controller
         }])->get();
 
         $cita->load(['cliente', 'mascota', 'veterinario']);
-        $estados= ['pendiente','completado','cancelado', 'confirmada'];
+        $estados= ['pendiente','cancelado', 'confirmada'];
         $bloqueos = BloqueoAgenda::where('fecha', '>=', now()->format('Y-m-d'))->get();
 
         return Inertia::render('Citas/Edit', [
@@ -352,8 +353,36 @@ class CitaController extends Controller
     public function update(UpdateCitaRequest $request, Cita $cita)
     {
         $validated = $request->validated();
-
+        $estadoAnterior = $cita->estado;
         $cita->update($validated);
+
+        if ($estadoAnterior !== 'confirmada' && $cita->estado === 'confirmada') {
+            Consulta::firstOrCreate(
+                ['cita_id' => $cita->id],
+                [
+                    'veterinario_id' => $cita->veterinario_id,
+                    'mascota_id' => $cita->mascota_id,
+                    'fecha_hora' => $cita->fecha_hora,
+                    'motivo_consulta' => $cita->motivo,
+                    'estado' => 'pendiente',
+                    'diagnostico' => '',
+                    'observaciones' => '',
+                ]
+            );
+
+            $cita->load(['cliente', 'mascota.raza.especie', 'veterinario.user']);
+            if ($cita->cliente && $cita->cliente->email) {
+                $data = [
+                    'cliente_nombre' => $cita->cliente->nombre,
+                    'mascota_nombre' => $cita->mascota->nombre ?? 'Tu mascota',
+                    'veterinario_nombre' => $cita->veterinario->user->name ?? 'Personal médico',
+                    'fecha_hora' => $cita->fecha_hora,
+                    'motivo' => $cita->motivo ?? 'Consulta general',
+                ];
+                Mail::to($cita->cliente->email)
+                    ->send(new SendMail($data, '¡Cita Confirmada! - Veterinaria', 'emails.cita_confirmada')); 
+            }
+        }
 
         return redirect()
             ->route('citas.index.admin')
@@ -414,6 +443,5 @@ class CitaController extends Controller
         ]);
         
         return $pdf->stream('citas_programadas.pdf');
-        //return $pdf->download('citas_programadas.pdf');
     }
 }

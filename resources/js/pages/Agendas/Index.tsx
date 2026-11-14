@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button";
 import { Head, Link, router } from "@inertiajs/react";
 import FlashMessage from '@/components/FlashMessage';
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 interface Usuario {
+    id: number;
     name: string;
 }
 
@@ -28,6 +30,8 @@ interface AgendasPaginadas {
     current_page: number;
     last_page: number;
     total: number;
+    from: number | null; 
+    to: number | null;
     prev_page_url: string | null;
     next_page_url: string | null;
 }
@@ -40,8 +44,20 @@ interface IndexProps {
 }
 
 export default function Index({ agendas, flash }: IndexProps) {
+
+    let mensaje="";
+    if(agendas.total === 0){
+        mensaje="No tienes Agendas Hechas.";
+    }else{
+        if (agendas.total === 1){
+            mensaje="Mostrando tu unica Agenda.";
+        }else{
+            mensaje=`Mostrando ${agendas.from} a ${agendas.to} de ${agendas.total} Agendas`;
+        }
+    }
     
     const diasSemana = ['', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const { can, user} = useAuth();
 
     const eliminar = (id: number) => {
         if (confirm('¿Estás seguro de eliminar este horario de agenda?')) {
@@ -72,6 +88,11 @@ export default function Index({ agendas, flash }: IndexProps) {
                             <span>Nueva Franja Horaria</span>
                         </Link>
                     </Button>
+                </div>
+            </div>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+                <div className="bg-white border border-gray-200 px-4 py-3 rounded-lg shadow-sm flex items-center justify-between">
+                    <p className="text-sm font-medium text-gray-700">{mensaje}</p>
                 </div>
             </div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
@@ -134,6 +155,33 @@ export default function Index({ agendas, flash }: IndexProps) {
                     </table>
                 </div>
             </div>
+            {agendas.last_page > 1 && (
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-center items-center gap-4 mt-8 bg-white p-4 rounded-xl border border-gray-200 shadow-sm max-w-md mx-auto">
+                        {agendas.prev_page_url && ( 
+                            <button 
+                                type="button" 
+                                onClick={() => router.get(agendas.prev_page_url!)}
+                                className="px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 text-sm font-semibold rounded-lg transition-colors border border-orange-200"
+                            > 
+                                Anterior 
+                            </button> 
+                        )} 
+                        <span className="text-sm font-medium text-gray-700">
+                            Página {agendas.current_page} de {agendas.last_page} 
+                        </span>
+                        {agendas.next_page_url && ( 
+                            <button 
+                                type="button" 
+                                onClick={() => router.get(agendas.next_page_url!)}
+                                className="px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 text-sm font-semibold rounded-lg transition-colors border border-orange-200"
+                            > 
+                                Siguiente 
+                            </button> 
+                        )}
+                    </div> 
+                </div>
+            )}
         </div>
     );
 }

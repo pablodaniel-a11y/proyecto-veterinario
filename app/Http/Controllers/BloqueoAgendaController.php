@@ -41,11 +41,8 @@ class BloqueoAgendaController extends Controller
     public function store(StoreBloqueoAgendaRequest $request)
     {
         BloqueoAgenda::create([
-            'user_id'     => auth()->id(),
-            'fecha'       => $request->fecha,
-            'hora_inicio' => $request->hora_inicio,
-            'hora_fin'    => $request->hora_fin,
-            'motivo'      => $request->motivo,
+            'user_id' => auth()->id(),
+            ...$request->validated(),
         ]);
 
         return redirect()

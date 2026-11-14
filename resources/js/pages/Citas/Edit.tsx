@@ -3,7 +3,7 @@ import { Link, useForm } from "@inertiajs/react";
 import { FormEvent, useMemo } from "react";
 
 type SexoMascota = 'Macho' | 'Hembra';
-type Estados = 'pendiente' | 'completado' | 'cancelado' | 'confirmada';
+type Estados = 'pendiente' | 'cancelado' | 'confirmada';
 
 interface Usuario{
     id: number;

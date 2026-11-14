@@ -34,8 +34,9 @@ class DatabaseSeeder extends Seeder
             VeterinarioSeeder::class,
             AgendaSeeder::class,
             BloqueoAgendaSeeder::class,
-            ConsultaSeeder::class,
             ProductoSeeder::class,
+            CitaSeeder::class,
+            ConsultaSeeder::class,  
             DetalleConsultaSeeder::class,
         ]);
     }

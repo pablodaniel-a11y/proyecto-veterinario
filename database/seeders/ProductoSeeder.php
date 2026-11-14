@@ -27,6 +27,13 @@ class ProductoSeeder extends Seeder
             'stock_actual' => 30,
         ]);
 
+        Producto::create([
+            'nombre_producto' => 'Gotas Óticas para Otitis',
+            'tipo_producto'   => 'Medicamento',
+            'precio_venta'    => 15.00,
+            'stock_actual'    => 50,
+        ]);
+
         Producto::factory()->count(15)->create();
     }
 }

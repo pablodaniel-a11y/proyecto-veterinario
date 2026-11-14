@@ -10,6 +10,7 @@ use App\Models\Especie;
 use App\Models\Veterinario;
 use App\Models\Producto;
 use App\Models\Detalle_Consulta;
+use App\Models\Cita;
 use App\Http\Requests\StoreConsultaRequest;
 use App\Http\Requests\UpdateConsultaRequest;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
@@ -285,6 +286,17 @@ class ConsultaController extends Controller
             'estado'        => $validated['estado'],
             'observaciones' => $validated['observaciones'],
         ]);
+
+        if($consulta->cita_id){
+            $consulta->cita()->update(['estado' => $consulta->estado]);
+        }else{
+            $cita = Cita::where('veterinario_id', $consulta->veterinario_id)
+                ->where('mascota_id', $consulta->mascota_id)
+                ->first();
+            if($cita){
+                $cita->update(['estado' => $consulta->estado]);
+            }
+        }
 
         $consulta->detalles_consultas()->delete();
 

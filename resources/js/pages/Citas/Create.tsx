@@ -287,12 +287,34 @@ export default function Create({mascotas, veterinarios, bloqueos, razas, especie
                                 className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                             />
                             {errors.fecha_hora && <span className="text-red-500 text-xs mt-0.5">{errors.fecha_hora}</span>}
-                            {data.fecha && bloqueos?.some(b => b.fecha === data.fecha && !b.hora_inicio) && (
-                                <div className="bg-red-50 border border-red-200 rounded-lg p-2.5 text-xs text-red-700 flex items-center gap-2 mt-1">
-                                    <span className="font-semibold">⚠️ ¡Atención!</span> 
-                                    <span>La clínica se encuentra cerrada en esta fecha por feriado o bloqueo administrativo.</span>
-                                </div>
-                            )}
+                            {data.fecha && bloqueos
+                                ?.filter(b => b.fecha.substring(0, 10) === data.fecha)
+                                .map((bloqueo) => (
+                                    <div 
+                                        key={bloqueo.id} 
+                                        className={`border rounded-lg p-3 text-xs flex flex-col gap-1 mt-1 ${
+                                            !bloqueo.hora_inicio ? 'bg-red-50 border-red-200 text-red-800' : 'bg-amber-50 border-amber-200 text-amber-900'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between font-semibold">
+                                            <span className="flex items-center gap-1.5">
+                                                <span>⚠️</span> 
+                                                <span>{bloqueo.motivo}</span>
+                                            </span>
+                                            <span 
+                                                className={`px-2 py-0.5 rounded font-medium text-[10px] ${
+                                                    !bloqueo.hora_inicio ? 'bg-red-200 text-red-900' : 'bg-amber-200 text-amber-900'
+                                                }`}
+                                            >
+                                                {!bloqueo.hora_inicio ? 'Bloqueo Total (Todo el día)' : `${bloqueo.hora_inicio} a ${bloqueo.hora_fin}`}
+                                            </span>
+                                        </div>
+                                        <p className="text-[11px] opacity-90">
+                                            {!bloqueo.hora_inicio ? 'La clínica se encuentra inhabilitada en esta fecha.' : 'Existe una restricción programada parcial en este intervalo de horas.'}
+                                        </p>
+                                    </div>
+                                ))
+                            }
                         </div>
                         <div className="flex flex-col gap-1.5">
                             <label className="text-sm font-semibold text-gray-700">Hora de la Cita</label>

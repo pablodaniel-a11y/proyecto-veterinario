@@ -36,4 +36,9 @@ class Consulta extends Model
     {
         return $this->HasMany(Detalle_Consulta::class);
     }
+
+    public function cita()
+    {
+        return $this->BelongsTo(Cita::class);
+    }
 }

@@ -21,7 +21,7 @@ class ClienteSeeder extends Seeder
 
         Cliente::create([
             'user_id' => $usuario->id,
-            'nombre' => 'Prueba',
+            'nombre' => 'PruebaAdmin',
             'email' => 'algo@algo.com',
             'telefono' => '123456789',
         ]);
