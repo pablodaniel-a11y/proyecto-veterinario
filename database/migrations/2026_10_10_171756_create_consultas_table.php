@@ -29,7 +29,8 @@ return new class extends Migration
 
             $table->dateTime('fecha_hora');
             $table->string('motivo_consulta')->nullable();
-            $table->string('diagnostico');
+            $table->string('diagnostico')->nullable();
+            $table->string('tratamiento')->nullable();
             $table->decimal('peso', 5, 2)->nullable(); 
             $table->string('estado')->default('pendiente');
             $table->string('observaciones')->nullable();

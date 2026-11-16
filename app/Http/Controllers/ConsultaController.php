@@ -187,9 +187,10 @@ class ConsultaController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    #[Middleware('permission:crear consulta')]
+    //#[Middleware('permission:crear consulta')]
     public function create()
     {
+        /*
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
         if (auth()->check()) {
@@ -223,14 +224,16 @@ class ConsultaController extends Controller
             'mascota' => $mascota,
             'veterinarios' => $veterinarios,
         ]);
+        */
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    #[Middleware('permission:crear consulta')]
+    //#[Middleware('permission:crear consulta')]
     public function store(StoreConsultaRequest $request)
     {
+        /*
         $validated= $request->validated();
         
         Consulta::create([
@@ -244,7 +247,7 @@ class ConsultaController extends Controller
         return redirect()
             ->route('mascota.consultas', $validated['mascota_id'])
             ->with('success', 'Consulta Realizada Correctamente');
-
+        */
     }
 
     /**
@@ -261,9 +264,9 @@ class ConsultaController extends Controller
     #[Middleware('permission:editar consulta')]
     public function edit(Consulta $consulta)
     {
-        $consulta->load(['mascota.cliente', 'mascota.raza.especie']);
+        $consulta->load(['mascota.cliente', 'mascota.raza.especie', 'detalles_consultas.producto']);
         $estados= ['pendiente','completado','cancelado'];
-        $productos = Producto::all();
+        $productos = Producto::orderBy('nombre_producto')->get();
 
         return Inertia::render('Consultas/Edit', [
             'estados' => $estados,
@@ -281,30 +284,26 @@ class ConsultaController extends Controller
         $validated = $request->validated();
 
         $consulta->update([
-            'diagnostico'   => $validated['diagnostico'],
-            'peso'          => $validated['peso'] ?? $consulta->peso,
-            'estado'        => $validated['estado'],
-            'observaciones' => $validated['observaciones'],
+            'diagnostico' => $validated['diagnostico'] ?? null,
+            'tratamiento'   => $validated['tratamiento'] ?? null,
+            'peso' => $validated['peso'] ?? $consulta->peso,
+            'estado' => $validated['estado'],
+            'observaciones' => $validated['observaciones'] ?? null,
         ]);
 
         if($consulta->cita_id){
             $consulta->cita()->update(['estado' => $consulta->estado]);
-        }else{
-            $cita = Cita::where('veterinario_id', $consulta->veterinario_id)
-                ->where('mascota_id', $consulta->mascota_id)
-                ->first();
-            if($cita){
-                $cita->update(['estado' => $consulta->estado]);
-            }
         }
 
         $consulta->detalles_consultas()->delete();
 
         if ($request->has('detalles')) {
             foreach ($request->detalles as $detalle) {
+                $existeproducto= !empty($detalle['producto_id']);
                 Detalle_Consulta::create([
                     'consulta_id'  => $consulta->id,
-                    'producto_id'  => $detalle['producto_id'],
+                    'producto_id'  => $existeproducto ? $detalle['producto_id'] : null,
+                    'nombre_medicamento' => $existeproducto ? null : ($detalle['nombre_medicamento'] ?? null),
                     'dosis'        => $detalle['dosis'],
                     'cantidad'     => $detalle['cantidad'],
                     'indicaciones' => $detalle['indicaciones'] ?? null,

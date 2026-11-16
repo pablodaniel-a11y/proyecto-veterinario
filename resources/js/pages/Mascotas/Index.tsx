@@ -113,6 +113,7 @@ export default function Index({mascotas, especies, filtros, flash} : indexProps)
                             <span>Añadir Mascota</span>
                         </Link> 
                     </Button>
+                    {/* 
                     <Button 
                         asChild 
                         className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white shadow-sm flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg transition-colors"
@@ -122,6 +123,7 @@ export default function Index({mascotas, especies, filtros, flash} : indexProps)
                             <span>Realizar una Consulta</span>
                         </Link> 
                     </Button>
+                    */}
                 </div>
             </div>
             <div className="bg-orange-100 border-b border-orange-200 py-4">

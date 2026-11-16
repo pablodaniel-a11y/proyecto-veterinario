@@ -23,17 +23,31 @@ class UpdateConsultaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'diagnostico' => ['required', 'string', 'max:500'],
+            'diagnostico' => ['nullable', 'required_if:estado,completado', 'string', 'max:2000'],
+            'tratamiento' => ['nullable', 'string', 'max:2000'],
             'peso' => ['nullable', 'decimal:0,2', 'min:0', 'max:999.99'],
             'estado' => ['required', 'string', 'in:pendiente,completado,cancelado', 'max:20'],
             'observaciones' => ['nullable', 'string', 'max:1000'],
 
-            //me di cuenta que no puedo usar el updatedatelle_consultarequest.php
             'detalles' => ['nullable', 'array'],
-            'detalles.*.producto_id' => ['required', 'exists:productos,id'],
+            'detalles.*.producto_id' => ['nullable', 'required_without:detalles.*.nombre_medicamento', 'exists:productos,id'],
+            'detalles.*.nombre_medicamento' => ['nullable', 'required_without:detalles.*.producto_id', 'string', 'max:255'],
             'detalles.*.dosis' => ['required', 'numeric', 'min:0', 'max:999.99'],
             'detalles.*.cantidad' => ['required', 'integer', 'min:1'],
             'detalles.*.indicaciones' => ['nullable', 'string', 'max:500'],
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'diagnostico' => 'diagnóstico',
+            'tratamiento' => 'tratamiento',
+            'detalles.*.producto_id'        => 'producto del catálogo',
+            'detalles.*.nombre_medicamento' => 'nombre del medicamento externo',
+            'detalles.*.dosis'              => 'dosis',
+            'detalles.*.cantidad'           => 'cantidad',
+            'detalles.*.indicaciones'       => 'indicaciones',
         ];
     }
 
@@ -41,9 +55,10 @@ class UpdateConsultaRequest extends FormRequest
     {
         return [
             'required' => 'El campo :attribute es obligatorio.',
+            'required_if' => 'El campo :attribute es obligatorio al completar la consulta.',
+            'required_without' => 'Debes seleccionar un producto del catálogo o escribir el nombre del medicamento.',
             'exists' => 'El :attribute seleccionado no es válido.',
             'max' => 'El campo :attribute no debe superar los :max caracteres.',
-            'date' => 'El campo :attribute debe tener un formato de fecha y hora válido.',
             'in' => 'El campo :attribute seleccionado no es válido.',
         ];
     }

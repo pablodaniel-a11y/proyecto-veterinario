@@ -17,8 +17,8 @@ class AgendaController extends Controller
     #[Middleware('permission:ver agendas')]
     public function index()
     {
-        $user = auth()->user();
-        $query = Agenda::with('veterinario.user')
+        $user= auth()->user();
+        $query= Agenda::with('veterinario.user')
             ->orderBy('dia_semana');
 
         if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])) {
@@ -27,7 +27,7 @@ class AgendaController extends Controller
             });
         }
 
-        $agendas = $query->paginate(10);
+        $agendas= $query->paginate(10);
 
         return Inertia::render('Agendas/Index', [
             'agendas' => $agendas,
@@ -40,11 +40,11 @@ class AgendaController extends Controller
     #[Middleware('permission:gestionar agendas')]
     public function create()
     {
-        $user = auth()->user();
+        $user= auth()->user();
         
-        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin','super-admin', 'recepcionista'])) {
+        if($user->hasRole('veterinario') && !$user->hasAnyRole(['admin','super-admin', 'recepcionista'])){
             $veterinarios = Veterinario::where('user_id', $user->id)->with('user')->get();
-        } else {
+        }else{
             $veterinarios = Veterinario::with('user')->get();
         }
 

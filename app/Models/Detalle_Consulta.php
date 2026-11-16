@@ -13,6 +13,7 @@ class Detalle_Consulta extends Model
     protected $fillable = [
         'consulta_id',
         'producto_id',
+        'nombre_medicamento',
         'dosis',
         'cantidad',
         'indicaciones',

@@ -13,9 +13,11 @@ class Consulta extends Model
     protected $fillable = [
         'veterinario_id',
         'mascota_id',
+        'cita_id',
         'fecha_hora',
         'motivo_consulta',
         'diagnostico',
+        'tratamiento',
         'peso',
         'estado',
         'observaciones'
@@ -24,21 +26,21 @@ class Consulta extends Model
 
     public function mascota()
     {
-        return $this->BelongsTo(Mascota::class);
+        return $this->belongsTo(Mascota::class);
     }
 
     public function veterinario()
     {
-        return $this->BelongsTo(Veterinario::class);
+        return $this->belongsTo(Veterinario::class);
     }
 
     public function detalles_consultas()
     {
-        return $this->HasMany(Detalle_Consulta::class);
+        return $this->hasMany(Detalle_Consulta::class);
     }
 
     public function cita()
     {
-        return $this->BelongsTo(Cita::class);
+        return $this->belongsTo(Cita::class);
     }
 }

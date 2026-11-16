@@ -23,9 +23,19 @@ class DetalleConsultaSeeder extends Seeder
             Detalle_Consulta::create([
                 'consulta_id'  => $consultaOtitis->id,
                 'producto_id'  => $productoGotas->id,
-                'dosis'        => 2.50,
+                'nombre_medicamento' => null,
+                'dosis'        => 2,
                 'cantidad'     => 1,
                 'indicaciones' => 'Aplicar 2 gotas en el oído afectado cada 12 horas.',
+            ]);
+            
+            Detalle_Consulta::create([
+                'consulta_id' => $consultaOtitis->id,
+                'producto_id' => null,
+                'nombre_medicamento' => 'Clorhexidina solución tópica 2% (Farmacia externa)',
+                'dosis' => 1,
+                'cantidad' => 1,
+                'indicaciones' => 'Limpiar suavemente el pabellón auricular antes de colocar las gotas.',
             ]);
         }
 
@@ -36,6 +46,7 @@ class DetalleConsultaSeeder extends Seeder
             Detalle_Consulta::create([
                 'consulta_id'  => $otraConsulta->id,
                 'producto_id'  => $productoServicio->id,
+                'nombre_medicamento' => null,
                 'dosis'        => 1.00,
                 'cantidad'     => 1,
                 'indicaciones' => 'Consulta clínica general realizada en consultorio.',

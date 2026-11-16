@@ -47,7 +47,7 @@ const generalNavItems: NavItem[] = [
         icon: Stethoscope,
     },
     {
-        title: 'Inventario de Productos',
+        title: 'Catálogo de Productos',
         href: '/productos',
         icon: Package,
     },
@@ -69,6 +69,7 @@ const exclusivoNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
+        //permission: 'ver panel',
         necesitaAuth: true,
         icon: LayoutGrid,
     },

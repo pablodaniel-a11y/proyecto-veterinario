@@ -40,8 +40,8 @@ Route::middleware(['auth'/*, 'verified'*/])->group(function () {
     Route::get('/citas/{cita}/edit', [CitaController::class, 'edit'])->name('citas.edit');
     Route::put('/citas/{cita}', [CitaController::class, 'update'])->name('citas.update');
     
-    Route::get('/mascotas/{mascota}/consultas', [ConsultaController::class, 'indexpormascota'])->name('mascota.consultas');
-    Route::get('/mascotas/{mascota}/consultas/create', [ConsultaController::class, 'createindividual'])->name('mascotas.consultas.create');
+    //Route::get('/mascotas/{mascota}/consultas', [ConsultaController::class, 'indexpormascota'])->name('mascota.consultas');
+    //Route::get('/mascotas/{mascota}/consultas/create', [ConsultaController::class, 'createindividual'])->name('mascotas.consultas.create');
     Route::post('/mascotas/{mascota}/consultas', [ConsultaController::class, 'store'])->name('mascotas.consultas.store');
     Route::get('/veterinario/consultas', [ConsultaController::class, 'indexdelveterinario'])->name('veterinario.consultas.index');
     Route::get('/veterinario/consultas/exportar-excel', [ConsultaController::class, 'export'])->name('veterinario.consultas.excel');

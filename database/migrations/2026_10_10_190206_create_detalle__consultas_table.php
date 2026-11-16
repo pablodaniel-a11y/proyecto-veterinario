@@ -18,9 +18,11 @@ return new class extends Migration
                 ->cascadeOnDelete();
             
             $table->foreignId('producto_id')
+                ->nullable()
                 ->constrained('productos')
                 ->cascadeOnDelete();
 
+            $table->string('nombre_medicamento')->nullable();
             $table->decimal('dosis',5,2);
             $table->integer('cantidad')->default(1);
             $table->string('indicaciones')->nullable();

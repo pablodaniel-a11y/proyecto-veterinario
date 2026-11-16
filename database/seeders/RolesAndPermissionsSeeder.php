@@ -18,6 +18,8 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+        Permission::create(['name' => 'ver panel']);
+
         Permission::create(['name' => 'listar usuarios']);
         Permission::create(['name' => 'listar roles']);
         Permission::create(['name' => 'listar permisos']);
@@ -86,7 +88,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'gestionar agendas',
             'editar agenda',
             'crear agenda',
-            'eliminar agenda'
+            'eliminar agenda',
+            'ver panel'
         ]);
         
         $roleVeterinario->givePermissionTo([
@@ -106,7 +109,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'gestionar agendas',
             'editar agenda',
             'crear agenda',
-            'eliminar agenda'
+            'eliminar agenda',
+            'ver panel'
         ]);
 
         $roleRecepcionista->givePermissionTo([
@@ -124,7 +128,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'gestionar agendas',
             'editar agenda',
             'crear agenda',
-            'eliminar agenda'
+            'eliminar agenda',
+            'ver panel'
         ]);
 
         $roleRegistrado->givePermissionTo([

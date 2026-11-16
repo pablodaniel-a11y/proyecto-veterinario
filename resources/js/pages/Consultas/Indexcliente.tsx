@@ -57,6 +57,7 @@ interface Producto{
 interface Detalle_Consulta {
     id: number;
     dosis: number;
+    nombre_medicamento: string | null;
     cantidad: number;
     indicaciones: string | null;
     producto: Producto;
@@ -66,10 +67,11 @@ interface Consulta{
     id: number;
     fecha_hora: Date;
     motivo_consulta: string;
-    diagnostico: string;
-    peso: number;
+    diagnostico: string | null;
+    tratamiento: string | null;
+    peso: number | null;
     estado: string;
-    observaciones: string;
+    observaciones: string | null;
     detalles_consultas?: Detalle_Consulta[];
 }
 
@@ -158,6 +160,7 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
             </div>
             <div className="bg-orange-200/60 border-b border-orange-300 py-4 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+                    {/* 
                     <Button 
                         asChild 
                         className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white shadow-sm flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg transition-colors"
@@ -167,6 +170,7 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
                             <span>Realizar una Consulta</span>
                         </Link> 
                     </Button>
+                    */}
                     <Button 
                         asChild 
                         className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white shadow-sm flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg transition-colors"
@@ -393,7 +397,7 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-base text-gray-700 mb-4">
                                 <div>
                                     <p className="font-semibold text-gray-900">Motivo de la Consulta:</p>
-                                    <p className="text-gray-800">{consulta.motivo_consulta}</p>
+                                    <p className="text-gray-800">{consulta.motivo_consulta || 'No especificado'}</p>
                                 </div>
                                 <div>
                                     <p className="font-semibold text-gray-900">Peso Registrado:</p>
@@ -402,9 +406,17 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
                                 <div className="sm:col-span-2">
                                     <p className="font-semibold text-gray-900">Diagnóstico:</p>
                                     <p className="bg-orange-50/50 p-3 rounded-lg border border-orange-100 text-gray-800 mt-1">
-                                        {consulta.diagnostico}
+                                        {consulta.diagnostico || 'Pendiente de diagnóstico'}
                                     </p>
                                 </div>
+                                {consulta.tratamiento && (
+                                    <div className="sm:col-span-2">
+                                        <p className="font-semibold text-gray-900">Tratamiento:</p>
+                                        <p className="bg-orange-50/30 p-3 rounded-lg border border-orange-100 text-gray-800 mt-1 text-sm">
+                                            {consulta.tratamiento}
+                                        </p>
+                                    </div>
+                                )}
                                 {consulta.observaciones && (
                                     <div className="sm:col-span-2">
                                         <p className="font-semibold text-gray-900">Observaciones:</p>
@@ -416,26 +428,35 @@ export default function Indexcliente({ mascota, consultas, filtros, estados, fec
                             </div>
                             <div className="mt-4 pt-4 border-t border-orange-100">
                                 <h3 className="font-bold text-gray-900 mb-3 text-sm uppercase tracking-wider text-orange-600">
-                                    Medicamentos / Productos Recetados:
+                                    Receta Médica y Productos:
                                 </h3>
                                 {consulta.detalles_consultas && consulta.detalles_consultas.length > 0 ? (
                                     <ul className="flex flex-col gap-2">
                                         {consulta.detalles_consultas.map((detalle) => (
                                             <li key={detalle.id} className="rounded-lg border border-orange-200 bg-orange-50/30 text-sm p-3 flex flex-col gap-1.5">
                                                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1">
-                                                    <span className="font-bold text-gray-900">
-                                                        {detalle.producto.nombre_producto} 
-                                                        <span className="text-xs font-normal text-gray-500 ml-1">({detalle.producto.tipo_producto})</span>
-                                                    </span>
+                                                    {detalle.producto ? (
+                                                        <span className="font-bold text-gray-900">
+                                                            {detalle.producto.nombre_producto}
+                                                            <span className="text-xs font-normal text-gray-500 ml-1">
+                                                                ({detalle.producto.tipo_producto})
+                                                            </span>
+                                                        </span>
+                                                    ) : (
+                                                        <span className="font-bold text-gray-900 flex items-center gap-2">
+                                                            {detalle.nombre_medicamento}
+                                                            <span className="text-[11px] font-medium bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                                                                Medicamento externo
+                                                            </span>
+                                                        </span>
+                                                    )}
                                                     <span className="font-semibold text-orange-700 bg-orange-100 px-2 py-0.5 rounded text-xs w-fit">
                                                         Cantidad: {detalle.cantidad}
                                                     </span>
                                                 </div>
                                                 <div className="text-gray-700 text-xs sm:text-sm mt-1">
                                                     <p><strong>Dosis:</strong> {detalle.dosis}</p>
-                                                    {detalle.indicaciones && (
-                                                        <p className="mt-0.5"><strong>Indicaciones:</strong> {detalle.indicaciones}</p>
-                                                    )}
+                                                    {detalle.indicaciones && (<p className="mt-0.5"><strong>Indicaciones:</strong> {detalle.indicaciones}</p>)}
                                                 </div>
                                             </li>
                                         ))}
