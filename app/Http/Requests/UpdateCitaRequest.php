@@ -42,6 +42,8 @@ class UpdateCitaRequest extends FormRequest
             'max' => 'El campo :attribute no debe superar los :max caracteres.',
             'date' => 'El campo :attribute debe tener un formato de fecha y hora válido.',
             'in' => 'El campo :attribute seleccionado no es válido.',
+            'after_or_equal:now' => 'El campo :attribute tiene una fecha no valida',
+            'after_or_equal' => 'El campo :attribute tiene una fecha no valida'
         ];
     }
 

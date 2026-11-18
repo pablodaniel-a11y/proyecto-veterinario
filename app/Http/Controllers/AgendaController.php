@@ -8,6 +8,7 @@ use App\Http\Requests\StoreAgendaRequest;
 use App\Http\Requests\UpdateAgendaRequest;
 use Inertia\Inertia;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Http\Request;
 
 class AgendaController extends Controller
 {
@@ -15,22 +16,46 @@ class AgendaController extends Controller
      * Display a listing of the resource.
      */
     #[Middleware('permission:ver agendas')]
-    public function index()
+    public function index(Request $request)
     {
+        $buscarname = trim($request->input('buscarname', ''));
+        $especialidadbus = trim($request->input('especialidadbus', ''));
+
         $user= auth()->user();
         $query= Agenda::with('veterinario.user')
             ->orderBy('dia_semana');
 
-        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])) {
+        if($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])){
             $query->whereHas('veterinario', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
         }
 
-        $agendas= $query->paginate(10);
+        $query->when($buscarname != '', function ($query) use ($buscarname) {
+            $query->whereHas('veterinario.user', function ($q) use ($buscarname) {
+                $q->where('name', 'like', "%{$buscarname}%");
+            });
+        });
+        
+        $query->when($especialidadbus !== '', function ($query) use ($especialidadbus) {
+            $query->whereHas('veterinario', function ($q) use ($especialidadbus) {
+                $q->where('especialidad', $especialidadbus);
+            });
+        });
+
+        $especialidades= Veterinario::select('especialidad')
+            ->distinct()
+            ->pluck('especialidad');
+
+        $agendas= $query->paginate(10)->withQueryString();
 
         return Inertia::render('Agendas/Index', [
             'agendas' => $agendas,
+            'especialidades' => $especialidades,
+            'filtros' => [
+                'buscarname' => $buscarname, 
+                'especialidadbus' => $especialidadbus,
+            ],
         ]);
     }
 

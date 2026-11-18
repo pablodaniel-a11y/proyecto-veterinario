@@ -61,5 +61,12 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => bcrypt('1234'),
         ]);
+
+        User::create([
+            'name' => 'Inventario',
+            'email' => 'inv@inv.com',
+            'email_verified_at' => now(),
+            'password' => bcrypt('1234'),
+        ]);
     }
 }

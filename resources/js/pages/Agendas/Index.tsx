@@ -1,8 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Head, Link, router } from "@inertiajs/react";
 import FlashMessage from '@/components/FlashMessage';
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronDown, Check } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { FormEvent, useState } from "react";
+
+interface Filtro {
+    buscarname?: string;
+    especialidadbus?: string;
+}
 
 interface Usuario {
     id: number;
@@ -38,12 +44,14 @@ interface AgendasPaginadas {
 
 interface IndexProps {
     agendas: AgendasPaginadas;
+    especialidades: string[];
+    filtros?: Filtro;
     flash?:{
         success?: string 
     };
 }
 
-export default function Index({ agendas, flash }: IndexProps) {
+export default function Index({ agendas, especialidades, filtros, flash }: IndexProps) {
 
     let mensaje="";
     if(agendas.total === 0){
@@ -56,8 +64,18 @@ export default function Index({ agendas, flash }: IndexProps) {
         }
     }
     
+    const [buscarname, setBuscarname] = useState(filtros?.buscarname ?? ''); 
+    const [especialidadbus, setEspecialidadbus] = useState(filtros?.especialidadbus ?? '');
+    const [mostrarFiltros, setMostrarFiltros] = useState(false);
     const diasSemana = ['', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
     const { can, user} = useAuth();
+
+    const [busquedaEspecialidad, setBusquedaEspecialidad] = useState(filtros?.especialidadbus ?? '');
+    const [abiertoEspecialidad, setAbiertoEspecialidad] = useState(false);
+
+    const especialidadesFiltradas = especialidades.filter((es) =>
+        es.toLowerCase().includes(busquedaEspecialidad.toLowerCase())
+    );
 
     const eliminar = (id: number) => {
         if (confirm('¿Estás seguro de eliminar este horario de agenda?')) {
@@ -65,6 +83,18 @@ export default function Index({ agendas, flash }: IndexProps) {
                 preserveScroll: true,
             });
         }
+    };
+
+    const aplicarFiltros = (e: FormEvent) => { 
+        e.preventDefault(); 
+     
+        router.get('/agendas', { 
+            buscarname, 
+            especialidadbus,
+        },{
+            preserveState: true,
+            preserveScroll: true,
+        }); 
     };
 
     return(
@@ -88,6 +118,96 @@ export default function Index({ agendas, flash }: IndexProps) {
                             <span>Nueva Franja Horaria</span>
                         </Link>
                     </Button>
+                </div>
+            </div>
+            <div className="bg-orange-100 border-b border-orange-200 py-4">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+                    <button
+                        onClick={() => setMostrarFiltros(!mostrarFiltros)}
+                        type="button"
+                        className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-colors text-sm"
+                    >
+                        <svg className={`w-4 h-4 transition-transform duration-200 ${mostrarFiltros ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                        {mostrarFiltros ? 'Ocultar Filtros' : 'Filtrar Profesionales'}
+                    </button>
+                    <div className={`w-full transition-all duration-300 ease-in-out ${mostrarFiltros ? 'max-h-[600px] opacity-100 mt-4 overflow-visible' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+                        <form onSubmit={aplicarFiltros} className="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 items-center bg-white/60 p-4 rounded-xl border border-orange-200 shadow-inner"> 
+                            <input 
+                                type="text" 
+                                value={buscarname} 
+                                onChange={(e) => setBuscarname(e.target.value)} 
+                                placeholder="Ingresar Nombre del Profesional..." 
+                                className="w-full sm:flex-1 rounded-lg border border-orange-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 text-sm bg-white p-2.5"
+                            />
+
+                            <div className="relative w-full sm:w-auto min-w-[240px]">
+                                <div 
+                                    onClick={() => setAbiertoEspecialidad(!abiertoEspecialidad)}
+                                    className="w-full rounded-lg border border-orange-300 shadow-sm bg-white p-2.5 text-sm flex items-center justify-between cursor-pointer focus:ring-2 focus:ring-orange-500"
+                                >
+                                    <input
+                                        type="text"
+                                        placeholder="Buscar o filtrar especialidad..."
+                                        value={busquedaEspecialidad}
+                                        onChange={(e) => {
+                                            setBusquedaEspecialidad(e.target.value);
+                                            setAbiertoEspecialidad(true);
+                                            if (e.target.value === '') {setEspecialidadbus('')};
+                                        }}
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="w-full outline-none bg-transparent cursor-text text-sm"
+                                    />
+                                    <ChevronDown className="w-4 h-4 text-gray-400 ml-2 shrink-0" />
+                                </div>
+
+                                {abiertoEspecialidad && (
+                                    <div className="absolute z-50 mt-1 w-full bg-white border border-orange-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        <div
+                                            onClick={() => {
+                                                setEspecialidadbus('');
+                                                setBusquedaEspecialidad('');
+                                                setAbiertoEspecialidad(false);
+                                            }}
+                                            className="px-3 py-2 text-sm text-gray-700 hover:bg-orange-50 cursor-pointer font-medium border-b border-gray-100"
+                                        >
+                                            Todas las Especialidades
+                                        </div>
+
+                                        {especialidadesFiltradas.length === 0 ? (
+                                            <div className="px-3 py-2 text-sm text-gray-400 text-center">
+                                                No se encontraron especialidades
+                                            </div>
+                                        ) : (
+                                            especialidadesFiltradas.map((es, i) => (
+                                                <div
+                                                    key={i}
+                                                    onClick={() => {
+                                                        setEspecialidadbus(es);
+                                                        setBusquedaEspecialidad(es);
+                                                        setAbiertoEspecialidad(false);
+                                                    }}
+                                                    className={`px-3 py-2 text-sm cursor-pointer flex items-center justify-between hover:bg-orange-50 ${
+                                                        especialidadbus === es ? 'bg-orange-100 text-orange-900 font-medium' : 'text-gray-700'
+                                                    }`}
+                                                >
+                                                    <span>{es}</span>
+                                                    {especialidadbus === es && <Check className="w-4 h-4 text-orange-600" />}
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                            <button 
+                                type="submit" 
+                                className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white font-medium px-6 py-2.5 rounded-lg shadow-sm transition-colors"
+                            >
+                                Aplicar
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">

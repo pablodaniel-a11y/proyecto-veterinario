@@ -47,6 +47,7 @@ Route::middleware(['auth'/*, 'verified'*/])->group(function () {
     Route::get('/veterinario/consultas/exportar-excel', [ConsultaController::class, 'export'])->name('veterinario.consultas.excel');
     Route::get('/veterinario/consultas/{consulta}/edit', [ConsultaController::class, 'edit'])->name('veterinario.consultas.edit');
     Route::put('/veterinario/consultas/{consulta}', [ConsultaController::class, 'update'])->name('veterinario.consultas.update');
+    Route::get('/veterinario/consultas/{id}/pdf', [ConsultaController::class, 'consulta_pdf'])->name('consultas.receta-pdf');
 
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class); 

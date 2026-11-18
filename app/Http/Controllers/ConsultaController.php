@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Exports\ConsultasExport; 
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ConsultaController extends Controller
 {
@@ -340,5 +341,18 @@ class ConsultaController extends Controller
             new ConsultasExport($request, $veterinario->id), 
             'mis_consultas.xlsx'
         );
+    }
+
+    #[Middleware('permission:ver consultas asignadas')]
+    public function consulta_pdf($id)
+    {
+        $consulta = Consulta::with(['mascota.raza.especie', 'mascota.cliente', 'veterinario.user', 'detalles_consultas.producto'])
+            ->findOrFail($id);
+
+        $pdf = Pdf::loadView('consultas.receta-pdf', [
+            'consulta' => $consulta,
+        ]);
+        
+        return $pdf->stream("receta_consulta_{$consulta->id}.pdf");
     }
 }

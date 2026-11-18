@@ -514,6 +514,18 @@ export default function Indexveterinario({ consultas, estados, fechasdisponibles
                                     </Button>
                                 </div>
                             )}
+                            {consulta.estado === 'completado' && (
+                                <div className="flex flex-col sm:flex-row gap-2 mt-2">
+                                    <a 
+                                        href={`/veterinario/consultas/${consulta.id}/pdf`} 
+                                        target="_blank"
+                                        className="bg-gray-700 hover:bg-gray-800 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center justify-center gap-2 text-sm text-center"
+                                    >
+                                        <FileText className="w-4 h-4" />
+                                        <span>Descargar Receta / PDF</span>
+                                    </a>
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>

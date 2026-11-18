@@ -59,6 +59,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $roleAdmin      = Role::create(['name' => 'admin']); 
         $roleVeterinario= Role::create(['name' => 'veterinario']);
         $roleRecepcionista = Role::create(['name' => 'recepcionista']);
+        $roleInventario = Role::create(['name' => 'inventario']);
         $roleRegistrado = Role::create(['name' => 'registrado']);
 
         $roleSuperAdmin->givePermissionTo(Permission::all());
@@ -67,17 +68,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'crear veterinario',
             'editar veterinario',
             'eliminar veterinario',
-            'ver mascotas',
-            'crear mascota',
-            'editar mascota',
-            'eliminar mascota',
             'gestionar consultas',
-            'ver consultas mascota',
             'ver consultas asignadas',
-            'crear consulta',
             'editar consulta',
             'eliminar consulta',
-            'ver citas',
             'editar cita',
             'eliminar cita',
             'gestionar citas',
@@ -93,18 +87,11 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
         
         $roleVeterinario->givePermissionTo([
-            'ver mascotas',
-            'crear mascota',
-            'editar mascota',
-            'eliminar mascota',
-            'ver consultas mascota',
             'ver consultas asignadas',
-            'crear consulta',
             'editar consulta',
             'eliminar consulta',
             'gestionar consultas',
             'editar veterinario',
-            'ver citas',
             'ver agendas',
             'gestionar agendas',
             'editar agenda',
@@ -114,13 +101,6 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         $roleRecepcionista->givePermissionTo([
-            'ver mascotas',
-            'crear mascota',
-            'editar mascota',
-            'eliminar mascota',
-            'ver consultas mascota',
-            'crear consulta',
-            'ver citas',
             'gestionar citas',
             'editar cita',
             'eliminar cita',
@@ -129,6 +109,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'editar agenda',
             'crear agenda',
             'eliminar agenda',
+            'ver panel'
+        ]);
+
+        $roleInventario->givePermissionTo([
+            'crear producto',
+            'editar producto',
+            'eliminar producto',
             'ver panel'
         ]);
 
@@ -160,7 +147,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password' => bcrypt('1234'),
             ]
         ); 
-        $adminUser->assignRole($roleAdmin);
+        $adminUser->assignRole([$roleAdmin, $roleRegistrado]);
 
         $veterinarioUser1 = User::firstOrCreate( 
             ['email' => 'vp1@vp1.com'], 
@@ -170,7 +157,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password' => bcrypt('1234'),
             ] 
         ); 
-        $veterinarioUser1->assignRole($roleVeterinario);
+        $veterinarioUser1->assignRole([$roleVeterinario, $roleRegistrado]);
 
         $veterinarioUser2 = User::firstOrCreate( 
             ['email' => 'vp2@vp2.com'], 
@@ -180,7 +167,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password' => bcrypt('1234'),
             ] 
         ); 
-        $veterinarioUser2->assignRole($roleVeterinario);
+        $veterinarioUser2->assignRole([$roleVeterinario, $roleRegistrado]);
 
         $veterinarioUser3 = User::firstOrCreate( 
             ['email' => 'vp3@vp3.com'], 
@@ -190,7 +177,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password' => bcrypt('1234'),
             ] 
         ); 
-        $veterinarioUser3->assignRole($roleVeterinario);
+        $veterinarioUser3->assignRole([$roleVeterinario, $roleRegistrado]);
 
         $veterinarioUser4 = User::firstOrCreate( 
             ['email' => 'vp4@vp4.com'], 
@@ -200,7 +187,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password' => bcrypt('1234'),
             ] 
         ); 
-        $veterinarioUser4->assignRole($roleVeterinario);
+        $veterinarioUser4->assignRole([$roleVeterinario, $roleRegistrado]);
 
         $recepcionUser = User::firstOrCreate( 
             ['email' => 'recepcion@recepcion.com'], 
@@ -210,7 +197,17 @@ class RolesAndPermissionsSeeder extends Seeder
                 'password' => bcrypt('1234'), 
             ] 
         ); 
-        $recepcionUser->assignRole($roleRecepcionista);
+        $recepcionUser->assignRole([$roleRecepcionista, $roleRegistrado]);
+
+        $inventarioUser = User::firstOrCreate(
+            ['email' => 'inv@inv.com'],
+            [
+                'name' => 'Inventario',
+                'email_verified_at' => now(),
+                'password' => bcrypt('1234'),
+            ]
+        );
+        $inventarioUser->assignRole([$roleInventario, $roleRegistrado]);
 
         $registradoUser = User::firstOrCreate(
             ['email' => 'reg@reg.com'],

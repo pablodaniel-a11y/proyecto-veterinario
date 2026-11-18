@@ -69,7 +69,7 @@ const exclusivoNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
-        //permission: 'ver panel',
+        permission: 'ver panel',
         necesitaAuth: true,
         icon: LayoutGrid,
     },

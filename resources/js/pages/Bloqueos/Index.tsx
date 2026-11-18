@@ -4,7 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 
-interface User {
+interface Usuario {
     name: string;
 }
 
@@ -14,7 +14,7 @@ interface Bloqueo {
     hora_inicio: string | null;
     hora_fin: string | null;
     motivo: string;
-    user: User;
+    user: Usuario;
 }
 
 interface BloqueosPaginados {
