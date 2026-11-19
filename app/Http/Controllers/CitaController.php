@@ -20,6 +20,8 @@ use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class CitaController extends Controller
 {
@@ -301,8 +303,16 @@ class CitaController extends Controller
                 'motivo' => $ultimaCita->motivo ?? 'Consulta general',
             ];
 
+            try {
             Mail::to($cliente->email)
                 ->send(new SendMail($data, 'Confirmación de Cita - Veterinaria', 'emails.cita_pendiente'));
+            } catch (Throwable $e) {
+                Log::warning('No se pudo enviar el email de cita confirmada.', [
+                    'cita_id' => $ultimaCita->id,
+                    'email' => $cliente->email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         if(!auth()->check()){
@@ -379,8 +389,16 @@ class CitaController extends Controller
                     'fecha_hora' => $cita->fecha_hora,
                     'motivo' => $cita->motivo ?? 'Consulta general',
                 ];
+                try {
                 Mail::to($cita->cliente->email)
                     ->send(new SendMail($data, '¡Cita Confirmada! - Veterinaria', 'emails.cita_confirmada')); 
+                } catch (Throwable $e) {
+                    Log::warning('No se pudo enviar el email de cita confirmada.', [
+                        'cita_id' => $cita->id,
+                        'email' => $cita->cliente->email,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
         }
 

@@ -112,11 +112,18 @@ class VeterinarioController extends Controller
             'password' => $contratemporal,
         ];
         
+        try {
         Mail::to($user->email)->send(new SendMail(
             $data,
             'Bienvenido - Cuenta de Veterinario Creada',
             'emails.veterinario_email'
         ));
+        } catch (Throwable $e) {
+            Log::warning('No se pudo enviar el email de bienvenida al veterinario.', [
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         return redirect()
             ->route('veterinarios.index')
