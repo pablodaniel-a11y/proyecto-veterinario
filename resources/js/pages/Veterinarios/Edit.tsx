@@ -42,7 +42,7 @@ export default function Index({veterinario}: editProps){
             <div className="bg-white border border-orange-200 rounded-xl p-6 sm:p-8 shadow-sm">
                 <div className="border-b border-orange-100 pb-4 mb-6">
                     <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                        Actualizar Información del Profecional: <span className="text-orange-600 text-lg font-normal block sm:inline">{veterinario.user.name}</span>
+                        Actualizar Información del Profesional: <span className="text-orange-600 text-lg font-normal block sm:inline">{veterinario.user.name}</span>
                     </h1>
                     <p className="text-sm text-gray-500 mt-1">Modifica los campos necesarios y guarda los cambios.</p>
                 </div>

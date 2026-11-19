@@ -265,7 +265,7 @@ export default function Create({mascotas, veterinarios, bloqueos, razas, especie
                             <div className="bg-orange-50/60 border border-orange-200 rounded-lg p-3 text-xs text-orange-900 mt-1">
                                 <span className="font-semibold block mb-1">Horarios de atención de este profesional:</span>
                                 {agendasVeterinario.length === 0 ? (
-                                    <span className="text-gray-500 italic">No tiene horarios configurados actualmente. <span text-red-500>Elejir un Profecional Diferente</span></span>
+                                    <span className="text-gray-500 italic">No tiene horarios configurados actualmente. <span text-red-500>Elejir un Profesional Diferente</span></span>
                                 ) : (
                                     <ul className="list-disc list-inside space-y-0.5">
                                         {agendasVeterinario.map((agenda) => (

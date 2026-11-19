@@ -55,7 +55,7 @@ export default function Index({veterinarios, especialidades, filtros, flash}: in
         if (veterinarios.total === 1){
             mensaje="Mostrando tu unico Especialista.";
         }else{
-            mensaje=`Mostrando ${veterinarios.from} a ${veterinarios.to} de ${veterinarios.total} Profecionales`;
+            mensaje=`Mostrando ${veterinarios.from} a ${veterinarios.to} de ${veterinarios.total} Profesionales`;
         }
     }
 
