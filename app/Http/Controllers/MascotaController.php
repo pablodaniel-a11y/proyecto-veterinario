@@ -26,7 +26,7 @@ class MascotaController extends Controller
         
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
-        if (!$cliente) {
+        if(!$cliente){
             $cliente = Cliente::create([
                 'user_id' => auth()->id(),
                 'nombre'  => auth()->user()->name,
@@ -89,7 +89,7 @@ class MascotaController extends Controller
 
         $mascota['cliente_id'] = $cliente->id;
 
-        if ($request->hasFile('foto')) {
+        if($request->hasFile('foto')){
             $mascota['foto'] = $request->file('foto')->store('mascotas', 'public');
         }
 
@@ -131,8 +131,8 @@ class MascotaController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->hasFile('foto')) {
-            if ($mascota->foto && Storage::disk('public')->exists($mascota->foto)) {
+        if($request->hasFile('foto')){
+            if($mascota->foto && Storage::disk('public')->exists($mascota->foto)){
                 Storage::disk('public')->delete($mascota->foto);
             }
             $validated['foto'] = $request->file('foto')->store('mascotas', 'public');
@@ -153,7 +153,7 @@ class MascotaController extends Controller
     #[Middleware('permission:eliminar mascota')]
     public function destroy(Mascota $mascota)
     {
-        if ($mascota->foto && Storage::disk('public')->exists($mascota->foto)) {
+        if($mascota->foto && Storage::disk('public')->exists($mascota->foto)){
             Storage::disk('public')->delete($mascota->foto);
         }
 

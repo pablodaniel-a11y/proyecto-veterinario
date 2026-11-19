@@ -96,13 +96,13 @@ class ConsultaController extends Controller
         $estadobus = trim($request->input('estadobus') ?? '');
         $porPagina = (int) $request->input('por_pagina', 10);
 
-        if (!in_array($porPagina, [10, 20, 50, 100], true)) { 
+        if(!in_array($porPagina, [10, 20, 50, 100], true)){ 
             $porPagina = 10; 
         }
 
         $veterinario = Veterinario::where('user_id', auth()->id())->first();
 
-        if (auth()->user()->hasAnyRole(['admin', 'super-admin'])) {
+        if(auth()->user()->hasAnyRole(['admin', 'super-admin'])){
             $consultas = Consulta::with(['mascota.cliente', 'mascota.raza.especie', 'detalles_consultas.producto'])
                 ->orderBy('fecha_hora', 'asc')
                 ->when($buscarname !== '', function ($query) use ($buscarname){
@@ -194,8 +194,8 @@ class ConsultaController extends Controller
         /*
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
-        if (auth()->check()) {
-            if (!$cliente || Mascota::where('cliente_id', $cliente->id)->count() === 0) {
+        if(auth()->check()){
+            if(!$cliente || Mascota::where('cliente_id', $cliente->id)->count() === 0){
                 return redirect()
                     ->route('mascotas.index')
                     ->with('error', 'No puedes realizar una consulta sin antes tener una mascota registrada.');
@@ -298,7 +298,7 @@ class ConsultaController extends Controller
 
         $consulta->detalles_consultas()->delete();
 
-        if ($request->has('detalles')) {
+        if($request->has('detalles')){
             foreach ($request->detalles as $detalle) {
                 $existeproducto= !empty($detalle['producto_id']);
                 Detalle_Consulta::create([

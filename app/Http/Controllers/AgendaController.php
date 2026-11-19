@@ -116,8 +116,8 @@ class AgendaController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])) {
-            if ($agenda->veterinario->user_id !== $user->id) {
+        if($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])){
+            if($agenda->veterinario->user_id !== $user->id){
                 abort(403, 'No tienes permiso para editar esta agenda.');
             }
         }
@@ -138,8 +138,8 @@ class AgendaController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])) {
-            if ($agenda->veterinario->user_id !== $user->id) {
+        if($user->hasRole('veterinario') && !$user->hasAnyRole(['admin', 'super-admin', 'recepcionista'])){
+            if($agenda->veterinario->user_id !== $user->id){
                 abort(403, 'No tienes permiso para actualizar esta agenda.');
             }
         }

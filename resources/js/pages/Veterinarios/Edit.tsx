@@ -78,16 +78,18 @@ export default function Index({veterinario}: editProps){
                             />
                             {errors.telefono && <span className="text-red-500 text-xs mt-0.5">{errors.telefono}</span>}
                         </div>
-                        <div className="flex flex-col gap-1.5">
-                            <label className="text-sm font-semibold text-gray-700">Matrícula</label>
-                            <input
-                                type="text" 
-                                value={data.matricula}
-                                onChange={(e) => setData('matricula', e.target.value)}
-                                className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-                            />
-                            {errors.matricula && <span className="text-red-500 text-xs mt-0.5">{errors.matricula}</span>}
-                        </div>
+                        {can('crear veterinario') && (
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-sm font-semibold text-gray-700">Matrícula</label>
+                                <input
+                                    type="text" 
+                                    value={data.matricula}
+                                    onChange={(e) => setData('matricula', e.target.value)}
+                                    className="rounded-lg border border-gray-300 px-3.5 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                                />
+                                {errors.matricula && <span className="text-red-500 text-xs mt-0.5">{errors.matricula}</span>}
+                            </div>
+                        )}
                         <div className="flex flex-col gap-1.5">
                             <label className="text-sm font-semibold text-gray-700">Especialidad</label>
                             <input 

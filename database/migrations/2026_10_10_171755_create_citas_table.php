@@ -28,6 +28,7 @@ return new class extends Migration
             
             $table->dateTime('fecha_hora');
             $table->string('motivo');
+            $table->string('motivo_cancelacion')->nullable();
             $table->string('estado')->default('pendiente');
             $table->timestamps();
         });

@@ -17,6 +17,7 @@ class Cita extends Model
         'fecha_hora',
         'motivo',
         'estado',
+        'motivo_cancelacion',
     ];
 
     public function cliente()

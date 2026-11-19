@@ -19,7 +19,7 @@ class DetalleConsultaSeeder extends Seeder
         $consultaOtitis = Consulta::where('estado', 'completado')->first() ?? Consulta::first();
         $productoGotas = Producto::where('tipo_producto', 'Medicamento')->first() ?? Producto::first();
 
-        if ($consultaOtitis && $productoGotas) {
+        if($consultaOtitis && $productoGotas){
             Detalle_Consulta::create([
                 'consulta_id'  => $consultaOtitis->id,
                 'producto_id'  => $productoGotas->id,
@@ -42,7 +42,7 @@ class DetalleConsultaSeeder extends Seeder
         $otraConsulta = Consulta::inRandomOrder()->first();
         $productoServicio = Producto::where('tipo_producto', 'Servicio')->first() ?? Producto::first();
 
-        if ($otraConsulta && $productoServicio) {
+        if($otraConsulta && $productoServicio){
             Detalle_Consulta::create([
                 'consulta_id'  => $otraConsulta->id,
                 'producto_id'  => $productoServicio->id,

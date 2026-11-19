@@ -60,6 +60,7 @@ interface Cita{
     mascota: Mascota;
     fecha_hora: string;
     motivo: string;
+    motivo_cancelacion?: string | null;
     estado: string;
 }
 
@@ -466,6 +467,14 @@ export default function Index({citas, filtros, estados, fechasdisponibles, masco
                                         {cita.motivo}
                                     </p>
                                 </div>
+                                {cita.estado === 'cancelado' && cita.motivo_cancelacion && (
+                                    <div className="sm:col-span-2">
+                                        <p className="font-semibold text-red-700">Motivo de la cancelación:</p>
+                                        <p className="bg-red-50 p-3 rounded-lg border border-red-200 text-red-900 mt-1">
+                                            {cita.motivo_cancelacion}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </li>
                     ))}

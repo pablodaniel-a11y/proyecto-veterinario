@@ -128,13 +128,13 @@ class ConsultasExport implements FromQuery, WithHeadings, WithMapping, WithEvent
                     $estado=$sheet->getCell("G{$row}")->getValue();
                     $colorFondo='';
 
-                    if ($estado === 'Pendiente') {
+                    if($estado === 'Pendiente'){
                         $colorFondo = 'FEF08A';
                     }
-                    if ($estado === 'Completado') {
+                    if($estado === 'Completado'){
                         $colorFondo = 'BBF7D0';
                     }
-                    if ($estado === 'Cancelado') {
+                    if($estado === 'Cancelado'){
                         $colorFondo = 'FECACA';
                     }
 

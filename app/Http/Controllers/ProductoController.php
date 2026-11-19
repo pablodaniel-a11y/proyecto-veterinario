@@ -23,10 +23,10 @@ class ProductoController extends Controller
 
         $camposPermitidos = ['nombre_producto', 'precio_venta', 'stock_actual'];
 
-        if (!in_array($orden, $camposPermitidos, true)) { 
+        if(!in_array($orden, $camposPermitidos, true)){ 
             $orden = 'nombre_producto'; 
         }
-        if (!in_array($direccion, ['asc', 'desc'], true)) { 
+        if(!in_array($direccion, ['asc', 'desc'], true)){ 
             $direccion = 'asc'; 
         }
 

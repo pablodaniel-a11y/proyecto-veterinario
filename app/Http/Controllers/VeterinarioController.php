@@ -168,7 +168,7 @@ class VeterinarioController extends Controller
             'especialidad' => $validated['especialidad'],
         ];
 
-        if (auth()->user()->hasAnyRole(['admin', 'super-admin'])) {
+        if(auth()->user()->hasAnyRole(['admin', 'super-admin'])){
             $datos['matricula'] = $validated['matricula'];
         }
 

@@ -33,7 +33,7 @@ class StoreCitaRequest extends FormRequest
             'estado' => ['required', 'string', 'in:pendiente,completado,cancelado,confirmada', 'max:20'],
         ];
 
-        if (!auth()->check()) {
+        if(!auth()->check()){
             $rules['nombreingresado'] = ['required', 'string', 'max:255'];
             $rules['emailingresado'] = ['required', 'email', 'max:255'];
             $rules['nombre_mascota'] = ['required', 'string', 'max:255'];
@@ -94,7 +94,7 @@ class StoreCitaRequest extends FormRequest
                 ->where('hora_fin', '>=', $hora)
                 ->exists();
 
-            if (!$atiende) {
+            if(!$atiende){
                 $validator->errors()->add('fecha_hora', 'El veterinario seleccionado no atiende en este día u horario.');
             }
         });

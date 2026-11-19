@@ -30,6 +30,7 @@ class UpdateCitaRequest extends FormRequest
             'veterinario_id' => ['required', 'integer', 'exists:veterinarios,id'],
             'fecha_hora' => ['required', 'date'],
             'motivo' => ['required', 'string', 'max:500'],
+            'motivo_cancelacion' => ['nullable', 'required_if:estado,cancelado', 'string', 'max:500'],
             'estado' => ['required', 'string', 'in:pendiente,completado,cancelado,confirmada', 'max:20'],
         ];
     }
@@ -81,7 +82,7 @@ class UpdateCitaRequest extends FormRequest
                 ->where('hora_fin', '>=', $hora)
                 ->exists();
 
-            if (!$atiende) {
+            if(!$atiende){
                 $validator->errors()->add('fecha_hora', 'El veterinario seleccionado no atiende en este día u horario.');
             }
         });

@@ -38,7 +38,7 @@ class CitaController extends Controller
 
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
-        if (!$cliente) {
+        if(!$cliente){
             return Inertia::render('Citas/Index', [
                 'citas' => [
                     'data' => [],
@@ -130,7 +130,7 @@ class CitaController extends Controller
         $vetbus = trim($request->input('vetbus') ?? '');
         $porPagina = (int) $request->input('por_pagina', 10);
 
-        if (!in_array($porPagina, [10, 20, 50, 100], true)) { 
+        if(!in_array($porPagina, [10, 20, 50, 100], true)){ 
             $porPagina = 10; 
         }
 
@@ -200,15 +200,15 @@ class CitaController extends Controller
     public function create()
     {
         $previous = url()->previous();
-        if (!str_contains($previous, '/citas/create')) {
+        if(!str_contains($previous, '/citas/create')){
             session(['cita_cancel_url' => $previous]);
         }
         $Urlanterior = session('cita_cancel_url', route('agendar.cita'));
         
         $cliente = Cliente::where('user_id', auth()->id())->first();
 
-        if (auth()->check()) {
-            if (!$cliente || Mascota::where('cliente_id', $cliente->id)->count() === 0) {
+        if(auth()->check()){
+            if(!$cliente || Mascota::where('cliente_id', $cliente->id)->count() === 0){
                 return redirect()
                     ->route('mascotas.index')
                     ->with('error', 'Debes registrar al menos una mascota antes de poder solicitar una cita.');
@@ -243,7 +243,7 @@ class CitaController extends Controller
     public function store(StoreCitaRequest $request)
     {
 
-        if (auth()->check()) {
+        if(auth()->check()){
             $email = auth()->user()->email;
             $nombre = auth()->user()->name;
             $userId = auth()->id();
@@ -262,13 +262,13 @@ class CitaController extends Controller
             ]
         );
 
-        if (auth()->check() && !$cliente->user_id) {
+        if(auth()->check() && !$cliente->user_id){
             $cliente->update(['user_id' => auth()->id()]);
         }
         
         $mascotaId = $request->input('mascota_id');
 
-        if (!auth()->check() || !$mascotaId) {
+        if(!auth()->check() || !$mascotaId){
             $mascota = Mascota::create([
                 'cliente_id' => $cliente->id,
                 'raza_id' => $request->input('raza_id', 1),
@@ -364,9 +364,15 @@ class CitaController extends Controller
     {
         $validated = $request->validated();
         $estadoAnterior = $cita->estado;
-        $cita->update($validated);
 
-        if ($estadoAnterior !== 'confirmada' && $cita->estado === 'confirmada') {
+        if($validated['estado'] !== 'cancelado'){
+            $validated['motivo_cancelacion'] = null;
+        }
+
+        $cita->update($validated);
+        $cita->load(['cliente', 'mascota.raza.especie', 'veterinario.user']);
+
+        if($estadoAnterior !== 'confirmada' && $cita->estado === 'confirmada'){
             Consulta::firstOrCreate(
                 ['cita_id' => $cita->id],
                 [
@@ -379,9 +385,7 @@ class CitaController extends Controller
                     'observaciones' => '',
                 ]
             );
-
-            $cita->load(['cliente', 'mascota.raza.especie', 'veterinario.user']);
-            if ($cita->cliente && $cita->cliente->email) {
+            if($cita->cliente && $cita->cliente->email){
                 $data = [
                     'cliente_nombre' => $cita->cliente->nombre,
                     'mascota_nombre' => $cita->mascota->nombre ?? 'Tu mascota',
@@ -394,6 +398,33 @@ class CitaController extends Controller
                     ->send(new SendMail($data, '¡Cita Confirmada! - Veterinaria', 'emails.cita_confirmada')); 
                 } catch (Throwable $e) {
                     Log::warning('No se pudo enviar el email de cita confirmada.', [
+                        'cita_id' => $cita->id,
+                        'email' => $cita->cliente->email,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+        }
+
+        if($estadoAnterior !== 'cancelado' && $cita->estado === 'cancelado'){
+            Consulta::where('cita_id', $cita->id)
+                ->where('estado', 'pendiente')
+                ->update(['estado' => 'cancelado']);
+
+            if($cita->cliente && $cita->cliente->email){
+                $data = [
+                    'cliente_nombre' => $cita->cliente->nombre,
+                    'mascota_nombre' => $cita->mascota->nombre ?? 'Tu mascota',
+                    'veterinario_nombre' => $cita->veterinario->user->name ?? 'Personal médico',
+                    'fecha_hora' => $cita->fecha_hora,
+                    'motivo' => $cita->motivo ?? 'Consulta general',
+                    'motivo_cancelacion' => $cita->motivo_cancelacion ?? 'No especificado',
+                ];
+                try {
+                    Mail::to($cita->cliente->email)
+                        ->send(new SendMail($data, 'Cita Cancelada - Veterinaria', 'emails.cita_cancelada'));
+                } catch (Throwable $e) {
+                    Log::warning('No se pudo enviar el email de cita cancelada.', [
                         'cita_id' => $cita->id,
                         'email' => $cita->cliente->email,
                         'error' => $e->getMessage(),

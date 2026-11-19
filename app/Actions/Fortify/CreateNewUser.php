@@ -35,12 +35,12 @@ class CreateNewUser implements CreatesNewUsers
 
         $cliente = Cliente::where('email', $user->email)->first();
 
-        if ($cliente) {
+        if($cliente){
             $cliente->update([
                 'user_id' => $user->id,
                 'nombre'  => $user->name,
             ]);
-        } else {
+        }else{
             Cliente::create([
                 'user_id'  => $user->id,
                 'nombre'   => $user->name,

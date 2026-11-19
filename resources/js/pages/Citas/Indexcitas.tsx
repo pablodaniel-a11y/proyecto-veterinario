@@ -63,6 +63,7 @@ interface Cita{
     mascota: Mascota;
     fecha_hora: string;
     motivo: string;
+    motivo_cancelacion?: string | null;
     estado: string;
 }
 

@@ -20,7 +20,7 @@ class ConsultaSeeder extends Seeder
         $citas = Cita::whereIn('estado', ['confirmada', 'completado'])->get();
 
         foreach ($citas as $cita) {
-            if ($cita->estado === 'confirmada' || $cita->estado === 'completado') {
+            if($cita->estado === 'confirmada' || $cita->estado === 'completado'){
                 $completada = $cita->estado === 'completado';
                 Consulta::firstOrCreate(
                     ['cita_id' => $cita->id],

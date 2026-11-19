@@ -70,6 +70,7 @@ interface Cita{
     mascota: Mascota;
     fecha_hora: string;
     motivo: string;
+    motivo_cancelacion?: string | null;
     estado: string;
 }
 
@@ -94,6 +95,7 @@ export default function Edit({veterinarios, bloqueos, cita, estados}: editProps)
         fecha: fechaInicial,
         hora: horaInicial,
         motivo: cita.motivo,
+        motivo_cancelacion: cita.motivo_cancelacion ?? '',
         estado: cita.estado as Estados,
         veterinario_id: cita.veterinario.id ?? veterinarios[0]?.id ?? 0,
     });
@@ -215,6 +217,19 @@ export default function Edit({veterinarios, bloqueos, cita, estados}: editProps)
                                     </option>
                                 ))}
                             </select>
+                            {data.estado === 'cancelado' && (
+                                <div className="flex flex-col gap-1.5 sm:col-span-2">
+                                    <label className="text-sm font-semibold text-red-700">Motivo de la Cancelación:</label>
+                                    <textarea
+                                        value={data.motivo_cancelacion}
+                                        onChange={(e) => setData('motivo_cancelacion', e.target.value)}
+                                        rows={2}
+                                        placeholder="Ej: El veterinario tuvo una urgencia por..."
+                                        className="rounded-lg border border-red-300 px-3.5 py-2 text-sm text-gray-900 bg-red-50/30 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    />
+                                    {errors.motivo_cancelacion && (<span className="text-red-500 text-xs mt-0.5">{errors.motivo_cancelacion}</span>)}
+                                </div>
+                            )}
                             {errors.estado && <span className="text-red-500 text-xs mt-0.5">{errors.estado}</span>}
                         </div>
                         <div className="flex flex-col gap-1.5 sm:col-span-2">

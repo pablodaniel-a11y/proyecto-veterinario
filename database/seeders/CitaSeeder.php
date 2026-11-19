@@ -71,7 +71,7 @@ class CitaSeeder extends Seeder
         $idsUsados = [];
         for ($i = 0; $i < 2; $i++) {
             $candidatos = array_values(array_diff($mascotasDisponiblesIds, $idsUsados));
-            if (empty($candidatos)) {
+            if(empty($candidatos)){
                 break;
             }
             $mascotaId = fake()->randomElement($candidatos);
