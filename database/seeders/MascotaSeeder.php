@@ -16,9 +16,11 @@ class MascotaSeeder extends Seeder
     public function run(): void
     {
         $cliente = Cliente::firstOrFail();
+        $clienteregistrado = Cliente::where('email', 'reg@reg.com')->firstOrFail();
 
         $caniche = Raza::where('nombre', 'Caniche')->firstOrFail();
         $siames = Raza::where('nombre', 'Siames')->firstOrFail();
+        $razaIds = Raza::pluck('id')->all();
 
         Mascota::create([
             'cliente_id' => $cliente->id,
@@ -35,5 +37,21 @@ class MascotaSeeder extends Seeder
             'sexo' => 'Hembra',
             'edad' => 18,
         ]);
+
+        Mascota::factory()
+            ->count(4)
+            ->state(fn () => [
+                'cliente_id' => $clienteregistrado->id,
+                'raza_id' => fake()->randomElement($razaIds),
+            ])
+            ->create();
+
+        Mascota::factory()
+            ->count(4)
+            ->state(fn () => [
+                'cliente_id' => $cliente->id,
+                'raza_id' => fake()->randomElement($razaIds),
+            ])
+            ->create();
     }
 }

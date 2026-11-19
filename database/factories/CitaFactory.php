@@ -3,6 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Cita;
+use App\Models\Mascota;
+use App\Models\Cliente;
+use App\Models\Veterinario;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +21,12 @@ class CitaFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'cliente_id'     => Cliente::inRandomOrder()->value('id'),
+            'veterinario_id' => Veterinario::inRandomOrder()->value('id'),
+            'mascota_id'     => Mascota::inRandomOrder()->value('id'),
+            'fecha_hora'     => fake()->dateTimeBetween('-1 week', '+1 week'),
+            'motivo'         => fake()->sentence(8),
+            'estado'         => fake()->randomElement(['pendiente', 'confirmada']),
         ];
     }
 }

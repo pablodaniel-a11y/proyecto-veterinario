@@ -19,8 +19,8 @@ class ProductoFactory extends Factory
     {
         return [
             'nombre_producto' => fake()->word() . ' ' . fake()->randomElement(['Antipulgas', 'Vitaminas', 'Shampoo', 'Gotas óticas']),
-            'tipo_producto' => fake()->randomElement(['Medicamento', 'Higiene', 'Accesorio']), // 'Servicio'
-            'precio_venta' => fake()->randomFloat(2, 10, 100),  // Precios aleatorios con 2 decimales (mínimo 10, máximo 100)
+            'tipo_producto' => fake()->randomElement(['Medicamento', 'Higiene', 'Accesorio']),
+            'precio_venta' => fake()->randomFloat(2, 10, 100),
             'stock_actual' => fake()->numberBetween(10, 100),
         ];
     }

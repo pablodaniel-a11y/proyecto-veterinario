@@ -18,10 +18,28 @@ class CitaSeeder extends Seeder
     {
         $ciro = Mascota::where('nombre', 'Ciro')->first();
         $mini = Mascota::where('nombre', 'Mini')->first();
-        $veterinario = Veterinario::inRandomOrder()->first();
-        $veterinarioPrueba = Veterinario::where('telefono', '387123456')->firstOrFail();
         $clienteCiro = $ciro ? $ciro->cliente_id : Cliente::first()->id;
         $clienteMini = $mini ? $mini->cliente_id : Cliente::first()->id;
+
+        $veterinario = Veterinario::inRandomOrder()->first();
+        $veterinarioPrueba = Veterinario::where('telefono', '387123456')->firstOrFail();
+
+        $veterinariosPruebaIds = Veterinario::whereHas('user', function ($q) {
+            $q->whereIn('email', [
+                'vp1@vp1.com',
+                'vp2@vp2.com',
+                'vp3@vp3.com',
+                'vp4@vp4.com',
+            ]);
+        })->pluck('id')->all();
+
+        $clienteregistrado = Cliente::where('email', 'reg@reg.com')->firstOrFail();
+        $mascotasDisponiblesIds = Mascota::where('cliente_id', $clienteregistrado->id)
+            ->whereDoesntHave('citas', function ($q) {
+                $q->whereIn('estado', ['pendiente', 'confirmada']);
+            })
+            ->pluck('id')
+            ->all();
 
         Cita::create([
             'cliente_id'     => $clienteCiro,
@@ -49,5 +67,20 @@ class CitaSeeder extends Seeder
             'motivo'         => 'Control de rutina anual y vacunación.',
             'estado'         => 'confirmada',
         ]);
+
+        $idsUsados = [];
+        for ($i = 0; $i < 2; $i++) {
+            $candidatos = array_values(array_diff($mascotasDisponiblesIds, $idsUsados));
+            if (empty($candidatos)) {
+                break;
+            }
+            $mascotaId = fake()->randomElement($candidatos);
+            $idsUsados[] = $mascotaId;
+            Cita::factory()->create([
+                'cliente_id'     => $clienteregistrado->id,
+                'veterinario_id' => fake()->randomElement($veterinariosPruebaIds),
+                'mascota_id'     => $mascotaId,
+            ]);
+        }
     }
 }

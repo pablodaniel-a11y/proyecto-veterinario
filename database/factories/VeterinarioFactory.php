@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Veterinario;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,7 @@ class VeterinarioFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => \App\Models\User::factory(),
+            'user_id' => User::factory(),
             'telefono' => fake()->unique()->phoneNumber(),
             'matricula' => fake()->unique()->numberBetween(1000, 9999),
             'especialidad' => fake()->randomElement(['Cirugía', 'Clínica General', 'Felinos', 'Dermatología', 'Oftalmología', 'Etología (Comportamiento Animal)', 'Nutrición y Dietética']),
